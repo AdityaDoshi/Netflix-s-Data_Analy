@@ -570,7 +570,7 @@ def chart_kpi_donut(value, title, labels, values):
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
         xaxis=dict(visible=False, fixedrange=True),
-        yaxis=dict(visible=False, fixedrange=True),
+        yaxis=dict(visible=False, fixedrange=True, range=[0, max(values) * 1.5 if len(values) > 0 else 1]),
         showlegend=False,
         clickmode="event+select"
     )
