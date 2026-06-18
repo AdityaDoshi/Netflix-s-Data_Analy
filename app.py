@@ -679,7 +679,7 @@ def chart_runtime_distribution(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna())]
     fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"])
     fig.update_traces(marker_line_color="#141414", marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="Duration (mins)", gridcolor="#333333"), yaxis=dict(title="Frequency", gridcolor="#333333"), bargap=0.06, height=350, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="Duration (mins)", gridcolor="#333333"), yaxis=dict(title="Frequency", gridcolor="#333333"), bargap=0.06, height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
     return fig
 
 # --- New Deep Dive Visualizations ---
@@ -693,7 +693,7 @@ def chart_top_countries_map(df: pd.DataFrame):
     fig.update_layout(
         title=dict(text="Global Production Hubs", font=dict(size=14, color="#FFFFFF")),
         geo=dict(showframe=False, showcoastlines=True, coastlinecolor="#333333", projection_type='equirectangular', bgcolor='rgba(0,0,0,0)'),
-        height=400, margin=dict(l=0, r=0, t=40, b=0), paper_bgcolor="rgba(0,0,0,0)"
+        height=400, margin=dict(l=0, r=0, t=40, b=0), paper_bgcolor="rgba(0,0,0,0)", clickmode="event+select"
     )
     return fig
 
@@ -705,7 +705,7 @@ def chart_top_cast(df: pd.DataFrame):
         x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
         marker=dict(color="#E50914", line=dict(color="#141414", width=0.5))
     ))
-    fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333"), yaxis=dict(title=""), height=400, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333"), yaxis=dict(title=""), height=400, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
     return fig
 
 def chart_duration_scatter(df: pd.DataFrame):
@@ -713,8 +713,8 @@ def chart_duration_scatter(df: pd.DataFrame):
     avg_duration = movies.groupby("release_year")["duration_minutes"].mean().reset_index()
     
     fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"])
-    fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines", line=dict(color="#E50914", width=3), name="Average Runtime"))
-    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="Release Year", gridcolor="#333333"), yaxis=dict(title="Duration (mins)", gridcolor="#333333"), height=400, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color="#E50914"), line=dict(color="#E50914", width=3), name="Average Runtime"))
+    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="Release Year", gridcolor="#333333"), yaxis=dict(title="Duration (mins)", gridcolor="#333333"), height=400, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
     return fig
 
 
@@ -792,11 +792,15 @@ def render_top_bar(df=None):
 
 @st.dialog("Explore Data", width="large")
 def show_data_popup(df, filter_col, filter_val, match_type="exact"):
-    st.markdown(f"### Exploring: {filter_val}")
+    st.markdown(f"### Exploring: {filter_val if match_type != 'all' else 'All Content'}")
     if match_type == "exact":
         display_df = df[df[filter_col].astype(str) == str(filter_val)]
     elif match_type == "contains":
         display_df = df[df[filter_col].astype(str).str.contains(str(filter_val), case=False, na=False)]
+    elif match_type == "range":
+        display_df = df[(df[filter_col] >= filter_val[0]) & (df[filter_col] <= filter_val[1])]
+    elif match_type == "all":
+        display_df = df
     
     st.caption(f"Showing {len(display_df):,} matching titles")
     st.dataframe(display_df, use_container_width=True, height=400)
@@ -863,15 +867,27 @@ def main():
 
     with tab2:
         st.markdown('<div class="section-header">Granular Analysis</div>', unsafe_allow_html=True)
-        st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True)
+        ev_m = st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+        if ev_m and ev_m.get("selection", {}).get("points"):
+            val = ev_m["selection"]["points"][0].get("location")
+            if val: show_data_popup(filtered_df, "primary_country", val, "contains")
         
         col_dd1, col_dd2 = st.columns(2, gap="large")
         with col_dd1:
-            st.plotly_chart(chart_top_cast(filtered_df), use_container_width=True)
+            ev_c = st.plotly_chart(chart_top_cast(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            if ev_c and ev_c.get("selection", {}).get("points"):
+                val = ev_c["selection"]["points"][0].get("y")
+                show_data_popup(filtered_df, "cast", val, "contains")
         with col_dd2:
-            st.plotly_chart(chart_duration_scatter(filtered_df), use_container_width=True)
+            ev_d = st.plotly_chart(chart_duration_scatter(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            if ev_d and ev_d.get("selection", {}).get("points"):
+                val = ev_d["selection"]["points"][0].get("x")
+                show_data_popup(filtered_df, "release_year", val, "exact")
             
-        st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True)
+        ev_r = st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+        if ev_r and ev_r.get("selection", {}).get("points"):
+            val = float(ev_r["selection"]["points"][0].get("x", 0))
+            show_data_popup(filtered_df, "duration_minutes", (val-5, val+5), "range")
 
     with tab3:
         col_ex1, col_ex2 = st.columns([2, 1], gap="large")
