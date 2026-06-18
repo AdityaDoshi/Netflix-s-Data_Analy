@@ -244,6 +244,21 @@ CUSTOM_CSS = """
         color: #FFFFFF;
     }
 
+    /* ─── Buffering Spinner Overlay ─── */
+    div[data-testid="stSpinner"] {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        background-color: rgba(20, 20, 20, 0.95) !important;
+        padding: 40px !important;
+        border-radius: 12px !important;
+        border: 1px solid #333333 !important;
+        z-index: 999999 !important;
+        width: auto !important;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+    }
+
     /* ─── Dataframe ─── */
     .stDataFrame {
         border-radius: 8px;
