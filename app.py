@@ -85,8 +85,9 @@ CUSTOM_CSS = """
     }
     
     /* Adjust top padding since the top bar is no longer a floating overlay */
-    .block-container {
-        padding-top: 1.5rem !important;
+    .block-container, div[data-testid="stAppViewBlockContainer"] {
+        padding-top: 0rem !important;
+        margin-top: 0rem !important;
     }
     .stApp > header {
         background: transparent !important;
