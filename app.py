@@ -559,16 +559,16 @@ def chart_kpi_bar(value, title, y_series):
 
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
-    fig.add_trace(go.Pie(labels=labels, values=values, hole=0.7, marker=dict(colors=["#E50914", "#333333"], line=dict(color="#1A1A1A", width=2)), textinfo='none', hoverinfo='label+percent'))
+    fig.add_trace(go.Pie(labels=labels, values=values, hole=0.7, marker=dict(colors=["#E50914", "#333333"], line=dict(color="#1A1A1A", width=2)), textinfo='none', hoverinfo='label+percent', domain=dict(x=[0.4, 0.75])))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
-        margin=dict(l=16, r=60, t=80, b=10),
+        margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
         showlegend=True,
-        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=0.7)
+        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=0.75)
     )
     return fig
 
