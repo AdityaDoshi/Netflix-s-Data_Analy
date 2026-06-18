@@ -84,9 +84,9 @@ CUSTOM_CSS = """
         gap: 8px;
     }
     
-    /* Push content down to account for top bar */
+    /* Adjust top padding since the top bar is no longer a floating overlay */
     .block-container {
-        padding-top: 5rem !important;
+        padding-top: 1.5rem !important;
     }
     .stApp > header {
         background: transparent !important;
