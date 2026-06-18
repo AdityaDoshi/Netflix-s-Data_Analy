@@ -84,9 +84,9 @@ CUSTOM_CSS = """
         gap: 8px;
     }
     
-    /* Adjust top padding since the top bar is no longer a floating overlay */
+    /* Adjust top padding to clear the Streamlit Cloud header */
     .block-container, div[data-testid="stAppViewBlockContainer"] {
-        padding-top: 0rem !important;
+        padding-top: 2.5rem !important;
         margin-top: 0rem !important;
     }
     .stApp > header {
