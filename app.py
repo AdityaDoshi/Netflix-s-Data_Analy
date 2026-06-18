@@ -599,17 +599,13 @@ def render_metric_cards(df: pd.DataFrame):
     cols = st.columns(3, gap="medium")
     with cols[0]:
         ev1 = st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
-        if ev1 and ev1.get("selection", {}).get("points"):
-            show_data_popup(df, "year_added", ev1["selection"]["points"][0].get("x"), "exact")
+        process_selection(ev1, "kpi_total", "year_added", extract_key="x")
     with cols[1]:
         ev2 = st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
-        if ev2 and ev2.get("selection", {}).get("points"):
-            show_data_popup(df, "listed_in", ev2["selection"]["points"][0].get("x"), "contains")
+        process_selection(ev2, "kpi_genres", "listed_in", extract_key="x", match_type="contains")
     with cols[2]:
         ev3 = st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
-        if ev3 and ev3.get("selection", {}).get("points"):
-            val = ev3["selection"]["points"][0].get("label", ev3["selection"]["points"][0].get("x"))
-            show_data_popup(df, "type", val, "exact")
+        process_selection(ev3, "kpi_split", "type", extract_key="x")
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -806,7 +802,29 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
     st.dataframe(display_df, use_container_width=True, height=400)
 
 
+def process_selection(event, chart_key, filter_col, extract_key="x", match_type="exact", is_range=False):
+    if event and event.get("selection", {}).get("points"):
+        pt = event["selection"]["points"][0]
+        val = pt.get(extract_key)
+        if val is None: val = pt.get("label", pt.get("x"))
+        if is_range:
+            val = float(pt.get("x", 0))
+            if st.session_state.chart_selections.get(chart_key) != val:
+                st.session_state.chart_selections[chart_key] = val
+                st.session_state.popup_request = {"col": filter_col, "val": (val-5, val+5), "match": "range"}
+        else:
+            if val is not None and st.session_state.chart_selections.get(chart_key) != str(val):
+                st.session_state.chart_selections[chart_key] = str(val)
+                st.session_state.popup_request = {"col": filter_col, "val": val, "match": match_type}
+    else:
+        st.session_state.chart_selections[chart_key] = None
+
 def main():
+    if "popup_request" not in st.session_state:
+        st.session_state.popup_request = None
+    if "chart_selections" not in st.session_state:
+        st.session_state.chart_selections = {}
+
     if not check_auth():
         render_top_bar(None)
         render_login_screen()
@@ -839,55 +857,37 @@ def main():
         col1, col2 = st.columns(2, gap="large")
         with col1:
             ev1 = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            if ev1 and ev1.get("selection", {}).get("points"):
-                val = ev1["selection"]["points"][0].get("label", ev1["selection"]["points"][0].get("x"))
-                show_data_popup(filtered_df, "type", val, "exact")
+            process_selection(ev1, "tab1_split", "type", extract_key="x")
         with col2:
             ev2 = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            if ev2 and ev2.get("selection", {}).get("points"):
-                val = ev2["selection"]["points"][0].get("x")
-                show_data_popup(filtered_df, "year_added", val, "exact")
+            process_selection(ev2, "tab1_year", "year_added", extract_key="x")
 
         col3, col4 = st.columns(2, gap="large")
         with col3:
             ev3 = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            if ev3 and ev3.get("selection", {}).get("points"):
-                val = ev3["selection"]["points"][0].get("y")
-                show_data_popup(filtered_df, "listed_in", val, "contains")
+            process_selection(ev3, "tab1_genres", "listed_in", extract_key="y", match_type="contains")
         with col4:
             ev4 = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            if ev4 and ev4.get("selection", {}).get("points"):
-                val = ev4["selection"]["points"][0].get("x")
-                show_data_popup(filtered_df, "rating", val, "exact")
+            process_selection(ev4, "tab1_ratings", "rating", extract_key="x")
             
         ev5 = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        if ev5 and ev5.get("selection", {}).get("points"):
-            val = ev5["selection"]["points"][0].get("y")
-            show_data_popup(filtered_df, "director", val, "contains")
+        process_selection(ev5, "tab1_directors", "director", extract_key="y", match_type="contains")
 
     with tab2:
         st.markdown('<div class="section-header">Granular Analysis</div>', unsafe_allow_html=True)
         ev_m = st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        if ev_m and ev_m.get("selection", {}).get("points"):
-            val = ev_m["selection"]["points"][0].get("location")
-            if val: show_data_popup(filtered_df, "primary_country", val, "contains")
+        process_selection(ev_m, "tab2_map", "primary_country", extract_key="location", match_type="contains")
         
         col_dd1, col_dd2 = st.columns(2, gap="large")
         with col_dd1:
             ev_c = st.plotly_chart(chart_top_cast(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            if ev_c and ev_c.get("selection", {}).get("points"):
-                val = ev_c["selection"]["points"][0].get("y")
-                show_data_popup(filtered_df, "cast", val, "contains")
+            process_selection(ev_c, "tab2_cast", "cast", extract_key="y", match_type="contains")
         with col_dd2:
             ev_d = st.plotly_chart(chart_duration_scatter(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            if ev_d and ev_d.get("selection", {}).get("points"):
-                val = ev_d["selection"]["points"][0].get("x")
-                show_data_popup(filtered_df, "release_year", val, "exact")
+            process_selection(ev_d, "tab2_scatter", "release_year", extract_key="x")
             
         ev_r = st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        if ev_r and ev_r.get("selection", {}).get("points"):
-            val = float(ev_r["selection"]["points"][0].get("x", 0))
-            show_data_popup(filtered_df, "duration_minutes", (val-5, val+5), "range")
+        process_selection(ev_r, "tab2_histogram", "duration_minutes", is_range=True)
 
     with tab3:
         col_ex1, col_ex2 = st.columns([2, 1], gap="large")
@@ -908,6 +908,11 @@ def main():
         """,
         unsafe_allow_html=True,
     )
+
+    if st.session_state.popup_request:
+        req = st.session_state.popup_request
+        show_data_popup(filtered_df, req["col"], req["val"], req["match"])
+        st.session_state.popup_request = None
 
 
 if __name__ == "__main__":
