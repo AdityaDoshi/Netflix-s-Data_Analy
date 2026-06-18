@@ -781,6 +781,18 @@ def render_top_bar(df=None):
     st.markdown(html_str, unsafe_allow_html=True)
 
 
+@st.dialog("Explore Data", width="large")
+def show_data_popup(df, filter_col, filter_val, match_type="exact"):
+    st.markdown(f"### Exploring: {filter_val}")
+    if match_type == "exact":
+        display_df = df[df[filter_col] == filter_val]
+    elif match_type == "contains":
+        display_df = df[df[filter_col].astype(str).str.contains(str(filter_val), case=False, na=False)]
+    
+    st.caption(f"Showing {len(display_df):,} matching titles")
+    st.dataframe(display_df, use_container_width=True, height=400)
+
+
 def main():
     if not check_auth():
         render_top_bar(None)
@@ -813,17 +825,32 @@ def main():
         st.markdown('<div class="section-header">High-Level Overview</div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2, gap="large")
         with col1:
-            st.plotly_chart(chart_content_split(filtered_df), width="stretch")
+            ev1 = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun")
+            if ev1 and ev1.get("selection", {}).get("points"):
+                val = ev1["selection"]["points"][0].get("label", ev1["selection"]["points"][0].get("x"))
+                show_data_popup(filtered_df, "type", val, "exact")
         with col2:
-            st.plotly_chart(chart_year_ingestion(filtered_df), width="stretch")
+            ev2 = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun")
+            if ev2 and ev2.get("selection", {}).get("points"):
+                val = ev2["selection"]["points"][0].get("x")
+                show_data_popup(filtered_df, "year_added", val, "exact")
 
         col3, col4 = st.columns(2, gap="large")
         with col3:
-            st.plotly_chart(chart_top_genres(filtered_df), width="stretch")
+            ev3 = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun")
+            if ev3 and ev3.get("selection", {}).get("points"):
+                val = ev3["selection"]["points"][0].get("y")
+                show_data_popup(filtered_df, "listed_in", val, "contains")
         with col4:
-            st.plotly_chart(chart_rating_distribution(filtered_df), width="stretch")
+            ev4 = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun")
+            if ev4 and ev4.get("selection", {}).get("points"):
+                val = ev4["selection"]["points"][0].get("x")
+                show_data_popup(filtered_df, "rating", val, "exact")
             
-        st.plotly_chart(chart_top_directors(filtered_df), width="stretch")
+        ev5 = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun")
+        if ev5 and ev5.get("selection", {}).get("points"):
+            val = ev5["selection"]["points"][0].get("y")
+            show_data_popup(filtered_df, "director", val, "contains")
 
     with tab2:
         st.markdown('<div class="section-header">Granular Analysis</div>', unsafe_allow_html=True)
