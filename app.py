@@ -528,8 +528,9 @@ def chart_kpi_line(value, title, y_series):
     fig = go.Figure()
     fig.add_trace(go.Scatter(y=y_series, mode='lines', fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span><br><b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", x=0.05, y=0.85),
-        margin=dict(l=0, r=0, t=80, b=10),
+        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="container", x=0.10, y=0.65, showarrow=False, xanchor="left", yanchor="top")],
+        margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
@@ -543,8 +544,9 @@ def chart_kpi_bar(value, title, y_series):
     fig = go.Figure()
     fig.add_trace(go.Bar(y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span><br><b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", x=0.05, y=0.85),
-        margin=dict(l=0, r=0, t=80, b=10),
+        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="container", x=0.10, y=0.65, showarrow=False, xanchor="left", yanchor="top")],
+        margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
@@ -559,8 +561,9 @@ def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
     fig.add_trace(go.Pie(labels=labels, values=values, hole=0.7, marker=dict(colors=["#E50914", "#333333"], line=dict(color="#1A1A1A", width=2)), textinfo='none', hoverinfo='label+percent'))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span><br><b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", x=0.05, y=0.85),
-        margin=dict(l=0, r=60, t=80, b=10),
+        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="container", x=0.10, y=0.65, showarrow=False, xanchor="left", yanchor="top")],
+        margin=dict(l=16, r=60, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
