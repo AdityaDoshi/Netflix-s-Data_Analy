@@ -560,7 +560,7 @@ def chart_kpi_bar(value, title, x_series, y_series):
 
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
-    fig.add_trace(go.Pie(labels=labels, values=values, hole=0.7, marker=dict(colors=["#E50914", "#333333"], line=dict(color="#1A1A1A", width=2)), textinfo='none', hoverinfo='label+percent', domain=dict(x=[0.4, 0.75])))
+    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="#FFFFFF", size=14), marker_color=["#E50914", "#333333"], marker_line_width=0))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
@@ -568,8 +568,9 @@ def chart_kpi_donut(value, title, labels, values):
         height=160,
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
-        showlegend=True,
-        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=0.75),
+        xaxis=dict(visible=False, fixedrange=True),
+        yaxis=dict(visible=False, fixedrange=True),
+        showlegend=False,
         clickmode="event+select"
     )
     return fig
@@ -626,12 +627,12 @@ PLOTLY_LAYOUT_DEFAULTS = dict(
 def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
     type_counts.columns = ["Type", "Count"]
-    fig = go.Figure(go.Pie(
-        labels=type_counts["Type"], values=type_counts["Count"], hole=0.6,
-        marker=dict(colors=["#E50914", "#F04438"], line=dict(color="#141414", width=2)),
-        textinfo="label+percent", textfont=dict(size=13, color="#141414"),
+    fig = go.Figure(go.Bar(
+        x=type_counts["Type"], y=type_counts["Count"],
+        text=type_counts["Count"], textposition='auto',
+        marker=dict(color=["#E50914", "#F04438"], line=dict(color="#141414", width=2)),
     ))
-    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="#FFFFFF")), showlegend=True, height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="#FFFFFF")), showlegend=False, height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
     return fig
 
 def chart_year_ingestion(df: pd.DataFrame):
@@ -763,32 +764,30 @@ def render_catalog_explorer(df: pd.DataFrame):
 # ══════════════════════════════════════════════════════════════════
 
 def render_top_bar(df=None):
+    if df is None:
+        return
+    
+    total = len(df)
+    movies = len(df[df["type"] == "Movie"])
+    shows = len(df[df["type"] == "TV Show"])
+    now = datetime.datetime.now().strftime("%H:%M UTC")
     user = st.session_state.get('user', '')
     user_status = f"User: {user}" if check_auth() else "Guest"
     
-    stats_html = ""
-    if df is not None:
-        total = len(df)
-        movies = len(df[df["type"] == "Movie"])
-        shows = len(df[df["type"] == "TV Show"])
-        now = datetime.datetime.now().strftime("%H:%M UTC")
-        stats_html = f"""<div class="top-bar-stats">
-<span><strong>{total:,}</strong> Total</span>
-<span>|</span>
-<span><strong>{movies:,}</strong> Movies</span>
-<span>|</span>
-<span><strong>{shows:,}</strong> TV Shows</span>
-<span>|</span>
-<span>Last Sync: {now}</span>
-</div>"""
-        
-    html_str = f"""<div class="top-bar">
-<div class="top-bar-brand" style="margin-top: 4px;"><img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" height="24"></div>
-{stats_html}
-<div class="top-bar-spacer"></div>
-<div class="top-bar-user">{user_status}</div>
-</div>"""
-    st.markdown(html_str, unsafe_allow_html=True)
+    st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" height="24" style="margin-bottom: 12px; margin-top: 12px;">""", unsafe_allow_html=True)
+    
+    c1, c2, c3, c4 = st.columns([2, 2, 2, 4])
+    with c1:
+        if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
+            show_data_popup(df, "type", "", "all")
+    with c2:
+        if st.button(f"**{movies:,}** Movies", type="tertiary", use_container_width=True):
+            show_data_popup(df, "type", "Movie", "exact")
+    with c3:
+        if st.button(f"**{shows:,}** TV Shows", type="tertiary", use_container_width=True):
+            show_data_popup(df, "type", "TV Show", "exact")
+    with c4:
+        st.markdown(f"<div style='text-align:right; color:#808080; padding-top:10px; font-size: 0.85rem;'>Last Sync: {now} | {user_status}</div>", unsafe_allow_html=True)
 
 
 @st.dialog("Explore Data", width="large")
