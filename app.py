@@ -526,7 +526,7 @@ def render_sidebar(df: pd.DataFrame):
 
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines', fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
+    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="#FFFFFF"), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
@@ -536,7 +536,8 @@ def chart_kpi_line(value, title, x_series, y_series):
         plot_bgcolor="#1A1A1A",
         xaxis=dict(visible=False, fixedrange=True),
         yaxis=dict(visible=False, fixedrange=True),
-        showlegend=False
+        showlegend=False,
+        clickmode="event+select"
     )
     return fig
 
@@ -568,7 +569,8 @@ def chart_kpi_donut(value, title, labels, values):
         paper_bgcolor="#1A1A1A",
         plot_bgcolor="#1A1A1A",
         showlegend=True,
-        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=0.75)
+        legend=dict(orientation="v", yanchor="middle", y=0.5, xanchor="left", x=0.75),
+        clickmode="event+select"
     )
     return fig
 
@@ -595,15 +597,15 @@ def render_metric_cards(df: pd.DataFrame):
 
     cols = st.columns(3, gap="medium")
     with cols[0]:
-        ev1 = st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False}, on_select="rerun")
+        ev1 = st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
         if ev1 and ev1.get("selection", {}).get("points"):
             show_data_popup(df, "year_added", ev1["selection"]["points"][0].get("x"), "exact")
     with cols[1]:
-        ev2 = st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False}, on_select="rerun")
+        ev2 = st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
         if ev2 and ev2.get("selection", {}).get("points"):
             show_data_popup(df, "listed_in", ev2["selection"]["points"][0].get("x"), "contains")
     with cols[2]:
-        ev3 = st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False}, on_select="rerun")
+        ev3 = st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
         if ev3 and ev3.get("selection", {}).get("points"):
             val = ev3["selection"]["points"][0].get("label", ev3["selection"]["points"][0].get("x"))
             show_data_popup(df, "type", val, "exact")
@@ -629,17 +631,17 @@ def chart_content_split(df: pd.DataFrame):
         marker=dict(colors=["#E50914", "#F04438"], line=dict(color="#141414", width=2)),
         textinfo="label+percent", textfont=dict(size=13, color="#141414"),
     ))
-    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="#FFFFFF")), showlegend=True, height=350, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="#FFFFFF")), showlegend=True, height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
     return fig
 
 def chart_year_ingestion(df: pd.DataFrame):
     yearly = df["year_added"].dropna().astype(int).value_counts().sort_index().reset_index()
     yearly.columns = ["Year", "Titles Added"]
     fig = go.Figure(go.Scatter(
-        x=yearly["Year"], y=yearly["Titles Added"], mode="lines",
-        line=dict(color="#E50914", width=2, shape="spline"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
+        x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
+        line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color="#FFFFFF"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
     ))
-    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333", zeroline=False), yaxis=dict(gridcolor="#333333", zeroline=False), height=350, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333", zeroline=False), yaxis=dict(gridcolor="#333333", zeroline=False), height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
@@ -793,7 +795,7 @@ def render_top_bar(df=None):
 def show_data_popup(df, filter_col, filter_val, match_type="exact"):
     st.markdown(f"### Exploring: {filter_val}")
     if match_type == "exact":
-        display_df = df[df[filter_col] == filter_val]
+        display_df = df[df[filter_col].astype(str) == str(filter_val)]
     elif match_type == "contains":
         display_df = df[df[filter_col].astype(str).str.contains(str(filter_val), case=False, na=False)]
     
@@ -833,29 +835,29 @@ def main():
         st.markdown('<div class="section-header">High-Level Overview</div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2, gap="large")
         with col1:
-            ev1 = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun")
+            ev1 = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
             if ev1 and ev1.get("selection", {}).get("points"):
                 val = ev1["selection"]["points"][0].get("label", ev1["selection"]["points"][0].get("x"))
                 show_data_popup(filtered_df, "type", val, "exact")
         with col2:
-            ev2 = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun")
+            ev2 = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
             if ev2 and ev2.get("selection", {}).get("points"):
                 val = ev2["selection"]["points"][0].get("x")
                 show_data_popup(filtered_df, "year_added", val, "exact")
 
         col3, col4 = st.columns(2, gap="large")
         with col3:
-            ev3 = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun")
+            ev3 = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
             if ev3 and ev3.get("selection", {}).get("points"):
                 val = ev3["selection"]["points"][0].get("y")
                 show_data_popup(filtered_df, "listed_in", val, "contains")
         with col4:
-            ev4 = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun")
+            ev4 = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
             if ev4 and ev4.get("selection", {}).get("points"):
                 val = ev4["selection"]["points"][0].get("x")
                 show_data_popup(filtered_df, "rating", val, "exact")
             
-        ev5 = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun")
+        ev5 = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
         if ev5 and ev5.get("selection", {}).get("points"):
             val = ev5["selection"]["points"][0].get("y")
             show_data_popup(filtered_df, "director", val, "contains")
