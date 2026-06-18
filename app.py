@@ -776,31 +776,63 @@ def render_top_bar(df=None):
     c1, c2, c3, c4 = st.columns([2, 2, 2, 4])
     with c1:
         if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
-            show_data_popup(df, "type", "", "all")
+            st.toast("Fetching data...", icon="⏳")
+            st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
+            st.session_state.popup_page = 0
     with c2:
         if st.button(f"**{movies:,}** Movies", type="tertiary", use_container_width=True):
-            show_data_popup(df, "type", "Movie", "exact")
+            st.toast("Fetching data...", icon="⏳")
+            st.session_state.popup_request = {"col": "type", "val": "Movie", "match": "exact"}
+            st.session_state.popup_page = 0
     with c3:
         if st.button(f"**{shows:,}** TV Shows", type="tertiary", use_container_width=True):
-            show_data_popup(df, "type", "TV Show", "exact")
+            st.toast("Fetching data...", icon="⏳")
+            st.session_state.popup_request = {"col": "type", "val": "TV Show", "match": "exact"}
+            st.session_state.popup_page = 0
     with c4:
         st.markdown(f"<div style='text-align:right; color:#808080; padding-top:10px; font-size: 0.85rem;'>Last Sync: {now} | {user_status}</div>", unsafe_allow_html=True)
 
 
 @st.dialog("Explore Data", width="large")
 def show_data_popup(df, filter_col, filter_val, match_type="exact"):
-    st.markdown(f"### Exploring: {filter_val if match_type != 'all' else 'All Content'}")
-    if match_type == "exact":
-        display_df = df[df[filter_col].astype(str) == str(filter_val)]
-    elif match_type == "contains":
-        display_df = df[df[filter_col].astype(str).str.contains(str(filter_val), case=False, na=False)]
-    elif match_type == "range":
-        display_df = df[(df[filter_col] >= filter_val[0]) & (df[filter_col] <= filter_val[1])]
-    elif match_type == "all":
-        display_df = df
-    
-    st.caption(f"Showing {len(display_df):,} matching titles")
-    st.dataframe(display_df, use_container_width=True, height=400)
+    with st.spinner("Analyzing and retrieving data..."):
+        st.markdown(f"### Exploring: {filter_val if match_type != 'all' else 'All Content'}")
+        if match_type == "exact":
+            display_df = df[df[filter_col].astype(str) == str(filter_val)]
+        elif match_type == "contains":
+            display_df = df[df[filter_col].astype(str).str.contains(str(filter_val), case=False, na=False)]
+        elif match_type == "range":
+            display_df = df[(df[filter_col] >= filter_val[0]) & (df[filter_col] <= filter_val[1])]
+        elif match_type == "all":
+            display_df = df
+        
+        PAGE_SIZE = 50
+        if "popup_page" not in st.session_state:
+            st.session_state.popup_page = 0
+            
+        total_rows = len(display_df)
+        total_pages = max(1, (total_rows + PAGE_SIZE - 1) // PAGE_SIZE)
+        
+        if st.session_state.popup_page >= total_pages:
+            st.session_state.popup_page = 0
+            
+        start_idx = st.session_state.popup_page * PAGE_SIZE
+        end_idx = min(start_idx + PAGE_SIZE, total_rows)
+        
+        st.caption(f"Showing {start_idx + 1}-{end_idx} of {total_rows:,} matching titles")
+        st.dataframe(display_df.iloc[start_idx:end_idx], use_container_width=True, height=400)
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col1:
+            if st.button("⬅️ Previous", disabled=st.session_state.popup_page == 0, use_container_width=True):
+                st.session_state.popup_page -= 1
+                st.rerun()
+        with col2:
+            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: #B3B3B3;'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
+        with col3:
+            if st.button("Next ➡️", disabled=st.session_state.popup_page >= total_pages - 1, use_container_width=True):
+                st.session_state.popup_page += 1
+                st.rerun()
 
 
 def process_selection(event, chart_key, filter_col, extract_key="x", match_type="exact", is_range=False):
@@ -811,12 +843,16 @@ def process_selection(event, chart_key, filter_col, extract_key="x", match_type=
         if is_range:
             val = float(pt.get("x", 0))
             if st.session_state.chart_selections.get(chart_key) != val:
+                st.toast("Fetching data...", icon="⏳")
                 st.session_state.chart_selections[chart_key] = val
                 st.session_state.popup_request = {"col": filter_col, "val": (val-5, val+5), "match": "range"}
+                st.session_state.popup_page = 0
         else:
             if val is not None and st.session_state.chart_selections.get(chart_key) != str(val):
+                st.toast("Fetching data...", icon="⏳")
                 st.session_state.chart_selections[chart_key] = str(val)
                 st.session_state.popup_request = {"col": filter_col, "val": val, "match": match_type}
+                st.session_state.popup_page = 0
     else:
         st.session_state.chart_selections[chart_key] = None
 
