@@ -810,8 +810,8 @@ def main():
         return
 
     df = load_and_preprocess_data()
-    render_top_bar(df)
     filtered_df = render_sidebar(df)
+    render_top_bar(filtered_df)
 
     st.markdown(
         """
