@@ -245,18 +245,27 @@ CUSTOM_CSS = """
     }
 
     /* ─── Buffering Spinner Overlay ─── */
-    div[data-testid="stSpinner"] {
+    [data-testid="stStatusWidget"] {
         position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        background-color: rgba(20, 20, 20, 0.95) !important;
-        padding: 40px !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(20, 20, 20, 0.6) !important;
+        z-index: 9999999 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        backdrop-filter: blur(2px) !important;
+    }
+    
+    [data-testid="stStatusWidget"] > div {
+        background-color: #1A1A1A !important;
+        padding: 20px 40px !important;
         border-radius: 12px !important;
         border: 1px solid #333333 !important;
-        z-index: 999999 !important;
-        width: auto !important;
         box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+        transform: scale(1.5);
     }
 
     /* ─── Dataframe ─── */
@@ -791,22 +800,16 @@ def render_top_bar(df=None):
     c1, c2, c3, c4 = st.columns([2, 2, 2, 4])
     with c1:
         if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
-            with st.spinner("Processing selection..."):
-                import time; time.sleep(0.3)
-                st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
-                st.session_state.popup_page = 0
+            st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
+            st.session_state.popup_page = 0
     with c2:
         if st.button(f"**{movies:,}** Movies", type="tertiary", use_container_width=True):
-            with st.spinner("Processing selection..."):
-                import time; time.sleep(0.3)
-                st.session_state.popup_request = {"col": "type", "val": "Movie", "match": "exact"}
-                st.session_state.popup_page = 0
+            st.session_state.popup_request = {"col": "type", "val": "Movie", "match": "exact"}
+            st.session_state.popup_page = 0
     with c3:
         if st.button(f"**{shows:,}** TV Shows", type="tertiary", use_container_width=True):
-            with st.spinner("Processing selection..."):
-                import time; time.sleep(0.3)
-                st.session_state.popup_request = {"col": "type", "val": "TV Show", "match": "exact"}
-                st.session_state.popup_page = 0
+            st.session_state.popup_request = {"col": "type", "val": "TV Show", "match": "exact"}
+            st.session_state.popup_page = 0
     with c4:
         st.markdown(f"<div style='text-align:right; color:#808080; padding-top:10px; font-size: 0.85rem;'>Last Sync: {now} | {user_status}</div>", unsafe_allow_html=True)
 
@@ -859,18 +862,14 @@ def process_selection(event, chart_key, filter_col, extract_key="x", match_type=
         if is_range:
             val = float(pt.get("x", 0))
             if st.session_state.chart_selections.get(chart_key) != val:
-                with st.spinner("Processing selection..."):
-                    import time; time.sleep(0.3)
-                    st.session_state.chart_selections[chart_key] = val
-                    st.session_state.popup_request = {"col": filter_col, "val": (val-5, val+5), "match": "range"}
-                    st.session_state.popup_page = 0
+                st.session_state.chart_selections[chart_key] = val
+                st.session_state.popup_request = {"col": filter_col, "val": (val-5, val+5), "match": "range"}
+                st.session_state.popup_page = 0
         else:
             if val is not None and st.session_state.chart_selections.get(chart_key) != str(val):
-                with st.spinner("Processing selection..."):
-                    import time; time.sleep(0.3)
-                    st.session_state.chart_selections[chart_key] = str(val)
-                    st.session_state.popup_request = {"col": filter_col, "val": val, "match": match_type}
-                    st.session_state.popup_page = 0
+                st.session_state.chart_selections[chart_key] = str(val)
+                st.session_state.popup_request = {"col": filter_col, "val": val, "match": match_type}
+                st.session_state.popup_page = 0
     else:
         st.session_state.chart_selections[chart_key] = None
 
