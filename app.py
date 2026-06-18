@@ -524,9 +524,9 @@ def render_sidebar(df: pd.DataFrame):
 #  MODULE 4: EXECUTIVE METRIC CARDS
 # ══════════════════════════════════════════════════════════════════
 
-def chart_kpi_line(value, title, y_series):
+def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(y=y_series, mode='lines', fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
+    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines', fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
@@ -540,9 +540,9 @@ def chart_kpi_line(value, title, y_series):
     )
     return fig
 
-def chart_kpi_bar(value, title, y_series):
+def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Bar(y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
+    fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
@@ -581,24 +581,32 @@ def render_metric_cards(df: pd.DataFrame):
     
     # Data for Card 2
     genres = df["listed_in"].str.split(", ").explode()
-    top_genres = genres.value_counts().head(12).values
+    top_genres_counts = genres.value_counts().head(12)
+    top_genres_names = top_genres_counts.index
     total_genres = len(genres.unique())
     
     # Data for Card 3
     type_counts = df["type"].value_counts()
     pct_movies = (type_counts.get('Movie', 0) / total_titles * 100) if total_titles > 0 else 0
     
-    fig1 = chart_kpi_line(f"{total_titles:,}", "Total Titles (10y Trend)", trend_counts["counts"])
-    fig2 = chart_kpi_bar(f"{total_genres}", "Unique Genres", top_genres[::-1])
+    fig1 = chart_kpi_line(f"{total_titles:,}", "Total Titles (10y Trend)", trend_counts["year_added"], trend_counts["counts"])
+    fig2 = chart_kpi_bar(f"{total_genres}", "Unique Genres", top_genres_names[::-1], top_genres_counts.values[::-1])
     fig3 = chart_kpi_donut(f"{pct_movies:.0f}%", "Movie vs TV Show", type_counts.index, type_counts.values)
 
     cols = st.columns(3, gap="medium")
     with cols[0]:
-        st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False})
+        ev1 = st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False}, on_select="rerun")
+        if ev1 and ev1.get("selection", {}).get("points"):
+            show_data_popup(df, "year_added", ev1["selection"]["points"][0].get("x"), "exact")
     with cols[1]:
-        st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
+        ev2 = st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False}, on_select="rerun")
+        if ev2 and ev2.get("selection", {}).get("points"):
+            show_data_popup(df, "listed_in", ev2["selection"]["points"][0].get("x"), "contains")
     with cols[2]:
-        st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False})
+        ev3 = st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False}, on_select="rerun")
+        if ev3 and ev3.get("selection", {}).get("points"):
+            val = ev3["selection"]["points"][0].get("label", ev3["selection"]["points"][0].get("x"))
+            show_data_popup(df, "type", val, "exact")
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -854,15 +862,15 @@ def main():
 
     with tab2:
         st.markdown('<div class="section-header">Granular Analysis</div>', unsafe_allow_html=True)
-        st.plotly_chart(chart_top_countries_map(filtered_df), width="stretch")
+        st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True)
         
         col_dd1, col_dd2 = st.columns(2, gap="large")
         with col_dd1:
-            st.plotly_chart(chart_top_cast(filtered_df), width="stretch")
+            st.plotly_chart(chart_top_cast(filtered_df), use_container_width=True)
         with col_dd2:
-            st.plotly_chart(chart_duration_scatter(filtered_df), width="stretch")
+            st.plotly_chart(chart_duration_scatter(filtered_df), use_container_width=True)
             
-        st.plotly_chart(chart_runtime_distribution(filtered_df), width="stretch")
+        st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True)
 
     with tab3:
         col_ex1, col_ex2 = st.columns([2, 1], gap="large")
