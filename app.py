@@ -53,6 +53,11 @@ def get_custom_css(theme):
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: VAR_TEXT; }
+    .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
+    [data-testid="stWidgetLabel"] p, [data-testid="stCaptionContainer"] p, 
+    [data-baseweb="checkbox"] label, [data-baseweb="radio"] label, div[data-baseweb="select"] * {
+        color: VAR_TEXT !important;
+    }
     .stApp { background-color: VAR_BG !important; }
     #MainMenu { visibility: hidden; } footer { visibility: hidden; }
 
