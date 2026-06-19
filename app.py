@@ -191,21 +191,24 @@ CUSTOM_CSS = """
         font-weight: 400;
     }
     .login-hint {
-        text-align: left;
-        font-size: 0.8rem;
-        color: #808080;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #A3A3A3;
         margin-top: 24px;
-        padding: 16px;
-        background: #000000;
-        border-radius: 6px;
-        border: 1px solid #333333;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
     }
     .login-hint code {
-        color: #E50914;
-        background: #FEF3F2;
+        color: #FFFFFF;
+        background: rgba(229, 9, 20, 0.2);
         padding: 2px 6px;
         border-radius: 4px;
-        font-size: 0.75rem;
+        font-weight: 600;
+        border: 1px solid rgba(229, 9, 20, 0.4);
     }
     [data-testid="stForm"] {
         border: none !important;
@@ -399,13 +402,15 @@ def render_login_screen():
         
         /* The Card */
         [data-testid="stForm"] {
-            background-color: rgba(0, 0, 0, 0.85) !important;
-            border: 1px solid #333333 !important;
-            border-radius: 16px !important;
+            background-color: rgba(0, 0, 0, 0.75) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 20px !important;
             padding: 48px !important;
             max-width: 450px !important;
             margin: 0 auto !important;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.6) !important;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1) !important;
             position: relative;
             z-index: 10;
             min-height: auto !important;
@@ -415,23 +420,28 @@ def render_login_screen():
         [data-testid="stForm"] label {
             display: block !important;
             font-size: 0.9rem !important;
-            color: #B3B3B3 !important;
+            color: #E5E5E5 !important;
             font-weight: 500 !important;
-            margin-bottom: 6px !important;
+            margin-bottom: 8px !important;
             text-transform: none !important;
         }
         
         /* Inputs */
         [data-testid="stForm"] input {
-            background-color: #333333 !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
             color: #FFFFFF !important;
-            border: 1px solid #404040 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             border-radius: 8px !important;
             padding: 14px 16px !important;
             font-size: 1rem !important;
-            margin-bottom: 16px !important;
+            margin-bottom: 20px !important;
+            transition: all 0.3s ease !important;
+        }
+        [data-testid="stForm"] input:hover {
+            border-color: rgba(255, 255, 255, 0.4) !important;
         }
         [data-testid="stForm"] input:focus {
+            background-color: rgba(255, 255, 255, 0.1) !important;
             border-color: #E50914 !important;
             box-shadow: 0 0 0 1px #E50914 !important;
         }
@@ -448,30 +458,34 @@ def render_login_screen():
             width: 100% !important;
             border: none !important;
             font-size: 1.05rem !important;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
         }
         [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"]:hover,
         [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):hover {
             background-color: #C11119 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 12px rgba(229, 9, 20, 0.4) !important;
         }
 
         /* Pill Button (Secondary / Demo) */
         [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"] {
-            background-color: #262626 !important;
+            background-color: rgba(255, 255, 255, 0.05) !important;
             color: #E5E5E5 !important;
             border-radius: 50px !important;
             font-weight: 600 !important;
             padding: 12px 14px !important;
             margin-top: 16px !important;
             width: 100% !important;
-            border: 1px solid #404040 !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             font-size: 1.05rem !important;
-            transition: all 0.2s;
+            transition: all 0.3s ease !important;
         }
         [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"]:hover {
-            background-color: #333333 !important;
+            background-color: rgba(255, 255, 255, 0.1) !important;
             color: #FFFFFF !important;
-            border-color: #555555 !important;
+            border-color: rgba(255, 255, 255, 0.4) !important;
+            transform: translateY(-2px) !important;
         }
         
         /* Bottom links */
@@ -483,13 +497,12 @@ def render_login_screen():
             font-weight: 500;
         }
         .login-links a {
-            color: #B3B3B3;
+            color: #A3A3A3;
             text-decoration: none;
             transition: color 0.2s;
         }
         .login-links a:hover {
             color: #FFFFFF;
-            text-decoration: underline;
         }
         </style>
         
