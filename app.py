@@ -80,7 +80,8 @@ def get_custom_css(theme):
     .section-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: VAR_TEXT; padding-bottom: 12px; margin-top: 32px; margin-bottom: 24px; border-bottom: 1px solid VAR_BORDER; }
 
     .stTabs [data-baseweb="tab-list"] { gap: 24px; }
-    .stTabs [data-baseweb="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; }
+    .stTabs [data-baseweb="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: VAR_TEXT_MUTED !important; }
+    .stTabs [data-baseweb="tab"] p { color: VAR_TEXT_MUTED !important; }
     .stTabs [aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid VAR_ACCENT !important; color: VAR_ACCENT !important; }
 
     [data-testid="stSidebar"] { top: 56px !important; height: calc(100vh - 56px) !important; background: VAR_CARD !important; border-right: 1px solid VAR_BORDER; }
@@ -114,6 +115,11 @@ def get_custom_css(theme):
     
     [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"] { background: transparent !important; color: VAR_TEXT_MUTED !important; border: none !important; box-shadow: none !important; font-size: 0.9rem !important; font-weight: 500 !important; padding: 0 !important; margin-top: 16px !important; }
     [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"]:hover { color: VAR_TEXT !important; text-decoration: underline !important; background: transparent !important; transform: none !important; }
+    
+    button[data-testid="baseButton-tertiary"] { background: transparent !important; color: VAR_TEXT_MUTED !important; border: none !important; box-shadow: none !important; }
+    button[data-testid="baseButton-tertiary"] p { color: VAR_TEXT_MUTED !important; }
+    button[data-testid="baseButton-tertiary"] strong { color: VAR_TEXT !important; font-weight: 600 !important; }
+    button[data-testid="baseButton-tertiary"]:hover p { color: VAR_TEXT !important; }
 </style>
 """
     for k, v in t.items():
@@ -456,8 +462,8 @@ def chart_kpi_line(value, title, x_series, y_series):
         annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
-        paper_bgcolor="#1A1A1A",
-        plot_bgcolor="#1A1A1A",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
         yaxis=dict(visible=False, fixedrange=True),
         showlegend=False,
@@ -473,8 +479,8 @@ def chart_kpi_bar(value, title, x_series, y_series):
         annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
-        paper_bgcolor="#1A1A1A",
-        plot_bgcolor="#1A1A1A",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
         yaxis=dict(visible=False, fixedrange=True),
         showlegend=False,
@@ -490,8 +496,8 @@ def chart_kpi_donut(value, title, labels, values):
         annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
-        paper_bgcolor="#1A1A1A",
-        plot_bgcolor="#1A1A1A",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
         yaxis=dict(visible=False, fixedrange=True, range=[0, max(values) * 1.5 if len(values) > 0 else 1]),
         showlegend=False,
