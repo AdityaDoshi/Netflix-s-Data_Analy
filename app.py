@@ -139,7 +139,7 @@ def load_and_preprocess_data():
 
 @st.dialog("Create a New Account")
 def show_signup_dialog():
-    st.markdown("<p style='color:#B3B3B3; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:{THEMES[st.session_state.theme][\"text_muted\"]}; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
     new_user = st.text_input("New Email", placeholder="e.g. elon@tesla.com")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Register", type="primary", use_container_width=True):
@@ -151,7 +151,7 @@ def show_signup_dialog():
 
 @st.dialog("Reset Password")
 def show_forgot_dialog():
-    st.markdown("<p style='color:#B3B3B3; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:{THEMES[st.session_state.theme][\"text_muted\"]}; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
     reset_email = st.text_input("Account Email")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Reset Password", type="primary", use_container_width=True):
@@ -215,7 +215,7 @@ def render_login_screen():
         
         .login-header-container h1 {
             font-size: 2.2rem;
-            color: #FFFFFF;
+            color: {THEMES[st.session_state.theme][\"text\"]};
             font-weight: 800;
             margin: 0;
             padding: 0;
@@ -343,7 +343,7 @@ def render_login_screen():
             transition: color 0.2s;
         }
         .login-links a:hover {
-            color: #FFFFFF;
+            color: {THEMES[st.session_state.theme][\"text\"]};
         }
         </style>
         
@@ -447,8 +447,8 @@ def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color=THEMES[st.session_state.theme]["text"]), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
+        title=dict(text=f"<span style='font-size:14px;color:{THEMES[st.session_state.theme]['text_muted']};font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
@@ -464,8 +464,8 @@ def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
+        title=dict(text=f"<span style='font-size:14px;color:{THEMES[st.session_state.theme]['text_muted']};font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
@@ -479,10 +479,10 @@ def chart_kpi_bar(value, title, x_series, y_series):
 
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color=THEMES[st.session_state.theme]["text"], size=14), marker_color=["#E50914", "#333333"], marker_line_width=0))
+    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color=THEMES[st.session_state.theme]["text"], size=14), marker_color=["#E50914", THEMES[st.session_state.theme]["border"]], marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
+        title=dict(text=f"<span style='font-size:14px;color:{THEMES[st.session_state.theme]['text_muted']};font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="#1A1A1A",
@@ -549,7 +549,7 @@ def chart_content_split(df: pd.DataFrame):
     fig = go.Figure(go.Bar(
         x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"], textposition='auto',
-        marker=dict(color=["#E50914", "#F04438"], line=dict(color="#141414", width=2)),
+        marker=dict(color=["#E50914", "#F04438"], line=dict(color=THEMES[st.session_state.theme]["bg"], width=2)),
     ))
     fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), showlegend=False, height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
@@ -570,7 +570,7 @@ def chart_top_genres(df: pd.DataFrame):
     genre_counts.columns = ["Genre", "Titles"]
     fig = go.Figure(go.Bar(
         x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
-        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color="#141414", width=0.5)),
+        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color=THEMES[st.session_state.theme]["bg"], width=0.5)),
     ))
     fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=350, **get_plotly_layout(st.session_state.theme))
     return fig
@@ -589,7 +589,7 @@ def chart_top_directors(df: pd.DataFrame):
     director_counts.columns = ["Director", "Titles"]
     fig = go.Figure(go.Bar(
         x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
-        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color="#141414", width=0.5)),
+        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color=THEMES[st.session_state.theme]["bg"], width=0.5)),
     ))
     fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=350, **get_plotly_layout(st.session_state.theme))
     return fig
@@ -607,7 +607,7 @@ def chart_top_countries_map(df: pd.DataFrame):
     country_counts.columns = ["Country", "Titles"]
     fig = px.choropleth(
         country_counts, locations="Country", locationmode="country names", color="Titles",
-        color_continuous_scale=["#000000", "#F04438", "#7A271A"], labels={'Titles': 'Number of Titles'}
+        color_continuous_scale=[THEMES[st.session_state.theme]["bg"], "#F04438", "#7A271A"], labels={'Titles': 'Number of Titles'}
     )
     fig.update_layout(
         title=dict(text="Global Production Hubs", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])),
@@ -622,7 +622,7 @@ def chart_top_cast(df: pd.DataFrame):
     cast_counts.columns = ["Actor", "Titles"]
     fig = go.Figure(go.Bar(
         x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
-        marker=dict(color="#E50914", line=dict(color="#141414", width=0.5))
+        marker=dict(color="#E50914", line=dict(color=THEMES[st.session_state.theme]["bg"], width=0.5))
     ))
     fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=400, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
@@ -650,9 +650,9 @@ def render_recent_feed(df: pd.DataFrame):
         desc = str(row["description"])[:140] + "..." if pd.notna(row["description"]) else ""
         html += f"""
 <div style="border-left: 3px solid #E50914; padding-left: 16px;">
-<div style="font-size: 0.75rem; color: #808080; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
-<div style="font-size: 1.05rem; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:#000000; border:1px solid #333333; padding:2px 6px; border-radius:4px; margin-left:8px; color:#B3B3B3; font-weight: 500;">{row['rating']}</span></div>
-<div style="font-size: 0.85rem; color: #B3B3B3; line-height: 1.5;">{desc}</div>
+<div style="font-size: 0.75rem; color: {THEMES[st.session_state.theme][\"text_muted\"]}; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
+<div style="font-size: 1.05rem; font-weight: 600; color: {THEMES[st.session_state.theme][\"text\"]}; margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:{THEMES[st.session_state.theme][\"card\"]}; border:1px solid {THEMES[st.session_state.theme][\"border\"]}; padding:2px 6px; border-radius:4px; margin-left:8px; color:{THEMES[st.session_state.theme]['text_muted']}; font-weight: 500;">{row['rating']}</span></div>
+<div style="font-size: 0.85rem; color: {THEMES[st.session_state.theme][\"text_muted\"]}; line-height: 1.5;">{desc}</div>
 </div>
 """
     html += '</div>'
@@ -759,7 +759,7 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
             if st.button("⬅️ Previous", disabled=st.session_state.popup_page == 0, use_container_width=True):
                 st.session_state.popup_page -= 1
         with col2:
-            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: #B3B3B3;'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: {THEMES[st.session_state.theme][\"text_muted\"]};'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
         with col3:
             if st.button("Next ➡️", disabled=st.session_state.popup_page >= total_pages - 1, use_container_width=True):
                 st.session_state.popup_page += 1
@@ -870,8 +870,8 @@ def main():
 
     st.markdown(
         """
-        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid #333333;">
-            <span style="color: #808080; font-size: 0.8rem;">
+        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid {THEMES[st.session_state.theme][\"border\"]};">
+            <span style="color: {THEMES[st.session_state.theme][\"text_muted\"]}; font-size: 0.8rem;">
                 Netflix Content Insights Engine &nbsp;|&nbsp; Enterprise Edition
             </span>
         </div>
