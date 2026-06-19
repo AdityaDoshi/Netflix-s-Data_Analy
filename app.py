@@ -139,7 +139,7 @@ def load_and_preprocess_data():
 
 @st.dialog("Create a New Account")
 def show_signup_dialog():
-    st.markdown(f"<p style='color:{THEMES[st.session_state.theme][\"text_muted\"]}; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:{THEMES[st.session_state.theme]['text_muted']}; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
     new_user = st.text_input("New Email", placeholder="e.g. elon@tesla.com")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Register", type="primary", use_container_width=True):
@@ -151,7 +151,7 @@ def show_signup_dialog():
 
 @st.dialog("Reset Password")
 def show_forgot_dialog():
-    st.markdown(f"<p style='color:{THEMES[st.session_state.theme][\"text_muted\"]}; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:{THEMES[st.session_state.theme]['text_muted']}; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
     reset_email = st.text_input("Account Email")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Reset Password", type="primary", use_container_width=True):
@@ -650,9 +650,9 @@ def render_recent_feed(df: pd.DataFrame):
         desc = str(row["description"])[:140] + "..." if pd.notna(row["description"]) else ""
         html += f"""
 <div style="border-left: 3px solid #E50914; padding-left: 16px;">
-<div style="font-size: 0.75rem; color: {THEMES[st.session_state.theme][\"text_muted\"]}; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
-<div style="font-size: 1.05rem; font-weight: 600; color: {THEMES[st.session_state.theme][\"text\"]}; margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:{THEMES[st.session_state.theme][\"card\"]}; border:1px solid {THEMES[st.session_state.theme][\"border\"]}; padding:2px 6px; border-radius:4px; margin-left:8px; color:{THEMES[st.session_state.theme]['text_muted']}; font-weight: 500;">{row['rating']}</span></div>
-<div style="font-size: 0.85rem; color: {THEMES[st.session_state.theme][\"text_muted\"]}; line-height: 1.5;">{desc}</div>
+<div style="font-size: 0.75rem; color: {THEMES[st.session_state.theme]['text_muted']}; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
+<div style="font-size: 1.05rem; font-weight: 600; color: {THEMES[st.session_state.theme]['text']}; margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:{THEMES[st.session_state.theme]['card']}; border:1px solid {THEMES[st.session_state.theme]['border']}; padding:2px 6px; border-radius:4px; margin-left:8px; color:{THEMES[st.session_state.theme]['text_muted']}; font-weight: 500;">{row['rating']}</span></div>
+<div style="font-size: 0.85rem; color: {THEMES[st.session_state.theme]['text_muted']}; line-height: 1.5;">{desc}</div>
 </div>
 """
     html += '</div>'
@@ -869,9 +869,9 @@ def main():
             render_recent_feed(filtered_df)
 
     st.markdown(
-        """
-        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid {THEMES[st.session_state.theme][\"border\"]};">
-            <span style="color: {THEMES[st.session_state.theme][\"text_muted\"]}; font-size: 0.8rem;">
+        f"""
+        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid {THEMES[st.session_state.theme]['border']};">
+            <span style="color: {THEMES[st.session_state.theme]['text_muted']}; font-size: 0.8rem;">
                 Netflix Content Insights Engine &nbsp;|&nbsp; Enterprise Edition
             </span>
         </div>
