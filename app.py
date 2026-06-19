@@ -21,282 +21,102 @@ st.set_page_config(
 )
 
 # ── Custom CSS Injection ──
-CUSTOM_CSS = """
+
+if "theme" not in st.session_state:
+    st.session_state.theme = "dark"
+
+THEMES = {
+    "dark": {
+        "bg": "#141414", "card": "#000000", "card_hover": "#1A1A1A",
+        "text": "#FFFFFF", "text_muted": "#B3B3B3", "border": "#333333",
+        "accent": "#E50914", "shadow": "rgba(16, 24, 40, 0.2)",
+        "glass": "rgba(0, 0, 0, 0.75)", "input_bg": "rgba(255, 255, 255, 0.05)",
+        "input_border": "rgba(255, 255, 255, 0.15)", "btn_hover": "rgba(255, 255, 255, 0.1)",
+        "overlay": "rgba(20, 20, 20, 0.6)", "tooltip": "#141414", "grid": "#333333",
+        "bar_default": "#344054", "plotly_bg": "rgba(0,0,0,0)"
+    },
+    "light": {
+        "bg": "#F9FAFB", "card": "#FFFFFF", "card_hover": "#F3F4F6",
+        "text": "#111827", "text_muted": "#6B7280", "border": "#E5E7EB",
+        "accent": "#E50914", "shadow": "rgba(0, 0, 0, 0.05)",
+        "glass": "rgba(255, 255, 255, 0.85)", "input_bg": "#FFFFFF",
+        "input_border": "#D1D5DB", "btn_hover": "rgba(0, 0, 0, 0.05)",
+        "overlay": "rgba(255, 255, 255, 0.6)", "tooltip": "#FFFFFF", "grid": "#E5E7EB",
+        "bar_default": "#9CA3AF", "plotly_bg": "rgba(255,255,255,0)"
+    }
+}
+
+def get_custom_css(theme):
+    t = THEMES[theme]
+    css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    /* ─── Root Theme Overrides ─── */
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
-        color: #FFFFFF;
-    }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: VAR_TEXT; }
+    .stApp { background-color: VAR_BG !important; }
+    #MainMenu { visibility: hidden; } footer { visibility: hidden; }
+
+    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: VAR_BG; border-bottom: 1px solid VAR_BORDER; z-index: 999999; display: flex; align-items: center; padding: 0 32px; }
+    .top-bar-brand { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: VAR_ACCENT; letter-spacing: 0.5px; text-transform: uppercase; }
+    .top-bar-spacer { flex-grow: 1; }
+    .top-bar-stats { margin-left: 32px; display: flex; gap: 16px; font-size: 0.85rem; color: VAR_TEXT_MUTED; }
+    .top-bar-stats strong { color: VAR_TEXT; font-weight: 600; }
+    .top-bar-user { font-size: 0.85rem; color: VAR_TEXT_MUTED; font-weight: 500; display: flex; gap: 8px; align-items: center; }
     
-    .stApp {
-        background-color: #141414 !important;
-    }
+    .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 2.5rem !important; margin-top: 0rem !important; }
+    .stApp > header { background: transparent !important; box-shadow: none !important; z-index: 9999999 !important; }
 
-    /* ─── Hide default Streamlit chrome ─── */
-    #MainMenu { visibility: hidden; }
-    footer { visibility: hidden; }
+    .metric-card { background: VAR_CARD; border: 1px solid VAR_BORDER; border-radius: 8px; padding: 24px; text-align: left; transition: all 0.2s ease; box-shadow: 0 1px 2px VAR_SHADOW; height: 100%; }
+    .metric-card:hover { border-color: VAR_CARD_HOVER; box-shadow: 0 4px 6px -1px VAR_SHADOW; }
+    .metric-value { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: VAR_TEXT; line-height: 1.2; margin-bottom: 4px; }
+    .metric-label { font-size: 0.85rem; font-weight: 500; color: VAR_TEXT_MUTED; }
+    .metric-subtext { font-size: 0.75rem; color: VAR_TEXT_MUTED; margin-top: 8px; font-weight: 400; }
 
-    /* ─── Top Bar ─── */
-    .top-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 56px;
-        background-color: #141414;
-        border-bottom: 1px solid #333333;
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        padding: 0 32px;
-    }
-    .top-bar-brand {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #E50914;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-    }
-    .top-bar-spacer {
-        flex-grow: 1;
-    }
-    .top-bar-stats {
-        margin-left: 32px;
-        display: flex;
-        gap: 16px;
-        font-size: 0.85rem;
-        color: #B3B3B3;
-    }
-    .top-bar-stats strong {
-        color: #FFFFFF;
-        font-weight: 600;
-    }
-    .top-bar-user {
-        font-size: 0.85rem;
-        color: #B3B3B3;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+    .section-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: VAR_TEXT; padding-bottom: 12px; margin-top: 32px; margin-bottom: 24px; border-bottom: 1px solid VAR_BORDER; }
+
+    .stTabs [data-baseweb="tab-list"] { gap: 24px; }
+    .stTabs [data-baseweb="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; }
+    .stTabs [aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid VAR_ACCENT !important; color: VAR_ACCENT !important; }
+
+    [data-testid="stSidebar"] { top: 56px !important; height: calc(100vh - 56px) !important; background: VAR_CARD !important; border-right: 1px solid VAR_BORDER; }
+    [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { top: 72px !important; left: 16px !important; z-index: 9999999 !important; background-color: VAR_BG !important; border: 1px solid VAR_BORDER !important; border-radius: 6px !important; box-shadow: 0 4px 6px VAR_SHADOW !important; }
+    [data-testid="stSidebar"] .stButton > button { width: 100%; background-color: VAR_BG; border: 1px solid VAR_BORDER; color: VAR_TEXT; font-weight: 500; box-shadow: 0 1px 2px VAR_SHADOW; }
+    [data-testid="stSidebar"] .stButton > button:hover { background-color: VAR_CARD_HOVER; border-color: VAR_BORDER; color: VAR_TEXT; }
+
+    [data-testid="stStatusWidget"] { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: VAR_OVERLAY !important; z-index: 9999999 !important; display: flex !important; align-items: center !important; justify-content: center !important; backdrop-filter: blur(2px) !important; }
+    [data-testid="stStatusWidget"] > div { background-color: VAR_CARD !important; padding: 20px 40px !important; border-radius: 12px !important; border: 1px solid VAR_BORDER !important; box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important; transform: scale(1.5); }
+
+    .stDataFrame { border-radius: 8px; overflow: hidden; border: 1px solid VAR_BORDER; }
+
+    .stDownloadButton > button { background: VAR_BG !important; color: VAR_TEXT !important; border: 1px solid VAR_BORDER !important; border-radius: 6px !important; padding: 10px 20px !important; font-weight: 500 !important; transition: all 0.2s ease !important; font-size: 0.85rem !important; box-shadow: 0 1px 2px VAR_SHADOW !important; }
+    .stDownloadButton > button:hover { background: VAR_CARD !important; border-color: VAR_CARD_HOVER !important; color: VAR_TEXT !important; }
+
+    .main-title-container { margin-bottom: 8px; }
+    .main-title { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: VAR_TEXT; line-height: 1.2; }
+    .main-description { color: VAR_TEXT_MUTED; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
+
+    [data-testid="stForm"] { background-color: VAR_GLASS !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border: 1px solid VAR_INPUT_BORDER !important; border-radius: 20px !important; padding: 48px !important; max-width: 450px !important; margin: 0 auto !important; box-shadow: 0 24px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1) !important; position: relative; z-index: 10; min-height: auto !important; }
+    [data-testid="stForm"] label { display: block !important; font-size: 0.9rem !important; color: VAR_TEXT !important; font-weight: 500 !important; margin-bottom: 8px !important; text-transform: none !important; }
+    [data-testid="stForm"] input { background-color: VAR_INPUT_BG !important; color: VAR_TEXT !important; border: 1px solid VAR_INPUT_BORDER !important; border-radius: 8px !important; padding: 14px 16px !important; font-size: 1rem !important; margin-bottom: 20px !important; transition: all 0.3s ease !important; }
+    [data-testid="stForm"] input:hover { border-color: VAR_BORDER !important; }
+    [data-testid="stForm"] input:focus { background-color: VAR_INPUT_BG !important; border-color: VAR_ACCENT !important; box-shadow: 0 0 0 1px VAR_ACCENT !important; }
     
-    /* Adjust top padding to clear the Streamlit Cloud header */
-    .block-container, div[data-testid="stAppViewBlockContainer"] {
-        padding-top: 2.5rem !important;
-        margin-top: 0rem !important;
-    }
-    .stApp > header {
-        background: transparent !important;
-        box-shadow: none !important;
-        z-index: 9999999 !important;
-    }
+    [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"], [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):not([data-testid="baseButton-tertiaryFormSubmit"]) { background-color: VAR_ACCENT !important; color: white !important; border-radius: 50px !important; font-weight: 700 !important; padding: 12px 14px !important; margin-top: 16px !important; width: 100% !important; border: none !important; font-size: 1.05rem !important; transition: all 0.3s ease !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important; }
+    [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"]:hover, [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):hover { background-color: #C11119 !important; transform: translateY(-2px) !important; box-shadow: 0 6px 12px rgba(229, 9, 20, 0.4) !important; }
 
-    /* ─── Metric Cards ─── */
-    .metric-card {
-        background: #141414;
-        border: 1px solid #333333;
-        border-radius: 8px;
-        padding: 24px;
-        text-align: left;
-        transition: all 0.2s ease;
-        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-        height: 100%;
-    }
+    [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"] { background-color: VAR_INPUT_BG !important; color: VAR_TEXT !important; border-radius: 50px !important; font-weight: 600 !important; padding: 12px 14px !important; margin-top: 16px !important; width: 100% !important; border: 1px solid VAR_INPUT_BORDER !important; font-size: 1.05rem !important; transition: all 0.3s ease !important; }
+    [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"]:hover { background-color: VAR_BTN_HOVER !important; border-color: VAR_BORDER !important; transform: translateY(-2px) !important; }
     
-    .metric-card:hover {
-        border-color: #404040;
-        box-shadow: 0 4px 6px -1px rgba(16, 24, 40, 0.05), 0 2px 4px -1px rgba(16, 24, 40, 0.03);
-    }
-    
-    .metric-value {
-        font-family: 'Inter', sans-serif;
-        font-size: 2.2rem;
-        font-weight: 600;
-        color: #FFFFFF;
-        line-height: 1.2;
-        margin-bottom: 4px;
-    }
-    
-    .metric-label {
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #808080;
-    }
-    
-    .metric-subtext {
-        font-size: 0.75rem;
-        color: #404040;
-        margin-top: 8px;
-        font-weight: 400;
-    }
-
-    /* ─── Section Headers ─── */
-    .section-header {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.2rem;
-        font-weight: 600;
-        color: #FFFFFF;
-        padding-bottom: 12px;
-        margin-top: 32px;
-        margin-bottom: 24px;
-        border-bottom: 1px solid #333333;
-    }
-
-    /* ─── Streamlit Tabs Styling ─── */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 24px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        height: 48px;
-        white-space: pre-wrap;
-        background-color: transparent;
-        border-radius: 4px 4px 0px 0px;
-        gap: 1px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-    .stTabs [aria-selected="true"] {
-        background-color: transparent !important;
-        border-bottom: 2px solid #E50914 !important;
-        color: #E50914 !important;
-    }
-
-    /* ─── Login Card ─── */
-    .login-container {
-        max-width: 400px;
-        margin: 8vh auto;
-        background: #141414;
-        border: 1px solid #333333;
-        border-radius: 8px;
-        padding: 40px;
-        box-shadow: 0 4px 6px -1px rgba(16, 24, 40, 0.05), 0 2px 4px -1px rgba(16, 24, 40, 0.03);
-    }
-    .login-title {
-        text-align: left;
-        font-family: 'Inter', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #FFFFFF;
-        margin-bottom: 8px;
-    }
-    .login-subtitle {
-        text-align: left;
-        font-size: 0.9rem;
-        color: #B3B3B3;
-        margin-bottom: 32px;
-        font-weight: 400;
-    }
-
-    [data-testid="stForm"] {
-        border: none !important;
-        padding: 0 !important;
-    }
-
-    /* ─── Sidebar Polish ─── */
-    [data-testid="stSidebar"] {
-        top: 56px !important;
-        height: calc(100vh - 56px) !important;
-        background: #000000 !important;
-        border-right: 1px solid #333333;
-    }
-    /* Ensure the collapse/expand button is clearly visible below the top bar */
-    [data-testid="collapsedControl"],
-    [data-testid="stSidebarCollapsedControl"] {
-        top: 72px !important;
-        left: 16px !important;
-        z-index: 9999999 !important;
-        background-color: #141414 !important;
-        border: 1px solid #404040 !important;
-        border-radius: 6px !important;
-        box-shadow: 0 4px 6px rgba(16, 24, 40, 0.1) !important;
-    }
-    [data-testid="stSidebar"] .stButton > button {
-        width: 100%;
-        background-color: #141414;
-        border: 1px solid #404040;
-        color: #344054;
-        font-weight: 500;
-        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
-    }
-    [data-testid="stSidebar"] .stButton > button:hover {
-        background-color: #F9FAFB;
-        border-color: #404040;
-        color: #FFFFFF;
-    }
-
-    /* ─── Buffering Spinner Overlay ─── */
-    [data-testid="stStatusWidget"] {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background-color: rgba(20, 20, 20, 0.6) !important;
-        z-index: 9999999 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        backdrop-filter: blur(2px) !important;
-    }
-    
-    [data-testid="stStatusWidget"] > div {
-        background-color: #1A1A1A !important;
-        padding: 20px 40px !important;
-        border-radius: 12px !important;
-        border: 1px solid #333333 !important;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
-        transform: scale(1.5);
-    }
-
-    /* ─── Dataframe ─── */
-    .stDataFrame {
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid #333333;
-    }
-
-    /* ─── Download Button ─── */
-    .stDownloadButton > button {
-        background: #141414 !important;
-        color: #344054 !important;
-        border: 1px solid #404040 !important;
-        border-radius: 6px !important;
-        padding: 10px 20px !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
-        font-size: 0.85rem !important;
-        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05) !important;
-    }
-    .stDownloadButton > button:hover {
-        background: #F9FAFB !important;
-        color: #FFFFFF !important;
-    }
-
-    /* ─── Main Title ─── */
-    .main-title-container {
-        margin-bottom: 8px;
-    }
-    .main-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 2.2rem;
-        font-weight: 600;
-        color: #FFFFFF;
-        line-height: 1.2;
-    }
-    .main-description {
-        color: #B3B3B3;
-        font-size: 1rem;
-        margin-bottom: 32px;
-        font-weight: 400;
-        max-width: 800px;
-    }
+    [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"] { background: transparent !important; color: VAR_TEXT_MUTED !important; border: none !important; box-shadow: none !important; font-size: 0.9rem !important; font-weight: 500 !important; padding: 0 !important; margin-top: 16px !important; }
+    [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"]:hover { color: VAR_TEXT !important; text-decoration: underline !important; background: transparent !important; transform: none !important; }
 </style>
 """
-st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
+    for k, v in t.items():
+        css = css.replace(f"VAR_{k.upper()}", v)
+    return css
+
+st.markdown(get_custom_css(st.session_state.theme), unsafe_allow_html=True)
+
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -625,7 +445,7 @@ def render_sidebar(df: pd.DataFrame):
 
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="#FFFFFF"), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
+    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color=THEMES[st.session_state.theme]["text"]), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
@@ -659,7 +479,7 @@ def chart_kpi_bar(value, title, x_series, y_series):
 
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="#FFFFFF", size=14), marker_color=["#E50914", "#333333"], marker_line_width=0))
+    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color=THEMES[st.session_state.theme]["text"], size=14), marker_color=["#E50914", "#333333"], marker_line_width=0))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:#B3B3B3;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
         annotations=[dict(text=f"<b style='font-size:28px;color:#FFFFFF;font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
@@ -711,13 +531,17 @@ def render_metric_cards(df: pd.DataFrame):
 #  MODULE 5: PLOTLY VISUALIZATIONS
 # ══════════════════════════════════════════════════════════════════
 
-PLOTLY_LAYOUT_DEFAULTS = dict(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="Inter, sans-serif", color="#B3B3B3", size=12),
-    margin=dict(l=20, r=20, t=50, b=20),
-    hoverlabel=dict(bgcolor="#141414", font_size=12, font_family="Inter, sans-serif", bordercolor="#333333"),
-)
+
+def get_plotly_layout(theme):
+    t = THEMES[theme]
+    return dict(
+        paper_bgcolor=t["plotly_bg"],
+        plot_bgcolor=t["plotly_bg"],
+        font=dict(family="Inter, sans-serif", color=t["text_muted"], size=12),
+        margin=dict(l=20, r=20, t=50, b=20),
+        hoverlabel=dict(bgcolor=t["card"], font_size=12, font_family="Inter, sans-serif", bordercolor=t["border"]),
+    )
+
 
 def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
@@ -727,7 +551,7 @@ def chart_content_split(df: pd.DataFrame):
         text=type_counts["Count"], textposition='auto',
         marker=dict(color=["#E50914", "#F04438"], line=dict(color="#141414", width=2)),
     ))
-    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="#FFFFFF")), showlegend=False, height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), showlegend=False, height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_year_ingestion(df: pd.DataFrame):
@@ -735,9 +559,9 @@ def chart_year_ingestion(df: pd.DataFrame):
     yearly.columns = ["Year", "Titles Added"]
     fig = go.Figure(go.Scatter(
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
-        line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color="#FFFFFF"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
+        line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color=THEMES[st.session_state.theme]["text"]), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
     ))
-    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333", zeroline=False), yaxis=dict(gridcolor="#333333", zeroline=False), height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"], zeroline=False), yaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"], zeroline=False), height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
@@ -746,17 +570,17 @@ def chart_top_genres(df: pd.DataFrame):
     genre_counts.columns = ["Genre", "Titles"]
     fig = go.Figure(go.Bar(
         x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
-        marker=dict(color="#344054", line=dict(color="#141414", width=0.5)),
+        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color="#141414", width=0.5)),
     ))
-    fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333"), yaxis=dict(title=""), height=350, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=350, **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_rating_distribution(df: pd.DataFrame):
     rating_counts = df["rating"].dropna().value_counts().head(10).reset_index()
     rating_counts.columns = ["Rating", "Count"]
     fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=["#E50914"])
-    fig.update_traces(marker_line_color="#141414", marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Maturity Rating Distribution", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="#333333"), bargap=0.2, height=350, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_traces(marker_line_color=THEMES[st.session_state.theme]["bg"], marker_line_width=0.5)
+    fig.update_layout(title=dict(text="Maturity Rating Distribution", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor=THEMES[st.session_state.theme]["grid"]), bargap=0.2, height=350, **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_top_directors(df: pd.DataFrame):
@@ -765,16 +589,16 @@ def chart_top_directors(df: pd.DataFrame):
     director_counts.columns = ["Director", "Titles"]
     fig = go.Figure(go.Bar(
         x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
-        marker=dict(color="#808080", line=dict(color="#141414", width=0.5)),
+        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color="#141414", width=0.5)),
     ))
-    fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333"), yaxis=dict(title=""), height=350, **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=350, **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_runtime_distribution(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna())]
     fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"])
-    fig.update_traces(marker_line_color="#141414", marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="Duration (mins)", gridcolor="#333333"), yaxis=dict(title="Frequency", gridcolor="#333333"), bargap=0.06, height=350, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_traces(marker_line_color=THEMES[st.session_state.theme]["bg"], marker_line_width=0.5)
+    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(title="Duration (mins)", gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title="Frequency", gridcolor=THEMES[st.session_state.theme]["grid"]), bargap=0.06, height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
 
 # --- New Deep Dive Visualizations ---
@@ -786,8 +610,8 @@ def chart_top_countries_map(df: pd.DataFrame):
         color_continuous_scale=["#000000", "#F04438", "#7A271A"], labels={'Titles': 'Number of Titles'}
     )
     fig.update_layout(
-        title=dict(text="Global Production Hubs", font=dict(size=14, color="#FFFFFF")),
-        geo=dict(showframe=False, showcoastlines=True, coastlinecolor="#333333", projection_type='equirectangular', bgcolor='rgba(0,0,0,0)'),
+        title=dict(text="Global Production Hubs", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])),
+        geo=dict(showframe=False, showcoastlines=True, coastlinecolor=THEMES[st.session_state.theme]["border"], projection_type='equirectangular', bgcolor='rgba(0,0,0,0)'),
         height=400, margin=dict(l=0, r=0, t=40, b=0), paper_bgcolor="rgba(0,0,0,0)", clickmode="event+select"
     )
     return fig
@@ -800,7 +624,7 @@ def chart_top_cast(df: pd.DataFrame):
         x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
         marker=dict(color="#E50914", line=dict(color="#141414", width=0.5))
     ))
-    fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="#FFFFFF")), xaxis=dict(gridcolor="#333333"), yaxis=dict(title=""), height=400, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=400, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_duration_scatter(df: pd.DataFrame):
@@ -809,7 +633,7 @@ def chart_duration_scatter(df: pd.DataFrame):
     
     fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"])
     fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color="#E50914"), line=dict(color="#E50914", width=3), name="Average Runtime"))
-    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="#FFFFFF")), xaxis=dict(title="Release Year", gridcolor="#333333"), yaxis=dict(title="Duration (mins)", gridcolor="#333333"), height=400, clickmode="event+select", **PLOTLY_LAYOUT_DEFAULTS)
+    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(title="Release Year", gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title="Duration (mins)", gridcolor=THEMES[st.session_state.theme]["grid"]), height=400, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
 
 
@@ -871,7 +695,12 @@ def render_top_bar(df=None):
     
     st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" height="24" style="margin-bottom: 12px; margin-top: 12px;">""", unsafe_allow_html=True)
     
-    c1, c2, c3, c4 = st.columns([2, 2, 2, 4])
+    c_theme, c1, c2, c3, c4 = st.columns([1.5, 2, 2, 2, 4])
+    with c_theme:
+        theme_icon = "🌞 Light Mode" if st.session_state.theme == "dark" else "🌙 Dark Mode"
+        if st.button(theme_icon, use_container_width=True):
+            st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
+            st.rerun()
     with c1:
         if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
@@ -891,7 +720,15 @@ def render_top_bar(df=None):
 @st.dialog("Explore Data", width="large")
 def show_data_popup(df, filter_col, filter_val, match_type="exact"):
     with st.spinner("Analyzing and retrieving data..."):
-        st.markdown(f"### Exploring: {filter_val if match_type != 'all' else 'All Content'}")
+        if "page_size" not in st.session_state:
+            st.session_state.page_size = 50
+            
+        header_col1, header_col2 = st.columns([3, 1])
+        with header_col1:
+            st.markdown(f"### Exploring: {filter_val if match_type != 'all' else 'All Content'}")
+        with header_col2:
+            st.session_state.page_size = st.selectbox("Items per page", options=[10, 50, 100, 500, 1000], index=[10, 50, 100, 500, 1000].index(st.session_state.page_size), label_visibility="collapsed")
+            
         if match_type == "exact":
             display_df = df[df[filter_col].astype(str) == str(filter_val)]
         elif match_type == "contains":
@@ -901,7 +738,7 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
         elif match_type == "all":
             display_df = df
         
-        PAGE_SIZE = 50
+        PAGE_SIZE = st.session_state.page_size
         if "popup_page" not in st.session_state:
             st.session_state.popup_page = 0
             
@@ -917,7 +754,7 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
         st.caption(f"Showing {start_idx + 1}-{end_idx} of {total_rows:,} matching titles")
         st.dataframe(display_df.iloc[start_idx:end_idx], use_container_width=True, height=400)
         
-        col1, col2, col3 = st.columns([1, 2, 1])
+        col1, col2, col3, col4 = st.columns([1, 2, 1, 1.5])
         with col1:
             if st.button("⬅️ Previous", disabled=st.session_state.popup_page == 0, use_container_width=True):
                 st.session_state.popup_page -= 1
@@ -926,6 +763,9 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
         with col3:
             if st.button("Next ➡️", disabled=st.session_state.popup_page >= total_pages - 1, use_container_width=True):
                 st.session_state.popup_page += 1
+        with col4:
+            csv_payload = display_df.to_csv(index=False).encode("utf-8")
+            st.download_button("📥 Download Data", data=csv_payload, file_name=f"netflix_export_{filter_col}.csv", mime="text/csv", use_container_width=True)
 
 
 def process_selection(event, chart_key, filter_col, extract_key="x", match_type="exact", is_range=False):
