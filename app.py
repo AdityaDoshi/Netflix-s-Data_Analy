@@ -34,7 +34,6 @@ THEMES = {
         "input_border": "rgba(255, 255, 255, 0.15)", "btn_hover": "rgba(255, 255, 255, 0.1)",
         "overlay": "rgba(20, 20, 20, 0.6)", "tooltip": "#141414", "grid": "#333333",
         "bar_default": "#344054", "plotly_bg": "rgba(0,0,0,0)"
-    },
     }
 }
 
