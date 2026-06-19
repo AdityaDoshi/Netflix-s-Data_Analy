@@ -123,7 +123,7 @@ st.markdown(get_custom_css(st.session_state.theme), unsafe_allow_html=True)
 
 @st.cache_data(show_spinner=False)
 def load_and_preprocess_data():
-    df = pd.read_csv("netflix_titles.csv")
+    df = pd.read_csv("netflix_titles_2025.csv")
     df["date_added"] = pd.to_datetime(df["date_added"].str.strip(), errors="coerce")
     df["year_added"] = df["date_added"].dt.year.astype("Int64")
     df["duration_minutes"] = df["duration"].str.extract(r"(\d+)", expand=False).astype(float)
@@ -500,7 +500,7 @@ def render_metric_cards(df: pd.DataFrame):
     trend_counts = trend_df.groupby("year_added").size().reset_index(name="counts")
     
     # Data for Card 2
-    genres = df["listed_in"].str.split(", ").explode()
+    genres = df["genres"].str.split(", ").explode()
     top_genres_counts = genres.value_counts().head(12)
     top_genres_names = top_genres_counts.index
     total_genres = len(genres.unique())
@@ -519,7 +519,7 @@ def render_metric_cards(df: pd.DataFrame):
         process_selection(ev1, "kpi_total", "year_added", extract_key="x")
     with cols[1]:
         ev2 = st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
-        process_selection(ev2, "kpi_genres", "listed_in", extract_key="x", match_type="contains")
+        process_selection(ev2, "kpi_genres", "genres", extract_key="x", match_type="contains")
     with cols[2]:
         ev3 = st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False}, on_select="rerun", selection_mode="points")
         process_selection(ev3, "kpi_split", "type", extract_key="x")
@@ -563,7 +563,7 @@ def chart_year_ingestion(df: pd.DataFrame):
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
-    genres = df["listed_in"].dropna().str.split(", ").explode()
+    genres = df["genres"].dropna().str.split(", ").explode()
     genre_counts = genres.value_counts().head(10).sort_values(ascending=True).reset_index()
     genre_counts.columns = ["Genre", "Titles"]
     fig = go.Figure(go.Bar(
@@ -661,12 +661,12 @@ def render_catalog_explorer(df: pd.DataFrame):
     search_query = st.text_input("Search Titles, Directors, or Genres", placeholder="e.g. Sci-Fi, Christopher Nolan")
     if search_query:
         query_lower = search_query.lower()
-        mask = (df["title"].str.lower().str.contains(query_lower, na=False) | df["director"].str.lower().str.contains(query_lower, na=False) | df["listed_in"].str.lower().str.contains(query_lower, na=False))
+        mask = (df["title"].str.lower().str.contains(query_lower, na=False) | df["director"].str.lower().str.contains(query_lower, na=False) | df["genres"].str.lower().str.contains(query_lower, na=False))
         search_results = df[mask]
     else:
         search_results = df
 
-    display_cols = ["title", "type", "director", "country", "release_year", "rating", "duration", "listed_in"]
+    display_cols = ["title", "type", "director", "country", "release_year", "rating", "duration", "genres"]
     display_df = search_results[[c for c in display_cols if c in search_results.columns]].reset_index(drop=True)
 
     st.caption(f"Showing {len(display_df):,} results")
@@ -761,7 +761,7 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
             st.download_button("📥 Download Data", data=csv_payload, file_name=f"netflix_export_{filter_col}.csv", mime="text/csv", use_container_width=True)
 
 
-def process_selection(event, chart_key, filter_col, extract_key="x", match_type="exact", is_range=False):
+def process_selection(event, chart_key, filter_col, extract_key="x", match_type="exact", is_range=False, bin_size=10):
     if event and event.get("selection", {}).get("points"):
         pt = event["selection"]["points"][0]
         val = pt.get(extract_key)
@@ -770,7 +770,7 @@ def process_selection(event, chart_key, filter_col, extract_key="x", match_type=
             val = float(pt.get("x", 0))
             if st.session_state.chart_selections.get(chart_key) != val:
                 st.session_state.chart_selections[chart_key] = val
-                st.session_state.popup_request = {"col": filter_col, "val": (val-5, val+5), "match": "range"}
+                st.session_state.popup_request = {"col": filter_col, "val": (val-(bin_size/2), val+(bin_size/2)), "match": "range"}
                 st.session_state.popup_page = 0
         else:
             if val is not None and st.session_state.chart_selections.get(chart_key) != str(val):
@@ -828,10 +828,10 @@ def main():
         col3, col4 = st.columns(2, gap="large")
         with col3:
             ev3 = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev3, "tab1_genres", "listed_in", extract_key="y", match_type="contains")
+            process_selection(ev3, "tab1_genres", "genres", extract_key="y", match_type="contains")
         with col4:
             ev4 = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev4, "tab1_ratings", "rating", extract_key="x")
+            process_selection(ev4, "tab1_ratings", "vote_average", is_range=True, bin_size=0.5)
             
         ev5 = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
         process_selection(ev5, "tab1_directors", "director", extract_key="y", match_type="contains")
