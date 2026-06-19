@@ -35,14 +35,6 @@ THEMES = {
         "overlay": "rgba(20, 20, 20, 0.6)", "tooltip": "#141414", "grid": "#333333",
         "bar_default": "#344054", "plotly_bg": "rgba(0,0,0,0)"
     },
-    "light": {
-        "bg": "#F9FAFB", "card": "#FFFFFF", "card_hover": "#F3F4F6",
-        "text": "#111827", "text_muted": "#6B7280", "border": "#E5E7EB",
-        "accent": "#E50914", "shadow": "rgba(0, 0, 0, 0.05)",
-        "glass": "rgba(255, 255, 255, 0.85)", "input_bg": "#FFFFFF",
-        "input_border": "#D1D5DB", "btn_hover": "rgba(0, 0, 0, 0.05)",
-        "overlay": "rgba(255, 255, 255, 0.6)", "tooltip": "#FFFFFF", "grid": "#E5E7EB",
-        "bar_default": "#9CA3AF", "plotly_bg": "rgba(255,255,255,0)"
     }
 }
 
@@ -52,19 +44,7 @@ def get_custom_css(theme):
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    :root {
-        --text-color: VAR_TEXT !important;
-        --background-color: VAR_BG !important;
-        --secondary-background-color: VAR_CARD !important;
-        --primary-color: VAR_ACCENT !important;
-    }
-
-    html, body, [class*="css"], [data-testid="stAppViewContainer"], [data-testid="stHeader"] { font-family: 'Inter', sans-serif; color: VAR_TEXT !important; background-color: VAR_BG !important; }
-    .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5, .stMarkdown h6,
-    [data-testid="stWidgetLabel"] p, [data-testid="stCaptionContainer"] p, 
-    [data-baseweb="checkbox"] label, [data-baseweb="radio"] label, div[data-baseweb="select"] * {
-        color: VAR_TEXT !important;
-    }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: VAR_TEXT; }
     .stApp { background-color: VAR_BG !important; }
     #MainMenu { visibility: hidden; } footer { visibility: hidden; }
 
@@ -714,12 +694,7 @@ def render_top_bar(df=None):
     
     st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" height="24" style="margin-bottom: 12px; margin-top: 12px;">""", unsafe_allow_html=True)
     
-    c_theme, c1, c2, c3, c4 = st.columns([1.5, 2, 2, 2, 4])
-    with c_theme:
-        theme_icon = "🌞 Light Mode" if st.session_state.theme == "dark" else "🌙 Dark Mode"
-        if st.button(theme_icon, use_container_width=True):
-            st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
-            st.rerun()
+    c1, c2, c3, c4 = st.columns([2, 2, 2, 5])
     with c1:
         if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
