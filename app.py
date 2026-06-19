@@ -86,15 +86,11 @@ def get_custom_css(theme):
 
     .section-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: VAR_TEXT; padding-bottom: 12px; margin-top: 32px; margin-bottom: 24px; border-bottom: 1px solid VAR_BORDER; }
 
-    [role="tablist"] { gap: 24px; }
-    button[role="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: VAR_TEXT_MUTED !important; }
-    button[role="tab"] p { color: VAR_TEXT_MUTED !important; }
-    button[role="tab"] span { color: VAR_TEXT_MUTED !important; }
-    button[role="tab"] div { color: VAR_TEXT_MUTED !important; }
-    button[role="tab"][aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid VAR_ACCENT !important; color: VAR_ACCENT !important; }
-    button[role="tab"][aria-selected="true"] p { color: VAR_ACCENT !important; font-weight: 600 !important; }
-    button[role="tab"][aria-selected="true"] span { color: VAR_ACCENT !important; font-weight: 600 !important; }
-    button[role="tab"][aria-selected="true"] div { color: VAR_ACCENT !important; font-weight: 600 !important; }
+    [role="tablist"], [data-testid="stTabList"] { gap: 24px; }
+    [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: VAR_TEXT_MUTED !important; }
+    [data-testid="stTab"] *, [data-baseweb="tab"] *, button[role="tab"] * { color: VAR_TEXT_MUTED !important; }
+    [data-testid="stTab"][aria-selected="true"], [data-baseweb="tab"][aria-selected="true"], button[role="tab"][aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid VAR_ACCENT !important; color: VAR_ACCENT !important; }
+    [data-testid="stTab"][aria-selected="true"] *, [data-baseweb="tab"][aria-selected="true"] *, button[role="tab"][aria-selected="true"] * { color: VAR_ACCENT !important; font-weight: 600 !important; }
 
     [data-testid="stSidebar"] { top: 56px !important; height: calc(100vh - 56px) !important; background: VAR_CARD !important; border-right: 1px solid VAR_BORDER; }
     [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { top: 72px !important; left: 16px !important; z-index: 9999999 !important; background-color: VAR_BG !important; border: 1px solid VAR_BORDER !important; border-radius: 6px !important; box-shadow: 0 4px 6px VAR_SHADOW !important; }
