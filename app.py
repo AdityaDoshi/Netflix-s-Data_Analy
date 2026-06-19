@@ -436,21 +436,42 @@ def render_login_screen():
             box-shadow: 0 0 0 1px #E50914 !important;
         }
         
-        /* Pill Button */
-        [data-testid="stForm"] .stButton > button {
+        /* Pill Button (Primary) */
+        [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"],
+        [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]) {
             background-color: #E50914 !important;
             color: white !important;
             border-radius: 50px !important;
             font-weight: 700 !important;
-            padding: 14px !important;
+            padding: 12px 14px !important;
             margin-top: 16px !important;
             width: 100% !important;
             border: none !important;
             font-size: 1.05rem !important;
             transition: background-color 0.2s;
         }
-        [data-testid="stForm"] .stButton > button:hover {
+        [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"]:hover,
+        [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):hover {
             background-color: #C11119 !important;
+        }
+
+        /* Pill Button (Secondary / Demo) */
+        [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"] {
+            background-color: #262626 !important;
+            color: #E5E5E5 !important;
+            border-radius: 50px !important;
+            font-weight: 600 !important;
+            padding: 12px 14px !important;
+            margin-top: 16px !important;
+            width: 100% !important;
+            border: 1px solid #404040 !important;
+            font-size: 1.05rem !important;
+            transition: all 0.2s;
+        }
+        [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"]:hover {
+            background-color: #333333 !important;
+            color: #FFFFFF !important;
+            border-color: #555555 !important;
         }
         
         /* Bottom links */
@@ -484,16 +505,30 @@ def render_login_screen():
     _, col_center, _ = st.columns([1, 1.8, 1])
     with col_center:
         with st.form("login_form", clear_on_submit=False):
-            username = st.text_input("Your email", placeholder="e.g. elon@tesla.com")
+            username = st.text_input("Your email", placeholder="e.g. admin")
             password = st.text_input("Your password", type="password", placeholder="Password")
-            submitted = st.form_submit_button("Sign In")
+            
+            col_btn1, col_btn2 = st.columns(2)
+            with col_btn1:
+                submitted = st.form_submit_button("Sign In", type="primary", use_container_width=True)
+            with col_btn2:
+                demo_submitted = st.form_submit_button("Instant Demo", type="secondary", use_container_width=True)
             
             st.markdown("""
+                <div class="login-hint">
+                    <strong>Demo Account Credentials:</strong><br>
+                    Email: <code>admin</code> &nbsp;|&nbsp; Password: <code>admin123</code>
+                </div>
                 <div class="login-links">
-                    <a href="#">Don't have an account?</a>
-                    <a href="#">Forgot password?</a>
+                    <a href="#" onclick="alert('Demo Version: User registration is disabled.'); return false;">Don't have an account?</a>
+                    <a href="#" onclick="alert('Demo Password Reset: Use the Instant Demo login to bypass.'); return false;">Forgot password?</a>
                 </div>
             """, unsafe_allow_html=True)
+
+            if demo_submitted:
+                st.session_state["authenticated"] = True
+                st.session_state["user"] = "admin"
+                st.rerun()
 
             if submitted:
                 if username in DEMO_CREDENTIALS and DEMO_CREDENTIALS[username] == password:
@@ -501,7 +536,7 @@ def render_login_screen():
                     st.session_state["user"] = username
                     st.rerun()
                 else:
-                    st.error("Invalid credentials. Try admin / admin123")
+                    st.error("Invalid credentials. Use 'Instant Demo' or enter admin / admin123")
 
 def check_auth():
     return st.session_state.get("authenticated", False)
