@@ -190,26 +190,7 @@ CUSTOM_CSS = """
         margin-bottom: 32px;
         font-weight: 400;
     }
-    .login-hint {
-        text-align: center;
-        font-size: 0.85rem;
-        color: #A3A3A3;
-        margin-top: 24px;
-        padding: 12px;
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-    }
-    .login-hint code {
-        color: #FFFFFF;
-        background: rgba(229, 9, 20, 0.2);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: 600;
-        border: 1px solid rgba(229, 9, 20, 0.4);
-    }
+
     [data-testid="stForm"] {
         border: none !important;
         padding: 0 !important;
@@ -528,10 +509,6 @@ def render_login_screen():
                 demo_submitted = st.form_submit_button("Instant Demo", type="secondary", use_container_width=True)
             
             st.markdown("""
-                <div class="login-hint">
-                    <strong>Demo Account Credentials:</strong><br>
-                    Email: <code>admin</code> &nbsp;|&nbsp; Password: <code>admin123</code>
-                </div>
                 <div class="login-links">
                     <a href="#" onclick="alert('Demo Version: User registration is disabled.'); return false;">Don't have an account?</a>
                     <a href="#" onclick="alert('Demo Password Reset: Use the Instant Demo login to bypass.'); return false;">Forgot password?</a>
