@@ -317,7 +317,29 @@ def load_and_preprocess_data():
 #  MODULE 2: AUTHENTICATION GATEWAY
 # ══════════════════════════════════════════════════════════════════
 
-DEMO_CREDENTIALS = {"admin": "admin123"}
+@st.dialog("Create a New Account")
+def show_signup_dialog():
+    st.markdown("<p style='color:#B3B3B3; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
+    new_user = st.text_input("New Email", placeholder="e.g. elon@tesla.com")
+    new_pass = st.text_input("New Password", type="password")
+    if st.button("Register", type="primary", use_container_width=True):
+        if new_user and new_pass:
+            st.session_state.demo_credentials[new_user] = new_pass
+            st.success("Account created successfully! You can now close this and sign in.")
+        else:
+            st.error("Please fill in both fields.")
+
+@st.dialog("Reset Password")
+def show_forgot_dialog():
+    st.markdown("<p style='color:#B3B3B3; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
+    reset_email = st.text_input("Account Email")
+    new_pass = st.text_input("New Password", type="password")
+    if st.button("Reset Password", type="primary", use_container_width=True):
+        if reset_email in st.session_state.demo_credentials:
+            st.session_state.demo_credentials[reset_email] = new_pass
+            st.success("Password reset successfully! You can now close this and sign in.")
+        else:
+            st.error("Account not found.")
 
 def render_login_screen():
     st.markdown("""
@@ -429,7 +451,7 @@ def render_login_screen():
         
         /* Pill Button (Primary) */
         [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"],
-        [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]) {
+        [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):not([data-testid="baseButton-tertiaryFormSubmit"]) {
             background-color: #E50914 !important;
             color: white !important;
             border-radius: 50px !important;
@@ -467,6 +489,24 @@ def render_login_screen():
             color: #FFFFFF !important;
             border-color: rgba(255, 255, 255, 0.4) !important;
             transform: translateY(-2px) !important;
+        }
+
+        /* Pill Button (Tertiary / Links) */
+        [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"] {
+            background: transparent !important;
+            color: #A3A3A3 !important;
+            border: none !important;
+            box-shadow: none !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+            padding: 0 !important;
+            margin-top: 16px !important;
+        }
+        [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"]:hover {
+            color: #FFFFFF !important;
+            text-decoration: underline !important;
+            background: transparent !important;
+            transform: none !important;
         }
         
         /* Bottom links */
@@ -509,11 +549,20 @@ def render_login_screen():
                 demo_submitted = st.form_submit_button("Instant Demo", type="secondary", use_container_width=True)
             
             st.markdown("""
-                <div class="login-links">
-                    <a href="#" onclick="alert('Demo Version: User registration is disabled.'); return false;">Don't have an account?</a>
-                    <a href="#" onclick="alert('Demo Password Reset: Use the Instant Demo login to bypass.'); return false;">Forgot password?</a>
-                </div>
+                <div class="login-links" style="display: none;"></div>
             """, unsafe_allow_html=True)
+
+            col_l1, col_l2 = st.columns(2)
+            with col_l1:
+                signup_submitted = st.form_submit_button("Don't have an account?", type="tertiary", use_container_width=True)
+            with col_l2:
+                forgot_submitted = st.form_submit_button("Forgot password?", type="tertiary", use_container_width=True)
+
+            if signup_submitted:
+                show_signup_dialog()
+            
+            if forgot_submitted:
+                show_forgot_dialog()
 
             if demo_submitted:
                 st.session_state["authenticated"] = True
@@ -521,12 +570,12 @@ def render_login_screen():
                 st.rerun()
 
             if submitted:
-                if username in DEMO_CREDENTIALS and DEMO_CREDENTIALS[username] == password:
+                if username in st.session_state.demo_credentials and st.session_state.demo_credentials[username] == password:
                     st.session_state["authenticated"] = True
                     st.session_state["user"] = username
                     st.rerun()
                 else:
-                    st.error("Invalid credentials. Use 'Instant Demo' or enter admin / admin123")
+                    st.error("Invalid credentials. Use 'Instant Demo' or enter a valid account.")
 
 def check_auth():
     return st.session_state.get("authenticated", False)
@@ -899,6 +948,8 @@ def process_selection(event, chart_key, filter_col, extract_key="x", match_type=
         st.session_state.chart_selections[chart_key] = None
 
 def main():
+    if "demo_credentials" not in st.session_state:
+        st.session_state.demo_credentials = {"admin": "admin123"}
     if "popup_request" not in st.session_state:
         st.session_state.popup_request = None
     if "chart_selections" not in st.session_state:
