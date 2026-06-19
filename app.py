@@ -759,7 +759,7 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
             if st.button("⬅️ Previous", disabled=st.session_state.popup_page == 0, use_container_width=True):
                 st.session_state.popup_page -= 1
         with col2:
-            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: {THEMES[st.session_state.theme][\"text_muted\"]};'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: {THEMES[st.session_state.theme]['text_muted']};'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
         with col3:
             if st.button("Next ➡️", disabled=st.session_state.popup_page >= total_pages - 1, use_container_width=True):
                 st.session_state.popup_page += 1
