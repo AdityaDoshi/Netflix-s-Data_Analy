@@ -75,6 +75,23 @@ css = """
 st.markdown(css, unsafe_allow_html=True)
 
 
+if "theme" not in st.session_state:
+    st.session_state.theme = "dark"
+
+LIGHT_MODE_CSS = """
+<style>
+:root {
+    --background-color: #FFFFFF !important;
+    --secondary-background-color: #F3F4F6 !important;
+    --text-color: #111827 !important;
+    --border-color: #E5E7EB !important;
+}
+</style>
+"""
+if st.session_state.theme == "light":
+    st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
+
+
 
 # ══════════════════════════════════════════════════════════════════
 #  MODULE 1: DATA LOADING & PREPROCESSING
