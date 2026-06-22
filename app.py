@@ -217,7 +217,7 @@ def render_login_screen():
         
         .login-header-container h1 {
             font-size: 2.2rem;
-            color: {THEMES[st.session_state.theme][\"text\"]};
+            color: var(--text-color);
             font-weight: 800;
             margin: 0;
             padding: 0;
@@ -345,7 +345,7 @@ def render_login_screen():
             transition: color 0.2s;
         }
         .login-links a:hover {
-            color: {THEMES[st.session_state.theme][\"text\"]};
+            color: var(--text-color);
         }
         
     @media (max-width: 768px) {
