@@ -77,7 +77,25 @@ css = """
     }
 </style>
 """
-st.markdown(css, unsafe_allow_html=True)
+
+theme = st.session_state.get("theme", "dark")
+bg_color = "#F9FAFB" if theme == "light" else "#141414"
+sec_bg_color = "#FFFFFF" if theme == "light" else "#000000"
+text_color = "#111827" if theme == "light" else "#FFFFFF"
+border_color = "rgba(0,0,0,0.1)" if theme == "light" else "rgba(255,255,255,0.1)"
+
+root_css = f"""
+<style>
+:root {{
+    --background-color: {bg_color};
+    --secondary-background-color: {sec_bg_color};
+    --text-color: {text_color};
+    --border-color: {border_color};
+}}
+</style>
+"""
+st.markdown(root_css + css, unsafe_allow_html=True)
+
 
 
 if "theme" not in st.session_state:
