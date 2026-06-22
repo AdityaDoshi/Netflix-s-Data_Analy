@@ -73,7 +73,27 @@ css = """
         .metric-card { padding: 16px !important; }
         [role="tablist"], [data-testid="stTabList"] { gap: 8px !important; flex-wrap: wrap !important; }
         [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: auto !important; padding-top: 8px !important; padding-bottom: 8px !important; font-size: 0.9rem !important; }
-        .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 1.5rem !important; }
+        
+        [data-testid="stHorizontalBlock"]:first-of-type {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 4px !important;
+            align-items: center !important;
+        }
+        [data-testid="stHorizontalBlock"]:first-of-type > div {
+            flex: 1 1 30% !important;
+            width: 30% !important;
+            min-width: 100px !important;
+        }
+        [data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
+            flex: 1 1 100% !important;
+            width: 100% !important;
+            text-align: center !important;
+            margin-top: 8px !important;
+        }
+        .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 4rem !important; }
+
     }
 </style>
 """
@@ -382,7 +402,27 @@ def render_login_screen():
         .metric-card { padding: 16px !important; }
         [role="tablist"], [data-testid="stTabList"] { gap: 8px !important; flex-wrap: wrap !important; }
         [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: auto !important; padding-top: 8px !important; padding-bottom: 8px !important; font-size: 0.9rem !important; }
-        .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 1.5rem !important; }
+        
+        [data-testid="stHorizontalBlock"]:first-of-type {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 4px !important;
+            align-items: center !important;
+        }
+        [data-testid="stHorizontalBlock"]:first-of-type > div {
+            flex: 1 1 30% !important;
+            width: 30% !important;
+            min-width: 100px !important;
+        }
+        [data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
+            flex: 1 1 100% !important;
+            width: 100% !important;
+            text-align: center !important;
+            margin-top: 8px !important;
+        }
+        .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 4rem !important; }
+
     }
 </style>
 
