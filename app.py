@@ -492,10 +492,10 @@ def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:var(--text-color);font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
-        margin=dict(l=16, r=16, t=80, b=10),
-        height=160,
+        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
+        annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
+        margin=dict(l=16, r=16, t=120, b=10),
+        height=190,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
@@ -509,10 +509,10 @@ def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:var(--text-color);font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
-        margin=dict(l=16, r=16, t=80, b=10),
-        height=160,
+        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
+        annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
+        margin=dict(l=16, r=16, t=120, b=10),
+        height=190,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
@@ -526,10 +526,10 @@ def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="gray", size=14), marker_color=["#E50914", "gray"], marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:var(--text-color);font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
-        margin=dict(l=16, r=16, t=80, b=10),
-        height=160,
+        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
+        annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
+        margin=dict(l=16, r=16, t=120, b=10),
+        height=190,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(visible=False, fixedrange=True),
