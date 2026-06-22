@@ -27,7 +27,7 @@ css = """
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text-color); }
-    .stApp { background-color: var(--background-color) !important; }
+    .stApp { background-color: var(--background-color) !important; overflow-x: hidden !important; }
     footer { visibility: hidden; }
 
     
@@ -346,6 +346,14 @@ def render_login_screen():
         }
         .login-links a:hover {
             color: var(--text-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .blob-1 { width: 200px !important; height: 200px !important; right: -50px !important; top: -50px !important; opacity: 0.4 !important; filter: blur(12px) !important; }
+            .blob-2 { width: 150px !important; height: 150px !important; left: -20px !important; bottom: 0px !important; opacity: 0.3 !important; filter: blur(10px) !important; }
+            .login-header-container h1 { font-size: 1.8rem !important; }
+            [data-testid="stForm"] { padding: 24px !important; width: 90% !important; margin-top: 24px !important; }
         }
         
     @media (max-width: 768px) {
