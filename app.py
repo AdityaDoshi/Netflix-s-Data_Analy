@@ -26,6 +26,7 @@ css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+    html, body { overflow-x: hidden !important; max-width: 100vw !important; }
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text-color); }
     .stApp { background-color: var(--background-color) !important; overflow-x: hidden !important; }
     footer { visibility: hidden; }
