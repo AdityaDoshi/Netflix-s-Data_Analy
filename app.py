@@ -368,9 +368,6 @@ def render_login_screen():
     }
 </style>
         
-        <div class="blob-1"></div>
-        <div class="blob-2"></div>
-        
         <div class="login-header-container">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="netflix-logo-center">
             <h1>Good to see you again</h1>
