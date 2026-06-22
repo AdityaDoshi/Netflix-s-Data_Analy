@@ -30,12 +30,6 @@ css = """
     .stApp { background-color: var(--background-color) !important; }
     footer { visibility: hidden; }
 
-    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: var(--background-color); border-bottom: 1px solid var(--border-color, rgba(128,128,128,0.2)); z-index: 999999; display: flex; align-items: center; padding: 0 32px; }
-    .top-bar-brand { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: #E50914; letter-spacing: 0.5px; text-transform: uppercase; }
-    .top-bar-spacer { flex-grow: 1; }
-    .top-bar-stats { margin-left: 32px; display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-color); opacity: 0.7; }
-    .top-bar-stats strong { color: var(--text-color); font-weight: 600; opacity: 1; }
-    .top-bar-user { font-size: 0.85rem; color: var(--text-color); opacity: 0.7; font-weight: 500; display: flex; gap: 8px; align-items: center; }
     
     .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 2.5rem !important; margin-top: 0rem !important; }
     .stApp > header { background: transparent !important; box-shadow: none !important; z-index: 9999999 !important; }
@@ -55,7 +49,7 @@ css = """
     [data-testid="stTab"][aria-selected="true"] *, [data-baseweb="tab"][aria-selected="true"] *, button[role="tab"][aria-selected="true"] * { color: inherit !important; font-weight: 600 !important; }
 
     [data-testid="stSidebar"] { top: 56px !important; height: calc(100vh - 56px) !important; background: var(--secondary-background-color) !important; border-right: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
-    [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { top: 72px !important; left: 16px !important; z-index: 9999999 !important; background-color: var(--background-color) !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; border-radius: 6px !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
+    [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { z-index: 9999999 !important; background-color: var(--background-color) !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; border-radius: 6px !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
     [data-testid="stSidebar"] .stButton > button { width: 100%; background-color: var(--background-color); border: 1px solid var(--border-color, rgba(128,128,128,0.2)); color: var(--text-color); font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
     [data-testid="stSidebar"] .stButton > button:hover { background-color: var(--secondary-background-color); border-color: #E50914; color: var(--text-color); }
 
@@ -70,6 +64,16 @@ css = """
     .main-title-container { margin-bottom: 8px; }
     .main-title { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: var(--text-color); line-height: 1.2; }
     .main-description { color: var(--text-color); opacity: 0.7; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
+
+    @media (max-width: 768px) {
+        .main-title { font-size: 1.6rem !important; }
+        .main-description { font-size: 0.9rem !important; }
+        .metric-value { font-size: 1.8rem !important; }
+        .metric-card { padding: 16px !important; }
+        [role="tablist"], [data-testid="stTabList"] { gap: 8px !important; flex-wrap: wrap !important; }
+        [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: auto !important; padding-top: 8px !important; padding-bottom: 8px !important; font-size: 0.9rem !important; }
+        .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 1.5rem !important; }
+    }
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
@@ -343,7 +347,17 @@ def render_login_screen():
         .login-links a:hover {
             color: {THEMES[st.session_state.theme][\"text\"]};
         }
-        </style>
+        
+    @media (max-width: 768px) {
+        .main-title { font-size: 1.6rem !important; }
+        .main-description { font-size: 0.9rem !important; }
+        .metric-value { font-size: 1.8rem !important; }
+        .metric-card { padding: 16px !important; }
+        [role="tablist"], [data-testid="stTabList"] { gap: 8px !important; flex-wrap: wrap !important; }
+        [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: auto !important; padding-top: 8px !important; padding-bottom: 8px !important; font-size: 0.9rem !important; }
+        .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 1.5rem !important; }
+    }
+</style>
         
         <div class="blob-1"></div>
         <div class="blob-2"></div>
