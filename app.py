@@ -78,18 +78,42 @@ st.markdown(css, unsafe_allow_html=True)
 if "theme" not in st.session_state:
     st.session_state.theme = "dark"
 
-LIGHT_MODE_CSS = """
-<style>
-:root {
-    --background-color: #FFFFFF !important;
-    --secondary-background-color: #F3F4F6 !important;
-    --text-color: #111827 !important;
-    --border-color: #E5E7EB !important;
-}
-</style>
+import os
+
+def update_theme_config(mode):
+    config_path = ".streamlit/config.toml"
+    os.makedirs(os.path.dirname(config_path), exist_ok=True)
+    if mode == "light":
+        config_str = """[theme]
+base="light"
+primaryColor="#E50914"
+backgroundColor="#F9FAFB"
+secondaryBackgroundColor="#FFFFFF"
+textColor="#111827"
+font="sans serif"
 """
-if st.session_state.theme == "light":
-    st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
+    else:
+        config_str = """[theme]
+base="dark"
+primaryColor="#E50914"
+backgroundColor="#141414"
+secondaryBackgroundColor="#000000"
+textColor="#FFFFFF"
+font="sans serif"
+"""
+    try:
+        with open(config_path, "r") as f:
+            if f.read() == config_str:
+                return
+    except:
+        pass
+    with open(config_path, "w") as f:
+        f.write(config_str)
+
+update_theme_config(st.session_state.theme)
+
+
+
 
 
 
@@ -386,7 +410,9 @@ def render_sidebar(df: pd.DataFrame):
 
         theme_icon = "☀️ Light Mode" if st.session_state.theme == "dark" else "🌙 Dark Mode"
         if st.button(theme_icon, use_container_width=True):
-            st.session_state.theme = "light" if st.session_state.theme == "dark" else "dark"
+            new_theme = "light" if st.session_state.theme == "dark" else "dark"
+            st.session_state.theme = new_theme
+            update_theme_config(new_theme)
             st.rerun()
 
         if st.button("Log Out", use_container_width=True):
