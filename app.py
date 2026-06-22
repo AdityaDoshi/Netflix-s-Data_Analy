@@ -367,11 +367,11 @@ def render_login_screen():
         .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 1.5rem !important; }
     }
 </style>
-        
-        <div class="login-header-container">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="netflix-logo-center">
-            <h1>Good to see you again</h1>
-        </div>
+
+<div class="login-header-container">
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="netflix-logo-center">
+<h1>Good to see you again</h1>
+</div>
     """, unsafe_allow_html=True)
 
     _, col_center, _ = st.columns([1, 1.8, 1])
