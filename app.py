@@ -22,98 +22,57 @@ st.set_page_config(
 
 # ── Custom CSS Injection ──
 
-if "theme" not in st.session_state:
-    st.session_state.theme = "dark"
-
-THEMES = {
-    "dark": {
-        "bg": "#141414", "card": "#000000", "card_hover": "#1A1A1A",
-        "text": "#FFFFFF", "text_muted": "#B3B3B3", "border": "#333333",
-        "accent": "#E50914", "shadow": "rgba(16, 24, 40, 0.2)",
-        "glass": "rgba(0, 0, 0, 0.75)", "input_bg": "rgba(255, 255, 255, 0.05)",
-        "input_border": "rgba(255, 255, 255, 0.15)", "btn_hover": "rgba(255, 255, 255, 0.1)",
-        "overlay": "rgba(20, 20, 20, 0.6)", "tooltip": "#141414", "grid": "#333333",
-        "bar_default": "#344054", "plotly_bg": "rgba(0,0,0,0)"
-    }
-}
-
-def get_custom_css(theme):
-    t = THEMES[theme]
-    css = """
+css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: VAR_TEXT; }
-    .stApp { background-color: VAR_BG !important; }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text-color); }
+    .stApp { background-color: var(--background-color) !important; }
     #MainMenu { visibility: hidden; } footer { visibility: hidden; }
 
-    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: VAR_BG; border-bottom: 1px solid VAR_BORDER; z-index: 999999; display: flex; align-items: center; padding: 0 32px; }
-    .top-bar-brand { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: VAR_ACCENT; letter-spacing: 0.5px; text-transform: uppercase; }
+    .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: var(--background-color); border-bottom: 1px solid var(--border-color, rgba(128,128,128,0.2)); z-index: 999999; display: flex; align-items: center; padding: 0 32px; }
+    .top-bar-brand { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: #E50914; letter-spacing: 0.5px; text-transform: uppercase; }
     .top-bar-spacer { flex-grow: 1; }
-    .top-bar-stats { margin-left: 32px; display: flex; gap: 16px; font-size: 0.85rem; color: VAR_TEXT_MUTED; }
-    .top-bar-stats strong { color: VAR_TEXT; font-weight: 600; }
-    .top-bar-user { font-size: 0.85rem; color: VAR_TEXT_MUTED; font-weight: 500; display: flex; gap: 8px; align-items: center; }
+    .top-bar-stats { margin-left: 32px; display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-color); opacity: 0.7; }
+    .top-bar-stats strong { color: var(--text-color); font-weight: 600; opacity: 1; }
+    .top-bar-user { font-size: 0.85rem; color: var(--text-color); opacity: 0.7; font-weight: 500; display: flex; gap: 8px; align-items: center; }
     
     .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 2.5rem !important; margin-top: 0rem !important; }
     .stApp > header { background: transparent !important; box-shadow: none !important; z-index: 9999999 !important; }
 
-    .metric-card { background: VAR_CARD; border: 1px solid VAR_BORDER; border-radius: 8px; padding: 24px; text-align: left; transition: all 0.2s ease; box-shadow: 0 1px 2px VAR_SHADOW; height: 100%; }
-    .metric-card:hover { border-color: VAR_CARD_HOVER; box-shadow: 0 4px 6px -1px VAR_SHADOW; }
-    .metric-value { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: VAR_TEXT; line-height: 1.2; margin-bottom: 4px; }
-    .metric-label { font-size: 0.85rem; font-weight: 500; color: VAR_TEXT_MUTED; }
-    .metric-subtext { font-size: 0.75rem; color: VAR_TEXT_MUTED; margin-top: 8px; font-weight: 400; }
+    .metric-card { background: var(--secondary-background-color); border: 1px solid var(--border-color, rgba(128,128,128,0.2)); border-radius: 8px; padding: 24px; text-align: left; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); height: 100%; }
+    .metric-card:hover { border-color: #E50914; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .metric-value { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: var(--text-color); line-height: 1.2; margin-bottom: 4px; }
+    .metric-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); opacity: 0.7; }
+    .metric-subtext { font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-top: 8px; font-weight: 400; }
 
-    .section-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: VAR_TEXT; padding-bottom: 12px; margin-top: 32px; margin-bottom: 24px; border-bottom: 1px solid VAR_BORDER; }
+    .section-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--text-color); padding-bottom: 12px; margin-top: 32px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
 
     [role="tablist"], [data-testid="stTabList"] { gap: 24px; }
-    [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: VAR_TEXT_MUTED !important; }
-    [data-testid="stTab"] *, [data-baseweb="tab"] *, button[role="tab"] * { color: VAR_TEXT_MUTED !important; }
-    [data-testid="stTab"][aria-selected="true"], [data-baseweb="tab"][aria-selected="true"], button[role="tab"][aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid VAR_ACCENT !important; color: VAR_ACCENT !important; }
-    [data-testid="stTab"][aria-selected="true"] *, [data-baseweb="tab"][aria-selected="true"] *, button[role="tab"][aria-selected="true"] * { color: VAR_ACCENT !important; font-weight: 600 !important; }
+    [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: var(--text-color) !important; opacity: 0.7; }
+    [data-testid="stTab"] *, [data-baseweb="tab"] *, button[role="tab"] * { color: inherit !important; }
+    [data-testid="stTab"][aria-selected="true"], [data-baseweb="tab"][aria-selected="true"], button[role="tab"][aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid #E50914 !important; color: #E50914 !important; opacity: 1; }
+    [data-testid="stTab"][aria-selected="true"] *, [data-baseweb="tab"][aria-selected="true"] *, button[role="tab"][aria-selected="true"] * { color: inherit !important; font-weight: 600 !important; }
 
-    [data-testid="stSidebar"] { top: 56px !important; height: calc(100vh - 56px) !important; background: VAR_CARD !important; border-right: 1px solid VAR_BORDER; }
-    [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { top: 72px !important; left: 16px !important; z-index: 9999999 !important; background-color: VAR_BG !important; border: 1px solid VAR_BORDER !important; border-radius: 6px !important; box-shadow: 0 4px 6px VAR_SHADOW !important; }
-    [data-testid="stSidebar"] .stButton > button { width: 100%; background-color: VAR_BG; border: 1px solid VAR_BORDER; color: VAR_TEXT; font-weight: 500; box-shadow: 0 1px 2px VAR_SHADOW; }
-    [data-testid="stSidebar"] .stButton > button:hover { background-color: VAR_CARD_HOVER; border-color: VAR_BORDER; color: VAR_TEXT; }
+    [data-testid="stSidebar"] { top: 56px !important; height: calc(100vh - 56px) !important; background: var(--secondary-background-color) !important; border-right: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
+    [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { top: 72px !important; left: 16px !important; z-index: 9999999 !important; background-color: var(--background-color) !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; border-radius: 6px !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
+    [data-testid="stSidebar"] .stButton > button { width: 100%; background-color: var(--background-color); border: 1px solid var(--border-color, rgba(128,128,128,0.2)); color: var(--text-color); font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    [data-testid="stSidebar"] .stButton > button:hover { background-color: var(--secondary-background-color); border-color: #E50914; color: var(--text-color); }
 
-    [data-testid="stStatusWidget"] { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: VAR_OVERLAY !important; z-index: 9999999 !important; display: flex !important; align-items: center !important; justify-content: center !important; backdrop-filter: blur(2px) !important; }
-    [data-testid="stStatusWidget"] > div { background-color: VAR_CARD !important; padding: 20px 40px !important; border-radius: 12px !important; border: 1px solid VAR_BORDER !important; box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important; transform: scale(1.5); }
+    [data-testid="stStatusWidget"] { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(128,128,128,0.2) !important; z-index: 9999999 !important; display: flex !important; align-items: center !important; justify-content: center !important; backdrop-filter: blur(2px) !important; }
+    [data-testid="stStatusWidget"] > div { background-color: var(--secondary-background-color) !important; padding: 20px 40px !important; border-radius: 12px !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important; transform: scale(1.5); }
 
-    .stDataFrame { border-radius: 8px; overflow: hidden; border: 1px solid VAR_BORDER; }
+    .stDataFrame { border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
 
-    .stDownloadButton > button { background: VAR_BG !important; color: VAR_TEXT !important; border: 1px solid VAR_BORDER !important; border-radius: 6px !important; padding: 10px 20px !important; font-weight: 500 !important; transition: all 0.2s ease !important; font-size: 0.85rem !important; box-shadow: 0 1px 2px VAR_SHADOW !important; }
-    .stDownloadButton > button:hover { background: VAR_CARD !important; border-color: VAR_CARD_HOVER !important; color: VAR_TEXT !important; }
+    .stDownloadButton > button { background: var(--background-color) !important; color: var(--text-color) !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; border-radius: 6px !important; padding: 10px 20px !important; font-weight: 500 !important; transition: all 0.2s ease !important; font-size: 0.85rem !important; box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important; }
+    .stDownloadButton > button:hover { background: var(--secondary-background-color) !important; border-color: #E50914 !important; color: var(--text-color) !important; }
 
     .main-title-container { margin-bottom: 8px; }
-    .main-title { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: VAR_TEXT; line-height: 1.2; }
-    .main-description { color: VAR_TEXT_MUTED; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
-
-    [data-testid="stForm"] { background-color: VAR_GLASS !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border: 1px solid VAR_INPUT_BORDER !important; border-radius: 20px !important; padding: 48px !important; max-width: 450px !important; margin: 0 auto !important; box-shadow: 0 24px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1) !important; position: relative; z-index: 10; min-height: auto !important; }
-    [data-testid="stForm"] label { display: block !important; font-size: 0.9rem !important; color: VAR_TEXT !important; font-weight: 500 !important; margin-bottom: 8px !important; text-transform: none !important; }
-    [data-testid="stForm"] input { background-color: VAR_INPUT_BG !important; color: VAR_TEXT !important; border: 1px solid VAR_INPUT_BORDER !important; border-radius: 8px !important; padding: 14px 16px !important; font-size: 1rem !important; margin-bottom: 20px !important; transition: all 0.3s ease !important; }
-    [data-testid="stForm"] input:hover { border-color: VAR_BORDER !important; }
-    [data-testid="stForm"] input:focus { background-color: VAR_INPUT_BG !important; border-color: VAR_ACCENT !important; box-shadow: 0 0 0 1px VAR_ACCENT !important; }
-    
-    [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"], [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):not([data-testid="baseButton-tertiaryFormSubmit"]) { background-color: VAR_ACCENT !important; color: white !important; border-radius: 50px !important; font-weight: 700 !important; padding: 12px 14px !important; margin-top: 16px !important; width: 100% !important; border: none !important; font-size: 1.05rem !important; transition: all 0.3s ease !important; box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important; }
-    [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"]:hover, [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):hover { background-color: #C11119 !important; transform: translateY(-2px) !important; box-shadow: 0 6px 12px rgba(229, 9, 20, 0.4) !important; }
-
-    [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"] { background-color: VAR_INPUT_BG !important; color: VAR_TEXT !important; border-radius: 50px !important; font-weight: 600 !important; padding: 12px 14px !important; margin-top: 16px !important; width: 100% !important; border: 1px solid VAR_INPUT_BORDER !important; font-size: 1.05rem !important; transition: all 0.3s ease !important; }
-    [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"]:hover { background-color: VAR_BTN_HOVER !important; border-color: VAR_BORDER !important; transform: translateY(-2px) !important; }
-    
-    [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"] { background: transparent !important; color: VAR_TEXT_MUTED !important; border: none !important; box-shadow: none !important; font-size: 0.9rem !important; font-weight: 500 !important; padding: 0 !important; margin-top: 16px !important; }
-    [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"]:hover { color: VAR_TEXT !important; text-decoration: underline !important; background: transparent !important; transform: none !important; }
-    
-    button[data-testid="baseButton-tertiary"] { background: transparent !important; color: VAR_TEXT_MUTED !important; border: none !important; box-shadow: none !important; }
-    button[data-testid="baseButton-tertiary"] * { color: VAR_TEXT_MUTED !important; }
-    button[data-testid="baseButton-tertiary"] strong { color: VAR_TEXT !important; font-weight: 600 !important; }
-    button[data-testid="baseButton-tertiary"]:hover * { color: VAR_TEXT !important; }
+    .main-title { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: var(--text-color); line-height: 1.2; }
+    .main-description { color: var(--text-color); opacity: 0.7; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
 </style>
 """
-    for k, v in t.items():
-        css = css.replace(f"VAR_{k.upper()}", v)
-    return css
-
-st.markdown(get_custom_css(st.session_state.theme), unsafe_allow_html=True)
+st.markdown(css, unsafe_allow_html=True)
 
 
 
@@ -559,7 +518,7 @@ def chart_year_ingestion(df: pd.DataFrame):
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
         line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color=THEMES[st.session_state.theme]["text"]), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
     ))
-    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"], zeroline=False), yaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"], zeroline=False), height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
@@ -648,9 +607,9 @@ def render_recent_feed(df: pd.DataFrame):
         desc = str(row["description"])[:140] + "..." if pd.notna(row["description"]) else ""
         html += f"""
 <div style="border-left: 3px solid #E50914; padding-left: 16px;">
-<div style="font-size: 0.75rem; color: {THEMES[st.session_state.theme]['text_muted']}; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
+<div style="font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
 <div style="font-size: 1.05rem; font-weight: 600; color: {THEMES[st.session_state.theme]['text']}; margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:{THEMES[st.session_state.theme]['card']}; border:1px solid {THEMES[st.session_state.theme]['border']}; padding:2px 6px; border-radius:4px; margin-left:8px; color:{THEMES[st.session_state.theme]['text_muted']}; font-weight: 500;">{row['rating']}</span></div>
-<div style="font-size: 0.85rem; color: {THEMES[st.session_state.theme]['text_muted']}; line-height: 1.5;">{desc}</div>
+<div style="font-size: 0.85rem; color: var(--text-color); opacity: 0.7; line-height: 1.5;">{desc}</div>
 </div>
 """
     html += '</div>'
@@ -752,7 +711,7 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
             if st.button("⬅️ Previous", disabled=st.session_state.popup_page == 0, use_container_width=True):
                 st.session_state.popup_page -= 1
         with col2:
-            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: {THEMES[st.session_state.theme]['text_muted']};'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center; padding-top: 8px; color: var(--text-color); opacity: 0.7;'>Page {st.session_state.popup_page + 1} of {total_pages}</div>", unsafe_allow_html=True)
         with col3:
             if st.button("Next ➡️", disabled=st.session_state.popup_page >= total_pages - 1, use_container_width=True):
                 st.session_state.popup_page += 1
@@ -864,7 +823,7 @@ def main():
     st.markdown(
         f"""
         <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid {THEMES[st.session_state.theme]['border']};">
-            <span style="color: {THEMES[st.session_state.theme]['text_muted']}; font-size: 0.8rem;">
+            <span style="color: var(--text-color); opacity: 0.7; font-size: 0.8rem;">
                 Netflix Content Insights Engine &nbsp;|&nbsp; Enterprise Edition
             </span>
         </div>
