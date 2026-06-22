@@ -28,7 +28,7 @@ css = """
 
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text-color); }
     .stApp { background-color: var(--background-color) !important; }
-    #MainMenu { visibility: hidden; } footer { visibility: hidden; }
+    footer { visibility: hidden; }
 
     .top-bar { position: fixed; top: 0; left: 0; right: 0; height: 56px; background-color: var(--background-color); border-bottom: 1px solid var(--border-color, rgba(128,128,128,0.2)); z-index: 999999; display: flex; align-items: center; padding: 0 32px; }
     .top-bar-brand { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: #E50914; letter-spacing: 0.5px; text-transform: uppercase; }
