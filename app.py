@@ -73,25 +73,6 @@ css = """
         .metric-card { padding: 16px !important; }
         [role="tablist"], [data-testid="stTabList"] { gap: 8px !important; flex-wrap: wrap !important; }
         [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: auto !important; padding-top: 8px !important; padding-bottom: 8px !important; font-size: 0.9rem !important; }
-        
-        [data-testid="stHorizontalBlock"]:first-of-type {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 4px !important;
-            align-items: center !important;
-        }
-        [data-testid="stHorizontalBlock"]:first-of-type > div {
-            flex: 1 1 30% !important;
-            width: 30% !important;
-            min-width: 100px !important;
-        }
-        [data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
-            flex: 1 1 100% !important;
-            width: 100% !important;
-            text-align: center !important;
-            margin-top: 8px !important;
-        }
         .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 4rem !important; }
 
     }
@@ -402,25 +383,6 @@ def render_login_screen():
         .metric-card { padding: 16px !important; }
         [role="tablist"], [data-testid="stTabList"] { gap: 8px !important; flex-wrap: wrap !important; }
         [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: auto !important; padding-top: 8px !important; padding-bottom: 8px !important; font-size: 0.9rem !important; }
-        
-        [data-testid="stHorizontalBlock"]:first-of-type {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 4px !important;
-            align-items: center !important;
-        }
-        [data-testid="stHorizontalBlock"]:first-of-type > div {
-            flex: 1 1 30% !important;
-            width: 30% !important;
-            min-width: 100px !important;
-        }
-        [data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
-            flex: 1 1 100% !important;
-            width: 100% !important;
-            text-align: center !important;
-            margin-top: 8px !important;
-        }
         .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 4rem !important; }
 
     }
@@ -768,7 +730,33 @@ def render_top_bar(df=None):
     
     st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" height="24" style="margin-bottom: 12px; margin-top: 12px;">""", unsafe_allow_html=True)
     
+    
+    st.markdown("""
+    <style>
+    @media (max-width: 768px) {
+        [data-testid="stHorizontalBlock"]:first-of-type {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            gap: 4px !important;
+            align-items: center !important;
+        }
+        [data-testid="stHorizontalBlock"]:first-of-type > div {
+            flex: 1 1 30% !important;
+            width: 30% !important;
+            min-width: 100px !important;
+        }
+        [data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
+            flex: 1 1 100% !important;
+            width: 100% !important;
+            text-align: center !important;
+            margin-top: 8px !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([2, 2, 2, 5])
+
     with c1:
         if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
