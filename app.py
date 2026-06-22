@@ -24,7 +24,7 @@ st.set_page_config(
 
 css = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
 
     html, body { overflow-x: hidden !important; max-width: 100vw !important; }
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text-color); }
@@ -37,11 +37,11 @@ css = """
 
     .metric-card { background: var(--secondary-background-color); border: 1px solid var(--border-color, rgba(128,128,128,0.2)); border-radius: 8px; padding: 24px; text-align: left; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); height: 100%; }
     .metric-card:hover { border-color: #E50914; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-    .metric-value { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: var(--text-color); line-height: 1.2; margin-bottom: 4px; }
+    .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 3.2rem; font-weight: normal; color: var(--text-color); line-height: 1; letter-spacing: 1px; margin-bottom: 0px; text-shadow: 0px 2px 4px rgba(0,0,0,0.2); }
     .metric-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); opacity: 0.7; }
     .metric-subtext { font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-top: 8px; font-weight: 400; }
 
-    .section-header { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--text-color); padding-bottom: 12px; margin-top: 32px; margin-bottom: 24px; border-bottom: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
+    .section-header { font-family: 'Inter', sans-serif; font-size: 1.3rem; font-weight: 600; color: var(--text-color); padding-bottom: 12px; margin-top: 56px; margin-bottom: 32px; border-bottom: 1px solid var(--border-color, rgba(128,128,128,0.2)); letter-spacing: 0.5px; }
 
     [role="tablist"], [data-testid="stTabList"] { gap: 24px; }
     [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: var(--text-color) !important; opacity: 0.7; }
@@ -63,7 +63,7 @@ css = """
     .stDownloadButton > button:hover { background: var(--secondary-background-color) !important; border-color: #E50914 !important; color: var(--text-color) !important; }
 
     .main-title-container { margin-bottom: 8px; }
-    .main-title { font-family: 'Inter', sans-serif; font-size: 2.2rem; font-weight: 600; color: var(--text-color); line-height: 1.2; }
+    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: #E50914; line-height: 1; text-transform: uppercase; text-shadow: 0px 2px 8px rgba(229,9,20,0.4); }
     .main-description { color: var(--text-color); opacity: 0.7; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
 
     @media (max-width: 768px) {
@@ -879,25 +879,27 @@ def main():
     tab1, tab2, tab3 = st.tabs(["Overview", "Content Deep Dive", "Data Explorer"])
 
     with tab1:
-        st.markdown('<div class="section-header">High-Level Overview</div>', unsafe_allow_html=True)
+        st.markdown('<div class="section-header" style="margin-top: 24px;">Content Release Trend (10 Years)</div>', unsafe_allow_html=True)
+        ev_hero = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+        process_selection(ev_hero, "tab1_year", "year_added", extract_key="x")
+
+        st.markdown('<div class="section-header">Distribution & Genres</div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2, gap="large")
         with col1:
-            ev1 = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev1, "tab1_split", "type", extract_key="x")
+            ev_split = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_split, "tab1_split", "type", extract_key="x")
         with col2:
-            ev2 = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev2, "tab1_year", "year_added", extract_key="x")
+            ev_genres = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_genres, "tab1_genres", "genres", extract_key="y", match_type="contains")
 
+        st.markdown('<div class="section-header">Ratings & Directors</div>', unsafe_allow_html=True)
         col3, col4 = st.columns(2, gap="large")
         with col3:
-            ev3 = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev3, "tab1_genres", "genres", extract_key="y", match_type="contains")
+            ev_rating = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_rating, "tab1_ratings", "vote_average", is_range=True, bin_size=0.5)
         with col4:
-            ev4 = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev4, "tab1_ratings", "vote_average", is_range=True, bin_size=0.5)
-            
-        ev5 = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        process_selection(ev5, "tab1_directors", "director", extract_key="y", match_type="contains")
+            ev_directors = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_directors, "tab1_directors", "director", extract_key="y", match_type="contains")
 
     with tab2:
         st.markdown('<div class="section-header">Granular Analysis</div>', unsafe_allow_html=True)
