@@ -96,7 +96,7 @@ def load_and_preprocess_data():
 
 @st.dialog("Create a New Account")
 def show_signup_dialog():
-    st.markdown(f"<p style='color:{THEMES[st.session_state.theme]['text_muted']}; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:gray; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
     new_user = st.text_input("New Email", placeholder="e.g. elon@tesla.com")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Register", type="primary", use_container_width=True):
@@ -108,7 +108,7 @@ def show_signup_dialog():
 
 @st.dialog("Reset Password")
 def show_forgot_dialog():
-    st.markdown(f"<p style='color:{THEMES[st.session_state.theme]['text_muted']}; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color:gray; font-size:0.9rem;'>Reset your password for a demo account.</p>", unsafe_allow_html=True)
     reset_email = st.text_input("Account Email")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Reset Password", type="primary", use_container_width=True):
@@ -402,10 +402,10 @@ def render_sidebar(df: pd.DataFrame):
 
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color=THEMES[st.session_state.theme]["text"]), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
+    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:{THEMES[st.session_state.theme]['text_muted']};font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
+        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:var(--text-color);font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="rgba(0,0,0,0)",
@@ -421,8 +421,8 @@ def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:{THEMES[st.session_state.theme]['text_muted']};font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
+        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:var(--text-color);font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="rgba(0,0,0,0)",
@@ -436,10 +436,10 @@ def chart_kpi_bar(value, title, x_series, y_series):
 
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color=THEMES[st.session_state.theme]["text"], size=14), marker_color=["#E50914", THEMES[st.session_state.theme]["border"]], marker_line_width=0))
+    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="gray", size=14), marker_color=["#E50914", "gray"], marker_line_width=0))
     fig.update_layout(
-        title=dict(text=f"<span style='font-size:14px;color:{THEMES[st.session_state.theme]['text_muted']};font-family:Inter'>{title}</span>", x=0.10, y=0.85),
-        annotations=[dict(text=f"<b style='font-size:28px;color:{THEMES[st.session_state.theme]['text']};font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
+        title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.85),
+        annotations=[dict(text=f"<b style='font-size:28px;color:var(--text-color);font-family:Inter'>{value}</b>", xref="paper", yref="paper", x=0.10, y=1.3, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=80, b=10),
         height=160,
         paper_bgcolor="rgba(0,0,0,0)",
@@ -489,16 +489,6 @@ def render_metric_cards(df: pd.DataFrame):
 # ══════════════════════════════════════════════════════════════════
 
 
-def get_plotly_layout(theme):
-    t = THEMES[theme]
-    return dict(
-        paper_bgcolor=t["plotly_bg"],
-        plot_bgcolor=t["plotly_bg"],
-        font=dict(family="Inter, sans-serif", color=t["text_muted"], size=12),
-        margin=dict(l=20, r=20, t=50, b=20),
-        hoverlabel=dict(bgcolor=t["card"], font_size=12, font_family="Inter, sans-serif", bordercolor=t["border"]),
-    )
-
 
 def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
@@ -506,9 +496,9 @@ def chart_content_split(df: pd.DataFrame):
     fig = go.Figure(go.Bar(
         x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"], textposition='auto',
-        marker=dict(color=["#E50914", "#F04438"], line=dict(color=THEMES[st.session_state.theme]["bg"], width=2)),
+        marker=dict(color=["#E50914", "#F04438"], line=dict(color="rgba(0,0,0,0)", width=2)),
     ))
-    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), showlegend=False, height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
     return fig
 
 def chart_year_ingestion(df: pd.DataFrame):
@@ -516,9 +506,9 @@ def chart_year_ingestion(df: pd.DataFrame):
     yearly.columns = ["Year", "Titles Added"]
     fig = go.Figure(go.Scatter(
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
-        line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color=THEMES[st.session_state.theme]["text"]), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
+        line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
     ))
-    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
@@ -527,17 +517,17 @@ def chart_top_genres(df: pd.DataFrame):
     genre_counts.columns = ["Genre", "Titles"]
     fig = go.Figure(go.Bar(
         x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
-        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color=THEMES[st.session_state.theme]["bg"], width=0.5)),
+        marker=dict(color="#F04438", line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=350, **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_rating_distribution(df: pd.DataFrame):
     rating_counts = df["rating"].dropna().value_counts().head(10).reset_index()
     rating_counts.columns = ["Rating", "Count"]
     fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=["#E50914"])
-    fig.update_traces(marker_line_color=THEMES[st.session_state.theme]["bg"], marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Maturity Rating Distribution", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor=THEMES[st.session_state.theme]["grid"]), bargap=0.2, height=350, **get_plotly_layout(st.session_state.theme))
+    fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
+    fig.update_layout(title=dict(text="Maturity Rating Distribution", font=dict(size=14, color="gray")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
     return fig
 
 def chart_top_directors(df: pd.DataFrame):
@@ -546,16 +536,16 @@ def chart_top_directors(df: pd.DataFrame):
     director_counts.columns = ["Director", "Titles"]
     fig = go.Figure(go.Bar(
         x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
-        marker=dict(color=THEMES[st.session_state.theme]["bar_default"], line=dict(color=THEMES[st.session_state.theme]["bg"], width=0.5)),
+        marker=dict(color="#F04438", line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=350, **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_runtime_distribution(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna())]
     fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"])
-    fig.update_traces(marker_line_color=THEMES[st.session_state.theme]["bg"], marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(title="Duration (mins)", gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title="Frequency", gridcolor=THEMES[st.session_state.theme]["grid"]), bargap=0.06, height=350, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
+    fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
+    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="gray")), xaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Frequency", gridcolor="rgba(128,128,128,0.2)"), bargap=0.06, height=350, clickmode="event+select")
     return fig
 
 # --- New Deep Dive Visualizations ---
@@ -564,11 +554,11 @@ def chart_top_countries_map(df: pd.DataFrame):
     country_counts.columns = ["Country", "Titles"]
     fig = px.choropleth(
         country_counts, locations="Country", locationmode="country names", color="Titles",
-        color_continuous_scale=[THEMES[st.session_state.theme]["bg"], "#F04438", "#7A271A"], labels={'Titles': 'Number of Titles'}
+        color_continuous_scale=["rgba(0,0,0,0)", "#F04438", "#7A271A"], labels={'Titles': 'Number of Titles'}
     )
     fig.update_layout(
-        title=dict(text="Global Production Hubs", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])),
-        geo=dict(showframe=False, showcoastlines=True, coastlinecolor=THEMES[st.session_state.theme]["border"], projection_type='equirectangular', bgcolor='rgba(0,0,0,0)'),
+        title=dict(text="Global Production Hubs", font=dict(size=14, color="gray")),
+        geo=dict(showframe=False, showcoastlines=True, coastlinecolor="gray", projection_type='equirectangular', bgcolor='rgba(0,0,0,0)'),
         height=400, margin=dict(l=0, r=0, t=40, b=0), paper_bgcolor="rgba(0,0,0,0)", clickmode="event+select"
     )
     return fig
@@ -579,9 +569,9 @@ def chart_top_cast(df: pd.DataFrame):
     cast_counts.columns = ["Actor", "Titles"]
     fig = go.Figure(go.Bar(
         x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
-        marker=dict(color="#E50914", line=dict(color=THEMES[st.session_state.theme]["bg"], width=0.5))
+        marker=dict(color="#E50914", line=dict(color="rgba(0,0,0,0)", width=0.5))
     ))
-    fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title=""), height=400, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
     return fig
 
 def chart_duration_scatter(df: pd.DataFrame):
@@ -590,7 +580,7 @@ def chart_duration_scatter(df: pd.DataFrame):
     
     fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"])
     fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color="#E50914"), line=dict(color="#E50914", width=3), name="Average Runtime"))
-    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color=THEMES[st.session_state.theme]["text"])), xaxis=dict(title="Release Year", gridcolor=THEMES[st.session_state.theme]["grid"]), yaxis=dict(title="Duration (mins)", gridcolor=THEMES[st.session_state.theme]["grid"]), height=400, clickmode="event+select", **get_plotly_layout(st.session_state.theme))
+    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="gray")), xaxis=dict(title="Release Year", gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), height=400, clickmode="event+select")
     return fig
 
 
@@ -608,7 +598,7 @@ def render_recent_feed(df: pd.DataFrame):
         html += f"""
 <div style="border-left: 3px solid #E50914; padding-left: 16px;">
 <div style="font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
-<div style="font-size: 1.05rem; font-weight: 600; color: {THEMES[st.session_state.theme]['text']}; margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:{THEMES[st.session_state.theme]['card']}; border:1px solid {THEMES[st.session_state.theme]['border']}; padding:2px 6px; border-radius:4px; margin-left:8px; color:{THEMES[st.session_state.theme]['text_muted']}; font-weight: 500;">{row['rating']}</span></div>
+<div style="font-size: 1.05rem; font-weight: 600; color: var(--text-color); margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:var(--secondary-background-color); border:1px solid gray; padding:2px 6px; border-radius:4px; margin-left:8px; color:gray; font-weight: 500;">{row['rating']}</span></div>
 <div style="font-size: 0.85rem; color: var(--text-color); opacity: 0.7; line-height: 1.5;">{desc}</div>
 </div>
 """
@@ -822,7 +812,7 @@ def main():
 
     st.markdown(
         f"""
-        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid {THEMES[st.session_state.theme]['border']};">
+        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid gray;">
             <span style="color: var(--text-color); opacity: 0.7; font-size: 0.8rem;">
                 Netflix Content Insights Engine &nbsp;|&nbsp; Enterprise Edition
             </span>
