@@ -9,6 +9,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import datetime
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 # ══════════════════════════════════════════════════════════════════
 #  GLOBAL CONFIGURATION & PAGE SETUP
@@ -161,7 +163,7 @@ LANG = {
         "main_desc": "Enterprise analytics dashboard. Adjust filters in the sidebar to explore streaming content trends.",
         "tab_overview": "Overview",
         "tab_deep_dive": "Content Deep Dive",
-        "tab_data": "Data Explorer",
+        "tab_data": "Data Explorer", "tab_ai": "🤖 AI Recommender", "ai_desc": "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!", "ai_search_prompt": "🔍 Search query...", "ai_search_placeholder": "e.g., A spooky detective movie with a twist ending", "ai_no_match": "No matches found. Try describing it differently!",
         "metric_total": "Total Content",
         "metric_movies": "Movies",
         "metric_shows": "TV Shows",
@@ -200,7 +202,7 @@ LANG = {
         "main_desc": "एंटरप्राइज़ एनालिटिक्स डैशबोर्ड। स्ट्रीमिंग सामग्री रुझानों का पता लगाने के लिए साइडबार में फ़िल्टर समायोजित करें।",
         "tab_overview": "अवलोकन",
         "tab_deep_dive": "सामग्री विश्लेषण",
-        "tab_data": "डेटा एक्सप्लोरर",
+        "tab_data": "डेटा एक्सप्लोरर", "tab_ai": "🤖 एआई अनुशंसाकर्ता", "ai_desc": "प्राकृतिक भाषा में बताएं कि आप क्या देखना चाहते हैं, और हमारा एआई प्लॉट विवरण के आधार पर सर्वोत्तम मेल खोजेगा!", "ai_search_prompt": "🔍 खोज क्वेरी...", "ai_search_placeholder": "उदा., एक ट्विस्ट एंडिंग वाली डरावनी जासूसी फिल्म", "ai_no_match": "कोई मेल नहीं मिला. इसे अलग तरह से वर्णित करने का प्रयास करें!",
         "metric_total": "कुल सामग्री",
         "metric_movies": "फिल्में",
         "metric_shows": "टीवी शो",
@@ -239,7 +241,7 @@ LANG = {
         "main_desc": "એન્ટરપ્રાઇઝ એનાલિટિક્સ ડેશબોર્ડ. સ્ટ્રીમિંગ સામગ્રી વલણોનું અન્વેષણ કરવા માટે સાઇડબારમાં ફિલ્ટર્સને સમાયોજિત કરો.",
         "tab_overview": "ઝાંખી",
         "tab_deep_dive": "સામગ્રી વિશ્લેષણ",
-        "tab_data": "ડેટા એક્સપ્લોરર",
+        "tab_data": "ડેટા એક્સપ્લોરર", "tab_ai": "🤖 એઆઈ ભલામણકર્તા", "ai_desc": "કુદરતી ભાષામાં તમે શું જોવા માંગો છો તેનું વર્ણન કરો, અને અમારું AI પ્લોટ વર્ણનોના આધારે શ્રેષ્ઠ મેળ શોધશે!", "ai_search_prompt": "🔍 શોધ ક્વેરી...", "ai_search_placeholder": "દા.ત., ટ્વિસ્ટ અંત સાથેની ડરામણી ડિટેક્ટીવ મૂવી", "ai_no_match": "કોઈ મેળ મળ્યો નથી. તેને અલગ રીતે વર્ણવવાનો પ્રયાસ કરો!",
         "metric_total": "કુલ સામગ્રી",
         "metric_movies": "ફિલ્મો",
         "metric_shows": "ટીવી શો",
@@ -1335,6 +1337,30 @@ def process_selection(event, chart_key, filter_col, extract_key="x", match_type=
     else:
         st.session_state.chart_selections[chart_key] = None
 
+
+@st.cache_resource
+def build_recommender_engine(df):
+    vectorizer = TfidfVectorizer(stop_words='english')
+    descriptions = df['description'].fillna('')
+    tfidf_matrix = vectorizer.fit_transform(descriptions)
+    return vectorizer, tfidf_matrix
+
+def get_recommendations(query, vectorizer, tfidf_matrix, df, top_n=5):
+    query_vec = vectorizer.transform([query])
+    sim_scores = cosine_similarity(query_vec, tfidf_matrix).flatten()
+    top_indices = sim_scores.argsort()[-top_n:][::-1]
+    results = []
+    for idx in top_indices:
+        if sim_scores[idx] > 0:
+            results.append({
+                "title": df.iloc[idx]['title'],
+                "description": df.iloc[idx]['description'],
+                "score": sim_scores[idx] * 100,
+                "type": df.iloc[idx]['type'],
+                "genres": df.iloc[idx]['genres']
+            })
+    return results
+
 def main():
     if "demo_credentials" not in st.session_state:
         st.session_state.demo_credentials = {"admin": "admin123"}
@@ -1368,7 +1394,7 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # --- TABS IMPLEMENTATION ---
-    tab1, tab2, tab3 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"]])
+    tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], T.get("tab_ai", "🤖 AI Recommender")])
 
     with tab1:
         st.markdown(f'<div class="section-header" style="margin-top: 24px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
@@ -1417,6 +1443,29 @@ def main():
         with col_ex2:
             st.markdown('<div class="section-header">Live Ingestion Feed</div>', unsafe_allow_html=True)
             render_recent_feed(filtered_df)
+
+    with tab4:
+        st.markdown(f'<div class="section-header">{T.get("tab_ai", "🤖 AI Recommender")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<p style="opacity:0.8;">{T.get("ai_desc", "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!")}</p>', unsafe_allow_html=True)
+        
+        search_query = st.text_input(T.get("ai_search_prompt", "🔍 Search query..."), placeholder=T.get("ai_search_placeholder", "e.g., A spooky detective movie with a twist ending"))
+        
+        if search_query:
+            with st.spinner("Analyzing..."):
+                vec, matrix = build_recommender_engine(df)
+                results = get_recommendations(search_query, vec, matrix, df)
+                
+            if results:
+                for r in results:
+                    st.markdown(f'''
+                    <div class="metric-card" style="margin-bottom: 16px;">
+                        <h3 style="margin:0; color:var(--primary-color)">{r['title']} <span style="font-size:0.9rem; opacity:0.6; color:var(--text-color);">({r['score']:.1f}% Match)</span></h3>
+                        <p style="font-size:0.85rem; font-weight:600; opacity:0.7; margin-top:4px;">{r['type']} • {r['genres']}</p>
+                        <p style="margin-top:8px; font-size:1rem;">{r['description']}</p>
+                    </div>
+                    ''', unsafe_allow_html=True)
+            else:
+                st.info(T.get("ai_no_match", "No matches found. Try describing it differently!"))
 
     st.markdown(
         f"""
