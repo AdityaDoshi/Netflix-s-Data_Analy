@@ -731,7 +731,7 @@ def localize_genre(genre, lang):
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color=theme_primary, fillcolor=hex_to_rgba(theme_primary, 0.1), line=dict(width=3)))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), 
+    fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
         annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=120, b=10),
@@ -748,7 +748,7 @@ def chart_kpi_line(value, title, x_series, y_series):
 def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color=theme_primary, opacity=0.8, marker_line_width=0))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), 
+    fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
         annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=120, b=10),
@@ -765,7 +765,7 @@ def chart_kpi_bar(value, title, x_series, y_series):
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="gray", size=14), marker_color=[theme_primary, "gray"], marker_line_width=0))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), 
+    fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
         annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
         margin=dict(l=16, r=16, t=120, b=10),
@@ -822,12 +822,11 @@ def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
     type_counts.columns = ["Type", "Count"]
     type_counts["Type"] = type_counts["Type"].map({"Movie": T["movie"], "TV Show": T["tv_show"]}).fillna(type_counts["Type"])
-    fig = go.Figure(go.Bar(name=T.get("director", "Director"), 
-        x=type_counts["Type"], y=type_counts["Count"],
+    fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"].map(lambda x: localize_number(x, st.session_state.lang)), textposition='auto',
         marker=dict(color=[theme_primary, theme_primary], line=dict(color="rgba(0,0,0,0)", width=2)),
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_distribution"], font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
+    fig.update_layout(xaxis_title=T.get("content_type", "Type"), yaxis_title=T.get("count", "Count"), title=dict(text=T["chart_distribution"], font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
     return fig
 
 def chart_year_ingestion(df: pd.DataFrame):
@@ -837,7 +836,7 @@ def chart_year_ingestion(df: pd.DataFrame):
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
         line=dict(color=theme_primary, width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor=hex_to_rgba(theme_primary, 0.05),
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_yoy"], font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
+    fig.update_layout(xaxis_title=T.get("year_added", "Year Added"), yaxis_title=T.get("count", "Count"), title=dict(text=T["chart_yoy"], font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
@@ -845,11 +844,10 @@ def chart_top_genres(df: pd.DataFrame):
     genre_counts = genres.value_counts().head(10).sort_values(ascending=True).reset_index()
     genre_counts.columns = ["Genre", "Titles"]
     genre_counts["Genre"] = genre_counts["Genre"].map(lambda x: localize_genre(x, st.session_state.lang))
-    fig = go.Figure(go.Bar(name=T.get("director", "Director"), 
-        x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
+    fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_genres"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
+    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("genre", "Genre"), title=dict(text=T["chart_genres"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_rating_distribution(df: pd.DataFrame):
@@ -857,15 +855,14 @@ def chart_rating_distribution(df: pd.DataFrame):
     rating_counts.columns = ["Rating", "Count"]
     fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=[theme_primary], text=rating_counts["Count"].map(lambda x: localize_number(x, st.session_state.lang)), labels={"Rating": T.get("rating", "Rating"), "Count": T.get("count", "Count")})
     fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_rating"], font=dict(size=14, color="gray")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
+    fig.update_layout(title=dict(text=T["chart_rating"], font=dict(size=14, color="gray")), xaxis=dict(title=T.get("rating", "Rating"), gridcolor="rgba(0,0,0,0)", type="category"), yaxis=dict(title=T.get("count", "Count"), gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
     return fig
 
 def chart_top_directors(df: pd.DataFrame):
     directors = df["director"].dropna().str.split(", ").explode()
     director_counts = directors.value_counts().head(10).sort_values(ascending=True).reset_index()
     director_counts.columns = ["Director", "Titles"]
-    fig = go.Figure(go.Bar(name=T.get("director", "Director"), 
-        x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
+    fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
     fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_directors"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
@@ -873,9 +870,9 @@ def chart_top_directors(df: pd.DataFrame):
 
 def chart_runtime_distribution(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna())]
-    fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"])
+    fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"], labels={"duration_minutes": T.get("duration_minutes", "Duration (min)"), "count": T.get("count", "Count")})
     fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="gray")), xaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Frequency", gridcolor="rgba(128,128,128,0.2)"), bargap=0.06, height=350, clickmode="event+select")
+    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="gray")), xaxis=dict(title=T.get("duration_minutes", "Duration (min)"), gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Frequency", gridcolor="rgba(128,128,128,0.2)"), bargap=0.06, height=350, clickmode="event+select")
     return fig
 
 # --- New Deep Dive Visualizations ---
@@ -884,9 +881,9 @@ def chart_top_countries_map(df: pd.DataFrame):
     country_counts.columns = ["Country", "Titles"]
     fig = px.choropleth(
         country_counts, locations="Country", locationmode="country names", color="Titles",
-        color_continuous_scale=["rgba(0,0,0,0)", theme_primary, "#7A271A"], labels={'Titles': T.get('titles', 'Titles')}
+        color_continuous_scale=["rgba(0,0,0,0)", theme_primary, "#7A271A"], labels={"Titles": T.get("titles", "Titles")}
     )
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), 
+    fig.update_layout(
         title=dict(text="Global Production Hubs", font=dict(size=14, color="gray")),
         geo=dict(showframe=False, showcoastlines=True, coastlinecolor="gray", projection_type='equirectangular', bgcolor='rgba(0,0,0,0)'),
         height=400, margin=dict(l=0, r=0, t=40, b=0), paper_bgcolor="rgba(0,0,0,0)", clickmode="event+select"
@@ -897,20 +894,19 @@ def chart_top_cast(df: pd.DataFrame):
     cast_list = df["cast"].dropna().str.split(", ").explode()
     cast_counts = cast_list.value_counts().head(10).sort_values(ascending=True).reset_index()
     cast_counts.columns = ["Actor", "Titles"]
-    fig = go.Figure(go.Bar(name=T.get("director", "Director"), 
-        x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
+    fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5))
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
+    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title="", title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
     return fig
 
 def chart_duration_scatter(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna()) & (df["release_year"] >= 1970)]
     avg_duration = movies.groupby("release_year")["duration_minutes"].mean().reset_index()
     
-    fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"])
+    fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"], labels={"release_year": T.get("release_year", "Release Year"), "duration_minutes": T.get("duration_minutes", "Duration (min)")})
     fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color=theme_primary), line=dict(color=theme_primary, width=3), name="Average Runtime"))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="gray")), xaxis=dict(title="Release Year", gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), height=400, clickmode="event+select")
+    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="gray")), xaxis=dict(title=T.get("release_year", "Release Year"), gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), height=400, clickmode="event+select")
     return fig
 
 
