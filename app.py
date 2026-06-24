@@ -2,11 +2,7 @@ def hex_to_rgba(hex_color, alpha=0.1):
     hex_color = hex_color.lstrip('#')
     return f'rgba({int(hex_color[0:2], 16)}, {int(hex_color[2:4], 16)}, {int(hex_color[4:6], 16)}, {alpha})'
 
-"""
-Netflix Content Insights Engine v1.0
-Professional Enterprise Dashboard
-Built with Streamlit, Plotly, Pandas
-"""
+
 
 import streamlit as st
 import pandas as pd
