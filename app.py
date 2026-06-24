@@ -193,6 +193,18 @@ def render_login_screen():
         [data-testid="stSidebarCollapsedControl"] { display: none !important; }
         [data-testid="stSidebar"] { display: none !important; }
         
+        
+        .dynamic-logo {
+            background-color: var(--primary-color);
+            -webkit-mask: url(https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg) no-repeat center;
+            mask: url(https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg) no-repeat center;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+        }
+        .logo-center { width: 140px; height: 38px; margin: 0 auto 16px auto; }
+        .logo-sidebar { width: 140px; height: 38px; margin-bottom: 16px; }
+        .logo-small { width: 88px; height: 24px; margin: 12px 0; }
+
         /* Netflix-Themed Blobs */
         .blob-1 {
             position: absolute;
@@ -386,7 +398,7 @@ def render_login_screen():
 </style>
 
 <div class="login-header-container">
-<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" class="netflix-logo-center">
+<div class="dynamic-logo logo-center"></div>
 <h1>Good to see you again</h1>
 </div>
     """, unsafe_allow_html=True)
@@ -442,7 +454,7 @@ def check_auth():
 
 def render_sidebar(df: pd.DataFrame):
     with st.sidebar:
-        st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" width="140" style="margin-bottom:16px;">""", unsafe_allow_html=True)
+        st.markdown("""<div class="dynamic-logo logo-sidebar"></div>""", unsafe_allow_html=True)
         st.caption(f"Logged in as {st.session_state.get('user', 'unknown')}")
 
         selected_theme = st.selectbox("🎨 UI Theme", options=list(THEMES.keys()), index=list(THEMES.keys()).index(st.session_state.theme))
@@ -724,7 +736,7 @@ def render_top_bar(df=None):
     user = st.session_state.get('user', '')
     user_status = f"User: {user}" if check_auth() else "Guest"
     
-    st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" height="24" style="margin-bottom: 12px; margin-top: 12px;">""", unsafe_allow_html=True)
+    st.markdown("""<div class="dynamic-logo logo-small"></div>""", unsafe_allow_html=True)
     
     
     st.markdown("""
