@@ -85,8 +85,8 @@ css = """
 
 
 THEMES = {
-    "Netflix Dark (Default)": {"bg_color": "#141414", "sec_bg_color": "#000000", "text_color": "#FFFFFF", "border_color": "rgba(255,255,255,0.1)", "primary_color": theme_primary, "base": "dark"},
-    "Netflix Light": {"bg_color": "#F9FAFB", "sec_bg_color": "#FFFFFF", "text_color": "#111827", "border_color": "rgba(0,0,0,0.1)", "primary_color": theme_primary, "base": "light"},
+    "Netflix Dark (Default)": {"bg_color": "#141414", "sec_bg_color": "#000000", "text_color": "#FFFFFF", "border_color": "rgba(255,255,255,0.1)", "primary_color": "#E50914", "base": "dark"},
+    "Netflix Light": {"bg_color": "#F9FAFB", "sec_bg_color": "#FFFFFF", "text_color": "#111827", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#E50914", "base": "light"},
     "Midnight Blue": {"bg_color": "#0F172A", "sec_bg_color": "#1E293B", "text_color": "#F8FAFC", "border_color": "rgba(255,255,255,0.1)", "primary_color": "#38BDF8", "base": "dark"},
     "Hacker Green": {"bg_color": "#000000", "sec_bg_color": "#0A0A0A", "text_color": "#4ADE80", "border_color": "rgba(74,222,128,0.2)", "primary_color": "#22C55E", "base": "dark"},
     "Sunset Orange": {"bg_color": "#FFFBF0", "sec_bg_color": "#FFFFFF", "text_color": "#431407", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#F97316", "base": "light"}
