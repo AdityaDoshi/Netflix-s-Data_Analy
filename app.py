@@ -151,9 +151,9 @@ css = """
 
 LANG = {
     "English": {
-        "language_selector": "🌐 Language",
+        "language_selector": "Language",
         "logged_in_as": "Logged in as",
-        "ui_theme": "🎨 UI Theme",
+        "ui_theme": "UI Theme",
         "log_out": "Log Out",
         "filter_controls": "Filter Controls",
         "release_year": "Release Year Range",
@@ -190,9 +190,9 @@ LANG = {
         "download_csv": "Download CSV", "count": "Count", "titles": "Titles", "genre": "Genre", "rating": "Rating", "director": "Director", "duration_minutes": "Duration (min)", "year_added": "Year Added", "release_year": "Release Year", "header_trend": "Content Release Trend (10 Years)", "header_dist": "Distribution & Genres", "header_ratings": "Ratings & Directors", "header_granular": "Granular Analysis", "dataset_info": "Dataset Info", "source": "Source", "total_records": "Total Records", "year_span": "Year Span"
     },
     "Hindi": {
-        "language_selector": "🌐 भाषा (Language)",
+        "language_selector": "भाषा (Language)",
         "logged_in_as": "लॉग इन किया है",
-        "ui_theme": "🎨 यूआई थीम",
+        "ui_theme": "यूआई थीम",
         "log_out": "लॉग आउट",
         "filter_controls": "फ़िल्टर नियंत्रण",
         "release_year": "रिलीज़ वर्ष सीमा",
@@ -229,9 +229,9 @@ LANG = {
         "download_csv": "सीएसवी डाउनलोड करें", "count": "गिनती", "titles": "शीर्षक", "genre": "शैलियां", "rating": "रेटिंग", "director": "निर्देशक", "duration_minutes": "अवधि (मिनट)", "year_added": "जोड़ा गया वर्ष", "release_year": "रिलीज़ वर्ष", "header_trend": "सामग्री रिलीज ट्रेंड (10 वर्ष)", "header_dist": "वितरण और शैलियां", "header_ratings": "रेटिंग और निर्देशक", "header_granular": "विस्तृत विश्लेषण", "dataset_info": "डेटासेट जानकारी", "source": "स्रोत", "total_records": "कुल रिकॉर्ड", "year_span": "वर्ष अवधि"
     },
     "Gujarati": {
-        "language_selector": "🌐 ભાષા (Language)",
+        "language_selector": "ભાષા (Language)",
         "logged_in_as": "તરીકે લૉગ ઇન કર્યું છે",
-        "ui_theme": "🎨 યુઆઇ થીમ",
+        "ui_theme": "યુઆઇ થીમ",
         "log_out": "લોગ આઉટ",
         "filter_controls": "ફિલ્ટર નિયંત્રણો",
         "release_year": "પ્રકાશન વર્ષ શ્રેણી",
@@ -268,9 +268,9 @@ LANG = {
         "download_csv": "સીએસવી ડાઉનલોડ કરો", "count": "ગણતરી", "titles": "શીર્ષકો", "genre": "શૈલીઓ", "rating": "રેટિંગ", "director": "દિગ્દર્શક", "duration_minutes": "અવધિ (મિનિટ)", "year_added": "ઉમેરાયેલ વર્ષ", "release_year": "પ્રકાશન વર્ષ", "header_trend": "સામગ્રી પ્રકાશન વલણ (10 વર્ષ)", "header_dist": "વિતરણ અને શૈલીઓ", "header_ratings": "રેટિંગ્સ અને દિગ્દર્શકો", "header_granular": "વિગતવાર વિશ્લેષણ", "dataset_info": "ડેટાસેટ માહિતી", "source": "સ્ત્રોત", "total_records": "કુલ રેકોર્ડ્સ", "year_span": "વર્ષનો સમયગાળો"
     },
     "Spanish": {
-        "language_selector": "🌐 Idioma (Language)",
+        "language_selector": "Idioma (Language)",
         "logged_in_as": "Conectado como",
-        "ui_theme": "🎨 Tema de UI",
+        "ui_theme": "Tema de UI",
         "log_out": "Cerrar sesión",
         "filter_controls": "Controles de filtro",
         "release_year": "Rango de año de lanzamiento",
