@@ -1177,7 +1177,7 @@ def chart_duration_scatter(df: pd.DataFrame):
 # ══════════════════════════════════════════════════════════════════
 
 def render_recent_feed(df: pd.DataFrame):
-    T = LANG[st.session_state.language]
+    T = LANG[st.session_state.lang]
     latest = df.sort_values("date_added", ascending=False).head(5)
     
     html = '<div style="display:flex; flex-direction:column; gap:16px;">'
@@ -1200,7 +1200,7 @@ def render_recent_feed(df: pd.DataFrame):
 
 
 def render_catalog_explorer(df: pd.DataFrame):
-    T = LANG[st.session_state.language]
+    T = LANG[st.session_state.lang]
     search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
     if search_query:
         query_lower = search_query.lower()
@@ -1226,14 +1226,14 @@ def render_catalog_explorer(df: pd.DataFrame):
     display_df = display_df.rename(columns=col_map)
     
     # Translate types and genres inside the dataframe for non-English languages
-    if st.session_state.language != "English":
+    if st.session_state.lang != "English":
         type_col = T.get("col_type", "Type")
         genres_col = T.get("col_genres", "Genres")
         if type_col in display_df.columns:
             display_df[type_col] = display_df[type_col].apply(lambda x: T["movie"] if x == "Movie" else T["tv_show"] if pd.notna(x) else x)
         if genres_col in display_df.columns:
             from app import GENRE_MAP
-            display_df[genres_col] = display_df[genres_col].apply(lambda g: ", ".join([GENRE_MAP.get(st.session_state.language, {}).get(genre.strip(), genre.strip()) for genre in str(g).split(',')]) if pd.notna(g) else g)
+            display_df[genres_col] = display_df[genres_col].apply(lambda g: ", ".join([GENRE_MAP.get(st.session_state.lang, {}).get(genre.strip(), genre.strip()) for genre in str(g).split(',')]) if pd.notna(g) else g)
 
     st.caption(T.get("cat_showing_results", "Showing {0:,} results").format(len(display_df)))
     st.dataframe(display_df, use_container_width=True, height=500)
