@@ -120,16 +120,10 @@ css = """
         color: var(--primary-color) !important;
     }}
 
-    /* Animated Title */
+    /* Static Title */
     .main-title {{
-        filter: drop-shadow(0 0 10px var(--primary-color));
-        animation: titlePulse 3s infinite alternate;
         position: relative;
         display: inline-block;
-    }}
-    @keyframes titlePulse {{
-        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
-        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
     }}
 
     /* Glassmorphism for containers and charts */
@@ -388,16 +382,10 @@ root_css = f"""
         color: var(--primary-color) !important;
     }}
 
-    /* Animated Title */
+    /* Static Title */
     .main-title {{
-        filter: drop-shadow(0 0 10px var(--primary-color));
-        animation: titlePulse 3s infinite alternate;
         position: relative;
         display: inline-block;
-    }}
-    @keyframes titlePulse {{
-        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
-        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
     }}
 
     /* Glassmorphism for containers and charts */
@@ -738,16 +726,10 @@ def render_login_screen():
         color: var(--primary-color) !important;
     }}
 
-    /* Animated Title */
+    /* Static Title */
     .main-title {{
-        filter: drop-shadow(0 0 10px var(--primary-color));
-        animation: titlePulse 3s infinite alternate;
         position: relative;
         display: inline-block;
-    }}
-    @keyframes titlePulse {{
-        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
-        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
     }}
 
     /* Glassmorphism for containers and charts */
@@ -1245,16 +1227,10 @@ def render_top_bar(df=None):
         color: var(--primary-color) !important;
     }}
 
-    /* Animated Title */
+    /* Static Title */
     .main-title {{
-        filter: drop-shadow(0 0 10px var(--primary-color));
-        animation: titlePulse 3s infinite alternate;
         position: relative;
         display: inline-block;
-    }}
-    @keyframes titlePulse {{
-        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
-        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
     }}
 
     /* Glassmorphism for containers and charts */
