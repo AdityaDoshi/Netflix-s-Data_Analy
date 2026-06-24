@@ -696,7 +696,7 @@ GENRE_MAP = {
         "International Movies": "अंतर्राष्ट्रीय मूवी", "International TV Shows": "अंतर्राष्ट्रीय टीवी",
         "Horror Movies": "हॉरर मूवी", "Stand-Up Comedy": "स्टैंड-अप", "Anime Series": "एनीमे",
         "Sci-Fi & Fantasy": "सांसारिक फंतासी", "Mystery": "रहस्य", "Music & Musicals": "संगीत",
-        "Independent Movies": "इंडिपेंडेंट मूवी", "British TV Shows": "ब्रिटिश टीवी", "Sports Movies": "स्पोर्ट्स", "Reality TV": "रियलिटी टीवी"
+        "Independent Movies": "इंडिपेंडेंट मूवी", "British TV Shows": "ब्रिटिश टीवी", "Sports Movies": "स्पोर्ट्स", "Animation": "एनिमेशन", "Family": "फैमिली", "Horror": "हॉरर", "Documentary": "डॉक्यूमेंट्री", "Reality": "रियलिटी", "Science Fiction": "विज्ञान कथा", "Fantasy": "फंतासी", "History": "इतिहास", "Kids": "किड्स", "Music": "संगीत", "War": "युद्ध", "War & Politics": "युद्ध और राजनीति", "Soap": "सोप ओपेरा", "Talk": "टॉक शो", "Adventure": "एडवेंचर", "Reality TV": "रियलिटी टीवी"
     },
     "Gujarati": {
         "Dramas": "ડ્રામા", "Drama": "ડ્રામા", "TV Dramas": "ટીવી ડ્રામા", "Comedies": "કોમેડી", "Comedy": "કોમેડી", "TV Comedies": "ટીવી કોમેડી",
@@ -708,7 +708,7 @@ GENRE_MAP = {
         "International Movies": "આંતરરાષ્ટ્રીય મૂવી", "International TV Shows": "આંતરરાષ્ટ્રીય ટીવી",
         "Horror Movies": "હોરર", "Stand-Up Comedy": "સ્ટેન્ડ-અપ", "Anime Series": "એનિમે",
         "Sci-Fi & Fantasy": "સાય-ફાઇ", "Mystery": "રહસ્ય", "Music & Musicals": "સંગીત",
-        "Independent Movies": "સ્વતંત્ર મૂવી", "British TV Shows": "બ્રિટિશ ટીવી", "Sports Movies": "સ્પોર્ટ્સ", "Reality TV": "રિયાલિટી ટીવી"
+        "Independent Movies": "સ્વતંત્ર મૂવી", "British TV Shows": "બ્રિટિશ ટીવી", "Sports Movies": "સ્પોર્ટ્સ", "Animation": "એનિમેશન", "Family": "કુટુંબ", "Horror": "હોરર", "Documentary": "ડોક્યુમેન્ટરી", "Reality": "રિયાલિટી", "Science Fiction": "વિજ્ઞાન કથા", "Fantasy": "કાલ્પનિક", "History": "ઇતિહાસ", "Kids": "બાળકો", "Music": "સંગીત", "War": "યુદ્ધ", "War & Politics": "યુદ્ધ અને રાજકારણ", "Soap": "સોપ ઓપેરા", "Talk": "ટૉક શો", "Adventure": "સાહસ", "Reality TV": "રિયાલિટી ટીવી"
     },
     "Spanish": {
         "Dramas": "Drama", "Drama": "Drama", "TV Dramas": "Dramas de TV", "Comedies": "Comedias", "Comedy": "Comedia", "TV Comedies": "Comedias de TV",
@@ -720,7 +720,7 @@ GENRE_MAP = {
         "International Movies": "Películas Internacionales", "International TV Shows": "TV Internacional",
         "Horror Movies": "Terror", "Stand-Up Comedy": "Comedia en vivo", "Anime Series": "Anime",
         "Sci-Fi & Fantasy": "Ciencia Ficción", "Mystery": "Misterio", "Music & Musicals": "Música",
-        "Independent Movies": "Cine Independiente", "British TV Shows": "TV Británica", "Sports Movies": "Deportes", "Reality TV": "Reality TV"
+        "Independent Movies": "Cine Independiente", "British TV Shows": "TV Británica", "Sports Movies": "Deportes", "Animation": "Animación", "Family": "Familiar", "Horror": "Terror", "Documentary": "Documental", "Reality": "Reality", "Science Fiction": "Ciencia Ficción", "Fantasy": "Fantasía", "History": "Historia", "Kids": "Infantil", "Music": "Música", "War": "Bélico", "War & Politics": "Guerra y Política", "Soap": "Telenovela", "Talk": "Talk Show", "Adventure": "Aventura", "Reality TV": "Reality TV"
     }
 }
 
