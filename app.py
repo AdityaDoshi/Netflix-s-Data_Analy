@@ -449,11 +449,10 @@ def render_sidebar(df: pd.DataFrame):
         st.markdown("""<img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" width="140" style="margin-bottom:16px;">""", unsafe_allow_html=True)
         st.caption(f"Logged in as {st.session_state.get('user', 'unknown')}")
 
-        theme_icon = "☀️ Light Mode" if st.session_state.theme == "dark" else "🌙 Dark Mode"
-        if st.button(theme_icon, use_container_width=True):
-            new_theme = "light" if st.session_state.theme == "dark" else "dark"
-            st.session_state.theme = new_theme
-            update_theme_config(new_theme)
+        selected_theme = st.selectbox("🎨 UI Theme", options=list(THEMES.keys()), index=list(THEMES.keys()).index(st.session_state.theme))
+        if selected_theme != st.session_state.theme:
+            st.session_state.theme = selected_theme
+            update_theme_config(selected_theme)
             st.rerun()
 
         if st.button("Log Out", use_container_width=True):
