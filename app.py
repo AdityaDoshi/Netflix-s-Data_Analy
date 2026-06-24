@@ -80,6 +80,172 @@ css = """
 """
 
 
+
+LANG = {
+    "English": {
+        "language_selector": "🌐 Language",
+        "logged_in_as": "Logged in as",
+        "ui_theme": T["ui_theme"],
+        "log_out": T["log_out"],
+        "filter_controls": "Filter Controls",
+        "release_year": T["release_year"],
+        "content_type": T["content_type"],
+        "movie": "Movie",
+        "tv_show": "TV Show",
+        "maturity_rating": T["maturity_rating"],
+        "choose_options": T["choose_options"],
+        "production_country": T["production_country"],
+        "main_title": T["main_title"],
+        "main_desc": T["main_desc"],
+        "tab_overview": "Overview",
+        "tab_deep_dive": "Content Deep Dive",
+        "tab_data": "Data Explorer",
+        "metric_total": "Total Content",
+        "metric_movies": "Movies",
+        "metric_shows": "TV Shows",
+        "metric_directors": "Total Directors",
+        "metric_cast": "Unique Cast",
+        "metric_countries": "Countries",
+        "chart_distribution": T["chart_distribution"],
+        "chart_yoy": T["chart_yoy"],
+        "chart_genres": T["chart_genres"],
+        "chart_rating": T["chart_rating"],
+        "chart_directors": T["chart_directors"],
+        "chart_map": T["chart_map"],
+        "chart_cast": T["chart_cast"],
+        "chart_duration": T["chart_duration"],
+        "trend_10y": T["trend_10y"],
+        "search_titles": T["search_titles"],
+        "items_per_page": T["items_per_page"],
+        "page": "Page",
+        "of": "of",
+        "download_csv": T["download_csv"]
+    },
+    "Hindi": {
+        "language_selector": "🌐 भाषा (Language)",
+        "logged_in_as": "लॉग इन किया है",
+        "ui_theme": "🎨 यूआई थीम",
+        "log_out": "लॉग आउट",
+        "filter_controls": "फ़िल्टर नियंत्रण",
+        "release_year": "रिलीज़ वर्ष सीमा",
+        "content_type": "सामग्री का प्रकार",
+        "movie": "फ़िल्म",
+        "tv_show": "टीवी शो",
+        "maturity_rating": "परिपक्वता रेटिंग",
+        "choose_options": "विकल्प चुनें",
+        "production_country": "उत्पादन देश",
+        "main_title": "सामग्री अंतर्दृष्टि इंजन",
+        "main_desc": "एंटरप्राइज़ एनालिटिक्स डैशबोर्ड। स्ट्रीमिंग सामग्री रुझानों का पता लगाने के लिए साइडबार में फ़िल्टर समायोजित करें।",
+        "tab_overview": "अवलोकन",
+        "tab_deep_dive": "सामग्री विश्लेषण",
+        "tab_data": "डेटा एक्सप्लोरर",
+        "metric_total": "कुल सामग्री",
+        "metric_movies": "फिल्में",
+        "metric_shows": "टीवी शो",
+        "metric_directors": "कुल निर्देशक",
+        "metric_cast": "अद्वितीय कास्ट",
+        "metric_countries": "देश",
+        "chart_distribution": "सामग्री वितरण",
+        "chart_yoy": "साल-दर-साल वृद्धि",
+        "chart_genres": "शीर्ष 10 शैलियां",
+        "chart_rating": "परिपक्वता रेटिंग वितरण",
+        "chart_directors": "शीर्ष 10 निर्देशक",
+        "chart_map": "वैश्विक सामग्री मानचित्र",
+        "chart_cast": "शीर्ष 20 कास्ट सदस्य",
+        "chart_duration": "मूवी अवधि बनाम रिलीज़ वर्ष",
+        "trend_10y": "सामग्री रिलीज ट्रेंड (10 वर्ष)",
+        "search_titles": "शीर्षक खोजें",
+        "items_per_page": "प्रति पृष्ठ आइटम",
+        "page": "पृष्ठ",
+        "of": "का",
+        "download_csv": "सीएसवी डाउनलोड करें"
+    },
+    "Gujarati": {
+        "language_selector": "🌐 ભાષા (Language)",
+        "logged_in_as": "તરીકે લૉગ ઇન કર્યું છે",
+        "ui_theme": "🎨 યુઆઇ થીમ",
+        "log_out": "લોગ આઉટ",
+        "filter_controls": "ફિલ્ટર નિયંત્રણો",
+        "release_year": "પ્રકાશન વર્ષ શ્રેણી",
+        "content_type": "સામગ્રીનો પ્રકાર",
+        "movie": "ફિલ્મ",
+        "tv_show": "ટીવી શો",
+        "maturity_rating": "પરિપક્વતા રેટિંગ",
+        "choose_options": "વિકલ્પો પસંદ કરો",
+        "production_country": "ઉત્પાદન દેશ",
+        "main_title": "સામગ્રી આંતરદૃષ્ટિ એન્જિન",
+        "main_desc": "એન્ટરપ્રાઇઝ એનાલિટિક્સ ડેશબોર્ડ. સ્ટ્રીમિંગ સામગ્રી વલણોનું અન્વેષણ કરવા માટે સાઇડબારમાં ફિલ્ટર્સને સમાયોજિત કરો.",
+        "tab_overview": "ઝાંખી",
+        "tab_deep_dive": "સામગ્રી વિશ્લેષણ",
+        "tab_data": "ડેટા એક્સપ્લોરર",
+        "metric_total": "કુલ સામગ્રી",
+        "metric_movies": "ફિલ્મો",
+        "metric_shows": "ટીવી શો",
+        "metric_directors": "કુલ દિગ્દર્શકો",
+        "metric_cast": "અનન્ય કાસ્ટ",
+        "metric_countries": "દેશો",
+        "chart_distribution": "સામગ્રી વિતરણ",
+        "chart_yoy": "વર્ષ-દર-વર્ષ વધારો",
+        "chart_genres": "ટોચની 10 શૈલીઓ",
+        "chart_rating": "પરિપક્વતા રેટિંગ વિતરણ",
+        "chart_directors": "ટોચના 10 દિગ્દર્શકો",
+        "chart_map": "વૈશ્વિક સામગ્રી નકશો",
+        "chart_cast": "ટોચના 20 કાસ્ટ સભ્યો",
+        "chart_duration": "મૂવી અવધિ વિ પ્રકાશન વર્ષ",
+        "trend_10y": "સામગ્રી પ્રકાશન વલણ (10 વર્ષ)",
+        "search_titles": "શીર્ષકો શોધો",
+        "items_per_page": "પૃષ્ઠ દીઠ આઇટમ્સ",
+        "page": "પૃષ્ઠ",
+        "of": "નું",
+        "download_csv": "સીએસવી ડાઉનલોડ કરો"
+    },
+    "Spanish": {
+        "language_selector": "🌐 Idioma (Language)",
+        "logged_in_as": "Conectado como",
+        "ui_theme": "🎨 Tema de UI",
+        "log_out": "Cerrar sesión",
+        "filter_controls": "Controles de filtro",
+        "release_year": "Rango de año de lanzamiento",
+        "content_type": "Tipo de contenido",
+        "movie": "Película",
+        "tv_show": "Programa de TV",
+        "maturity_rating": "Clasificación por edades",
+        "choose_options": "Elegir opciones",
+        "production_country": "País de producción",
+        "main_title": "Motor de Análisis de Contenido",
+        "main_desc": "Panel de análisis empresarial. Ajuste los filtros en la barra lateral para explorar tendencias.",
+        "tab_overview": "Resumen",
+        "tab_deep_dive": "Análisis profundo",
+        "tab_data": "Explorador de datos",
+        "metric_total": "Contenido total",
+        "metric_movies": "Películas",
+        "metric_shows": "Programas de TV",
+        "metric_directors": "Directores",
+        "metric_cast": "Elenco",
+        "metric_countries": "Países",
+        "chart_distribution": "Distribución de contenido",
+        "chart_yoy": "Ingresos año tras año",
+        "chart_genres": "Top 10 Géneros",
+        "chart_rating": "Distribución de clasificación",
+        "chart_directors": "Top 10 Directores",
+        "chart_map": "Mapa de contenido global",
+        "chart_cast": "Top 20 Miembros del elenco",
+        "chart_duration": "Duración vs Año",
+        "trend_10y": "Tendencias (10 Años)",
+        "search_titles": "Buscar títulos",
+        "items_per_page": "Artículos por página",
+        "page": "Página",
+        "of": "de",
+        "download_csv": "Descargar CSV"
+    }
+}
+
+if "lang" not in st.session_state:
+    st.session_state.lang = "English"
+
+T = LANG[st.session_state.lang]
+
+
 THEMES = {
     "Netflix Dark (Default)": {"bg_color": "#141414", "sec_bg_color": "#000000", "text_color": "#FFFFFF", "border_color": "rgba(255,255,255,0.1)", "primary_color": "#E50914", "base": "dark"},
     "Netflix Light": {"bg_color": "#F9FAFB", "sec_bg_color": "#FFFFFF", "text_color": "#111827", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#E50914", "base": "light"},
@@ -453,29 +619,36 @@ def check_auth():
 def render_sidebar(df: pd.DataFrame):
     with st.sidebar:
         st.markdown(get_netflix_logo_svg("38px", "display:block;margin-bottom:16px;"), unsafe_allow_html=True)
-        st.caption(f"Logged in as {st.session_state.get('user', 'unknown')}")
+        st.caption(f"{T['logged_in_as']} {st.session_state.get('user', 'unknown')}")
 
-        selected_theme = st.selectbox("🎨 UI Theme", options=list(THEMES.keys()), index=list(THEMES.keys()).index(st.session_state.theme))
+        selected_lang = st.selectbox(T["language_selector"], options=list(LANG.keys()), index=list(LANG.keys()).index(st.session_state.lang))
+        if selected_lang != st.session_state.lang:
+            st.session_state.lang = selected_lang
+            st.rerun()
+
+
+
+        selected_theme = st.selectbox(T["ui_theme"], options=list(THEMES.keys()), index=list(THEMES.keys()).index(st.session_state.theme))
         if selected_theme != st.session_state.theme:
             st.session_state.theme = selected_theme
             update_theme_config(selected_theme)
             st.rerun()
 
-        if st.button("Log Out", use_container_width=True):
+        if st.button(T["log_out"], use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.rerun()
 
         st.divider()
-        st.markdown("#### Filter Controls")
+        st.markdown(f"#### {T['filter_controls']}")
 
         valid_years = df["release_year"].dropna().astype(int)
         min_year, max_year = int(valid_years.min()), int(valid_years.max())
 
-        year_range = st.slider("Release Year Range", min_value=min_year, max_value=max_year, value=(min_year, max_year), step=1)
-        selected_types = st.multiselect("Content Type", options=sorted(df["type"].dropna().unique()), default=sorted(df["type"].dropna().unique()))
-        selected_ratings = st.multiselect("Maturity Rating", options=sorted(df["rating"].dropna().unique()), default=[])
-        selected_countries = st.multiselect("Production Country", options=sorted(df["primary_country"].dropna().unique()), default=[])
+        year_range = st.slider(T["release_year"], min_value=min_year, max_value=max_year, value=(min_year, max_year), step=1)
+        selected_types = st.multiselect(T["content_type"], options=sorted(df["type"].dropna().unique()), default=sorted(df["type"].dropna().unique()))
+        selected_ratings = st.multiselect(T["maturity_rating"], options=sorted(df["rating"].dropna().unique()), default=[])
+        selected_countries = st.multiselect(T["production_country"], options=sorted(df["primary_country"].dropna().unique()), default=[])
 
         st.divider()
         st.markdown("#### Dataset Info")
@@ -592,7 +765,7 @@ def chart_content_split(df: pd.DataFrame):
         text=type_counts["Count"], textposition='auto',
         marker=dict(color=[theme_primary, theme_primary], line=dict(color="rgba(0,0,0,0)", width=2)),
     ))
-    fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
+    fig.update_layout(title=dict(text=T["chart_distribution"], font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
     return fig
 
 def chart_year_ingestion(df: pd.DataFrame):
@@ -602,7 +775,7 @@ def chart_year_ingestion(df: pd.DataFrame):
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
         line=dict(color=theme_primary, width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor=hex_to_rgba(theme_primary, 0.05),
     ))
-    fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
+    fig.update_layout(title=dict(text=T["chart_yoy"], font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
     return fig
 
 def chart_top_genres(df: pd.DataFrame):
@@ -613,7 +786,7 @@ def chart_top_genres(df: pd.DataFrame):
         x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
+    fig.update_layout(title=dict(text=T["chart_genres"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_rating_distribution(df: pd.DataFrame):
@@ -621,7 +794,7 @@ def chart_rating_distribution(df: pd.DataFrame):
     rating_counts.columns = ["Rating", "Count"]
     fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=[theme_primary])
     fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Maturity Rating Distribution", font=dict(size=14, color="gray")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
+    fig.update_layout(title=dict(text=T["chart_rating"], font=dict(size=14, color="gray")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
     return fig
 
 def chart_top_directors(df: pd.DataFrame):
@@ -632,7 +805,7 @@ def chart_top_directors(df: pd.DataFrame):
         x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
+    fig.update_layout(title=dict(text=T["chart_directors"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_runtime_distribution(df: pd.DataFrame):
@@ -716,7 +889,7 @@ def render_catalog_explorer(df: pd.DataFrame):
     st.dataframe(display_df, use_container_width=True, height=500)
 
     csv_payload = display_df.to_csv(index=False).encode("utf-8")
-    st.download_button("Download CSV", data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True)
+    st.download_button(T["download_csv"], data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -764,15 +937,15 @@ def render_top_bar(df=None):
     c1, c2, c3, c4 = st.columns([2, 2, 2, 5])
 
     with c1:
-        if st.button(f"**{total:,}** Total", type="tertiary", use_container_width=True):
+        if st.button(f"**{total:,}** {T['metric_total']}", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
             st.session_state.popup_page = 0
     with c2:
-        if st.button(f"**{movies:,}** Movies", type="tertiary", use_container_width=True):
+        if st.button(f"**{movies:,}** {T['metric_movies']}", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "Movie", "match": "exact"}
             st.session_state.popup_page = 0
     with c3:
-        if st.button(f"**{shows:,}** TV Shows", type="tertiary", use_container_width=True):
+        if st.button(f"**{shows:,}** {T['metric_shows']}", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "TV Show", "match": "exact"}
             st.session_state.popup_page = 0
     with c4:
@@ -787,9 +960,9 @@ def show_data_popup(df, filter_col, filter_val, match_type="exact"):
             
         header_col1, header_col2 = st.columns([3, 1])
         with header_col1:
-            st.markdown(f"### Exploring: {filter_val if match_type != 'all' else 'All Content'}")
+            st.markdown(f"### {filter_val if match_type != 'all' else T['metric_total']}")
         with header_col2:
-            st.session_state.page_size = st.selectbox("Items per page", options=[10, 50, 100, 500, 1000], index=[10, 50, 100, 500, 1000].index(st.session_state.page_size), label_visibility="collapsed")
+            st.session_state.page_size = st.selectbox(T["items_per_page"], options=[10, 50, 100, 500, 1000], index=[10, 50, 100, 500, 1000].index(st.session_state.page_size), label_visibility="collapsed")
             
         if match_type == "exact":
             display_df = df[df[filter_col].astype(str) == str(filter_val)]
@@ -882,7 +1055,7 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # --- TABS IMPLEMENTATION ---
-    tab1, tab2, tab3 = st.tabs(["Overview", "Content Deep Dive", "Data Explorer"])
+    tab1, tab2, tab3 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"]])
 
     with tab1:
         st.markdown('<div class="section-header" style="margin-top: 24px;">Content Release Trend (10 Years)</div>', unsafe_allow_html=True)
