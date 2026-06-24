@@ -65,7 +65,7 @@ css = """
     .stDownloadButton > button:hover { background: var(--secondary-background-color) !important; border-color: var(--primary-color) !important; color: var(--text-color) !important; }
 
     .main-title-container { margin-bottom: 8px; }
-    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: var(--primary-color); line-height: 1; text-transform: uppercase; text-shadow: 0px 2px 8px var(--primary-color); }
+    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: var(--primary-color); line-height: 1; text-transform: uppercase; text-shadow: none; }
     .main-description { color: var(--text-color); opacity: 0.7; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
 
     @media (max-width: 768px) {
