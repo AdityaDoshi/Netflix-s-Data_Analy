@@ -1,3 +1,7 @@
+def hex_to_rgba(hex_color, alpha=0.1):
+    hex_color = hex_color.lstrip('#')
+    return f'rgba({int(hex_color[0:2], 16)}, {int(hex_color[2:4], 16)}, {int(hex_color[4:6], 16)}, {alpha})'
+
 """
 Netflix Content Insights Engine v1.0
 Professional Enterprise Dashboard
@@ -36,7 +40,7 @@ css = """
     .stApp > header { background: transparent !important; box-shadow: none !important; z-index: 9999999 !important; }
 
     .metric-card { background: var(--secondary-background-color); border: 1px solid var(--border-color, rgba(128,128,128,0.2)); border-radius: 8px; padding: 24px; text-align: left; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.1); height: 100%; }
-    .metric-card:hover { border-color: #E50914; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .metric-card:hover { border-color: var(--primary-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 3.2rem; font-weight: normal; color: var(--text-color); line-height: 1; letter-spacing: 1px; margin-bottom: 16px; text-shadow: 0px 2px 4px rgba(0,0,0,0.2); }
     .metric-label { font-size: 0.85rem; font-weight: 500; color: var(--text-color); opacity: 0.7; }
     .metric-subtext { font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-top: 8px; font-weight: 400; }
@@ -46,13 +50,13 @@ css = """
     [role="tablist"], [data-testid="stTabList"] { gap: 24px; }
     [data-testid="stTab"], [data-baseweb="tab"], button[role="tab"] { height: 48px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0px 0px; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: var(--text-color) !important; opacity: 0.7; }
     [data-testid="stTab"] *, [data-baseweb="tab"] *, button[role="tab"] * { color: inherit !important; }
-    [data-testid="stTab"][aria-selected="true"], [data-baseweb="tab"][aria-selected="true"], button[role="tab"][aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid #E50914 !important; color: #E50914 !important; opacity: 1; }
+    [data-testid="stTab"][aria-selected="true"], [data-baseweb="tab"][aria-selected="true"], button[role="tab"][aria-selected="true"] { background-color: transparent !important; border-bottom: 2px solid var(--primary-color) !important; color: var(--primary-color) !important; opacity: 1; }
     [data-testid="stTab"][aria-selected="true"] *, [data-baseweb="tab"][aria-selected="true"] *, button[role="tab"][aria-selected="true"] * { color: inherit !important; font-weight: 600 !important; }
 
     [data-testid="stSidebar"] { background: var(--secondary-background-color) !important; border-right: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
     [data-testid="collapsedControl"], [data-testid="stSidebarCollapsedControl"] { z-index: 9999999 !important; background-color: var(--background-color) !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; border-radius: 6px !important; box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; }
     [data-testid="stSidebar"] .stButton > button { width: 100%; background-color: var(--background-color); border: 1px solid var(--border-color, rgba(128,128,128,0.2)); color: var(--text-color); font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-    [data-testid="stSidebar"] .stButton > button:hover { background-color: var(--secondary-background-color); border-color: #E50914; color: var(--text-color); }
+    [data-testid="stSidebar"] .stButton > button:hover { background-color: var(--secondary-background-color); border-color: var(--primary-color); color: var(--text-color); }
 
     [data-testid="stStatusWidget"] { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background-color: rgba(128,128,128,0.2) !important; z-index: 9999999 !important; display: flex !important; align-items: center !important; justify-content: center !important; backdrop-filter: blur(2px) !important; }
     [data-testid="stStatusWidget"] > div { background-color: var(--secondary-background-color) !important; padding: 20px 40px !important; border-radius: 12px !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important; transform: scale(1.5); }
@@ -60,10 +64,10 @@ css = """
     .stDataFrame { border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color, rgba(128,128,128,0.2)); }
 
     .stDownloadButton > button { background: var(--background-color) !important; color: var(--text-color) !important; border: 1px solid var(--border-color, rgba(128,128,128,0.2)) !important; border-radius: 6px !important; padding: 10px 20px !important; font-weight: 500 !important; transition: all 0.2s ease !important; font-size: 0.85rem !important; box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important; }
-    .stDownloadButton > button:hover { background: var(--secondary-background-color) !important; border-color: #E50914 !important; color: var(--text-color) !important; }
+    .stDownloadButton > button:hover { background: var(--secondary-background-color) !important; border-color: var(--primary-color) !important; color: var(--text-color) !important; }
 
     .main-title-container { margin-bottom: 8px; }
-    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: #E50914; line-height: 1; text-transform: uppercase; text-shadow: 0px 2px 8px rgba(229,9,20,0.4); }
+    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: #E50914; line-height: 1; text-transform: uppercase; text-shadow: 0px 2px 8px var(--primary-color); }
     .main-description { color: var(--text-color); opacity: 0.7; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
 
     @media (max-width: 768px) {
@@ -79,11 +83,24 @@ css = """
 </style>
 """
 
-theme = st.session_state.get("theme", "dark")
-bg_color = "#F9FAFB" if theme == "light" else "#141414"
-sec_bg_color = "#FFFFFF" if theme == "light" else "#000000"
-text_color = "#111827" if theme == "light" else "#FFFFFF"
-border_color = "rgba(0,0,0,0.1)" if theme == "light" else "rgba(255,255,255,0.1)"
+
+THEMES = {
+    "Netflix Dark (Default)": {"bg_color": "#141414", "sec_bg_color": "#000000", "text_color": "#FFFFFF", "border_color": "rgba(255,255,255,0.1)", "primary_color": theme_primary, "base": "dark"},
+    "Netflix Light": {"bg_color": "#F9FAFB", "sec_bg_color": "#FFFFFF", "text_color": "#111827", "border_color": "rgba(0,0,0,0.1)", "primary_color": theme_primary, "base": "light"},
+    "Midnight Blue": {"bg_color": "#0F172A", "sec_bg_color": "#1E293B", "text_color": "#F8FAFC", "border_color": "rgba(255,255,255,0.1)", "primary_color": "#38BDF8", "base": "dark"},
+    "Hacker Green": {"bg_color": "#000000", "sec_bg_color": "#0A0A0A", "text_color": "#4ADE80", "border_color": "rgba(74,222,128,0.2)", "primary_color": "#22C55E", "base": "dark"},
+    "Sunset Orange": {"bg_color": "#FFFBF0", "sec_bg_color": "#FFFFFF", "text_color": "#431407", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#F97316", "base": "light"}
+}
+
+if "theme" not in st.session_state:
+    st.session_state.theme = "Netflix Dark (Default)"
+
+current_theme = THEMES.get(st.session_state.theme, THEMES["Netflix Dark (Default)"])
+bg_color = current_theme["bg_color"]
+sec_bg_color = current_theme["sec_bg_color"]
+text_color = current_theme["text_color"]
+border_color = current_theme["border_color"]
+theme_primary = current_theme["primary_color"]
 
 root_css = f"""
 <style>
@@ -92,49 +109,33 @@ root_css = f"""
     --secondary-background-color: {sec_bg_color};
     --text-color: {text_color};
     --border-color: {border_color};
+    --primary-color: {theme_primary};
 }}
 </style>
 """
 st.markdown(root_css + css, unsafe_allow_html=True)
 
-
-
-if "theme" not in st.session_state:
-    st.session_state.theme = "dark"
-
 import os
-
-def update_theme_config(mode):
+def update_theme_config(theme_name):
     config_path = ".streamlit/config.toml"
     os.makedirs(os.path.dirname(config_path), exist_ok=True)
-    if mode == "light":
-        config_str = """[theme]
-base="light"
-primaryColor="#E50914"
-backgroundColor="#F9FAFB"
-secondaryBackgroundColor="#FFFFFF"
-textColor="#111827"
-font="sans serif"
-"""
-    else:
-        config_str = """[theme]
-base="dark"
-primaryColor="#E50914"
-backgroundColor="#141414"
-secondaryBackgroundColor="#000000"
-textColor="#FFFFFF"
+    t = THEMES.get(theme_name, THEMES["Netflix Dark (Default)"])
+    config_str = f"""[theme]
+base="{t['base']}"
+primaryColor="{t['primary_color']}"
+backgroundColor="{t['bg_color']}"
+secondaryBackgroundColor="{t['sec_bg_color']}"
+textColor="{t['text_color']}"
 font="sans serif"
 """
     try:
         with open(config_path, "r") as f:
-            if f.read() == config_str:
-                return
-    except:
-        pass
-    with open(config_path, "w") as f:
-        f.write(config_str)
+            if f.read() == config_str: return
+    except: pass
+    with open(config_path, "w") as f: f.write(config_str)
 
 update_theme_config(st.session_state.theme)
+
 
 
 
@@ -287,14 +288,14 @@ def render_login_screen():
         }
         [data-testid="stForm"] input:focus {
             background-color: rgba(255, 255, 255, 0.1) !important;
-            border-color: #E50914 !important;
+            border-color: var(--primary-color) !important;
             box-shadow: 0 0 0 1px #E50914 !important;
         }
         
         /* Pill Button (Primary) */
         [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"],
         [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):not([data-testid="baseButton-tertiaryFormSubmit"]) {
-            background-color: #E50914 !important;
+            background-color: var(--primary-color) !important;
             color: white !important;
             border-radius: 50px !important;
             font-weight: 700 !important;
@@ -490,7 +491,7 @@ def render_sidebar(df: pd.DataFrame):
 
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color='#E50914', fillcolor='rgba(229, 9, 20, 0.1)', line=dict(width=3)))
+    fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color=theme_primary, fillcolor=hex_to_rgba(theme_primary, 0.1), line=dict(width=3)))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
         annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
@@ -507,7 +508,7 @@ def chart_kpi_line(value, title, x_series, y_series):
 
 def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color='#E50914', opacity=0.8, marker_line_width=0))
+    fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color=theme_primary, opacity=0.8, marker_line_width=0))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
         annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
@@ -524,7 +525,7 @@ def chart_kpi_bar(value, title, x_series, y_series):
 
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="gray", size=14), marker_color=["#E50914", "gray"], marker_line_width=0))
+    fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="gray", size=14), marker_color=[theme_primary, "gray"], marker_line_width=0))
     fig.update_layout(
         title=dict(text=f"<span style='font-size:14px;color:gray;font-family:Inter'>{title}</span>", x=0.10, y=0.95),
         annotations=[dict(text=f"<span style='font-size:46px;color:var(--text-color);font-family:\"Bebas Neue\",sans-serif;letter-spacing:1px'>{value}</span>", xref="paper", yref="paper", x=0.10, y=1.7, showarrow=False, xanchor="left", yanchor="top")],
@@ -584,7 +585,7 @@ def chart_content_split(df: pd.DataFrame):
     fig = go.Figure(go.Bar(
         x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"], textposition='auto',
-        marker=dict(color=["#E50914", "#F04438"], line=dict(color="rgba(0,0,0,0)", width=2)),
+        marker=dict(color=[theme_primary, "#F04438"], line=dict(color="rgba(0,0,0,0)", width=2)),
     ))
     fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
     return fig
@@ -594,7 +595,7 @@ def chart_year_ingestion(df: pd.DataFrame):
     yearly.columns = ["Year", "Titles Added"]
     fig = go.Figure(go.Scatter(
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
-        line=dict(color="#E50914", width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
+        line=dict(color=theme_primary, width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
     ))
     fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
     return fig
@@ -613,7 +614,7 @@ def chart_top_genres(df: pd.DataFrame):
 def chart_rating_distribution(df: pd.DataFrame):
     rating_counts = df["rating"].dropna().value_counts().head(10).reset_index()
     rating_counts.columns = ["Rating", "Count"]
-    fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=["#E50914"])
+    fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=[theme_primary])
     fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
     fig.update_layout(title=dict(text="Maturity Rating Distribution", font=dict(size=14, color="gray")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
     return fig
@@ -657,7 +658,7 @@ def chart_top_cast(df: pd.DataFrame):
     cast_counts.columns = ["Actor", "Titles"]
     fig = go.Figure(go.Bar(
         x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
-        marker=dict(color="#E50914", line=dict(color="rgba(0,0,0,0)", width=0.5))
+        marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5))
     ))
     fig.update_layout(title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
     return fig
@@ -667,7 +668,7 @@ def chart_duration_scatter(df: pd.DataFrame):
     avg_duration = movies.groupby("release_year")["duration_minutes"].mean().reset_index()
     
     fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"])
-    fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color="#E50914"), line=dict(color="#E50914", width=3), name="Average Runtime"))
+    fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color=theme_primary), line=dict(color=theme_primary, width=3), name="Average Runtime"))
     fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="gray")), xaxis=dict(title="Release Year", gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), height=400, clickmode="event+select")
     return fig
 
