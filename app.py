@@ -105,7 +105,7 @@ LANG = {
         "metric_shows": "TV Shows",
         "metric_directors": "Total Directors",
         "metric_cast": "Unique Cast",
-        "metric_countries": "Countries",
+        "metric_countries": "Countries", "metric_genres": "Unique Genres",
         "chart_distribution": "Content Distribution",
         "chart_yoy": "Year-over-Year Ingestion",
         "chart_genres": "Top 10 Genres",
@@ -144,7 +144,7 @@ LANG = {
         "metric_shows": "टीवी शो",
         "metric_directors": "कुल निर्देशक",
         "metric_cast": "अद्वितीय कास्ट",
-        "metric_countries": "देश",
+        "metric_countries": "देश", "metric_genres": "अद्वितीय शैलियां",
         "chart_distribution": "सामग्री वितरण",
         "chart_yoy": "साल-दर-साल वृद्धि",
         "chart_genres": "शीर्ष 10 शैलियां",
@@ -183,7 +183,7 @@ LANG = {
         "metric_shows": "ટીવી શો",
         "metric_directors": "કુલ દિગ્દર્શકો",
         "metric_cast": "અનન્ય કાસ્ટ",
-        "metric_countries": "દેશો",
+        "metric_countries": "દેશો", "metric_genres": "અનન્ય શૈલીઓ",
         "chart_distribution": "સામગ્રી વિતરણ",
         "chart_yoy": "વર્ષ-દર-વર્ષ વધારો",
         "chart_genres": "ટોચની 10 શૈલીઓ",
@@ -222,7 +222,7 @@ LANG = {
         "metric_shows": "Programas de TV",
         "metric_directors": "Directores",
         "metric_cast": "Elenco",
-        "metric_countries": "Países",
+        "metric_countries": "Países", "metric_genres": "Géneros Únicos",
         "chart_distribution": "Distribución de contenido",
         "chart_yoy": "Ingresos año tras año",
         "chart_genres": "Top 10 Géneros",
@@ -796,9 +796,16 @@ def render_metric_cards(df: pd.DataFrame):
     type_counts = df["type"].value_counts()
     pct_movies = (type_counts.get('Movie', 0) / total_titles * 100) if total_titles > 0 else 0
     
-    fig1 = chart_kpi_line(f"{total_titles:,}", "Total Titles (10y Trend)", trend_counts["year_added"], trend_counts["counts"])
-    fig2 = chart_kpi_bar(f"{total_genres}", "Unique Genres", top_genres_names[::-1], top_genres_counts.values[::-1])
-    fig3 = chart_kpi_donut(f"{pct_movies:.0f}%", "Movie vs TV Show", type_counts.index, type_counts.values)
+    localized_total = localize_number(total_titles, st.session_state.lang)
+    localized_genres = localize_number(total_genres, st.session_state.lang)
+    localized_pct = localize_number(f"{pct_movies:.0f}", st.session_state.lang) + "%"
+    
+    localized_genre_names = [localize_genre(g, st.session_state.lang) for g in top_genres_names]
+    localized_type_names = [T["movie"] if x == "Movie" else (T["tv_show"] if x == "TV Show" else x) for x in type_counts.index]
+
+    fig1 = chart_kpi_line(localized_total, T.get("metric_total", "Total Content"), trend_counts["year_added"], trend_counts["counts"])
+    fig2 = chart_kpi_bar(localized_genres, T.get("metric_genres", "Unique Genres"), localized_genre_names[::-1], top_genres_counts.values[::-1])
+    fig3 = chart_kpi_donut(localized_pct, T.get("content_type", "Content Type"), localized_type_names, type_counts.values)
 
     cols = st.columns(3, gap="medium")
     with cols[0]:
