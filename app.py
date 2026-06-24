@@ -163,7 +163,75 @@ LANG = {
         "main_desc": "Enterprise analytics dashboard. Adjust filters in the sidebar to explore streaming content trends.",
         "tab_overview": "Overview",
         "tab_deep_dive": "Content Deep Dive",
-        "tab_data": "Data Explorer", "tab_ai": "🤖 AI Recommender", "ai_desc": "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!", "ai_search_prompt": "🔍 Search query...", "ai_search_placeholder": "e.g., A spooky detective movie with a twist ending", "ai_no_match": "No matches found. Try describing it differently!",
+        "tab_data": "Data Explorer", "tab_ai": "🤖 AI Recommender", "ai_desc": "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!",         "cat_search_prompt": "Search Titles, Directors, or Genres",
+        "cat_search_placeholder": "e.g. Sci-Fi, Christopher Nolan",
+        "cat_showing_results": "Showing {0:,} results",
+        "cat_header": "Catalog Search & Export",
+        "feed_header": "Live Ingestion Feed",
+        "feed_unknown": "Unknown Date",
+        "col_title": "Title",
+        "col_type": "Type",
+        "col_director": "Director",
+        "col_country": "Country",
+        "col_year": "Release Year",
+        "col_rating": "Rating",
+        "col_duration": "Duration",
+        "col_genres": "Genres",
+        "metric_total": "Total Content",
+        "metric_genres": "Unique Genres",
+        "metric_type": "Content Type",
+                "cat_search_prompt": "શીર્ષકો, દિગ્દર્શકો અથવા શૈલીઓ શોધો",
+        "cat_search_placeholder": "દા.ત. સાય-ફાઇ, ક્રિસ્ટોફર નોલાન",
+        "cat_showing_results": "{0:,} પરિણામો બતાવી રહ્યાં છીએ",
+        "cat_header": "કેટલોગ શોધ અને નિકાસ",
+        "feed_header": "લાઇવ ઇન્જેશન ફીડ",
+        "feed_unknown": "અજ્ઞાત તારીખ",
+        "col_title": "શીર્ષક",
+        "col_type": "પ્રકાર",
+        "col_director": "દિગ્દર્શક",
+        "col_country": "દેશ",
+        "col_year": "પ્રકાશન વર્ષ",
+        "col_rating": "રેટિંગ",
+        "col_duration": "સમયગાળો",
+        "col_genres": "શૈલીઓ",
+        "metric_total": "કુલ સામગ્રી",
+        "metric_genres": "અનન્ય શૈલીઓ",
+        "metric_type": "સામગ્રી પ્રકાર",
+                "cat_search_prompt": "शीर्षक, निर्देशक या शैलियां खोजें",
+        "cat_search_placeholder": "उदा. साई-फाई, क्रिस्टोफर नोलन",
+        "cat_showing_results": "{0:,} परिणाम दिखा रहे हैं",
+        "cat_header": "कैटलॉग खोज और निर्यात",
+        "feed_header": "लाइव इंजेशन फ़ीड",
+        "feed_unknown": "अज्ञात तिथि",
+        "col_title": "शीर्षक",
+        "col_type": "प्रकार",
+        "col_director": "निर्देशक",
+        "col_country": "देश",
+        "col_year": "रिलीज़ वर्ष",
+        "col_rating": "रेटिंग",
+        "col_duration": "अवधि",
+        "col_genres": "शैलियां",
+        "metric_total": "कुल सामग्री",
+        "metric_genres": "अद्वितीय शैलियां",
+        "metric_type": "सामग्री का प्रकार",
+                "cat_search_prompt": "Buscar Títulos, Directores o Géneros",
+        "cat_search_placeholder": "ej. Ciencia Ficción, Christopher Nolan",
+        "cat_showing_results": "Mostrando {0:,} resultados",
+        "cat_header": "Búsqueda y Exportación",
+        "feed_header": "Feed de Ingestión en Vivo",
+        "feed_unknown": "Fecha Desconocida",
+        "col_title": "Título",
+        "col_type": "Tipo",
+        "col_director": "Director",
+        "col_country": "País",
+        "col_year": "Año de Lanzamiento",
+        "col_rating": "Clasificación",
+        "col_duration": "Duración",
+        "col_genres": "Géneros",
+        "metric_total": "Contenido Total",
+        "metric_genres": "Géneros Únicos",
+        "metric_type": "Tipo de Contenido",
+        "ai_search_prompt": "🔍 Search query...", "ai_search_placeholder": "e.g., A spooky detective movie with a twist ending", "ai_no_match": "No matches found. Try describing it differently!",
         "metric_total": "Total Content",
         "metric_movies": "Movies",
         "metric_shows": "TV Shows",
@@ -1109,15 +1177,20 @@ def chart_duration_scatter(df: pd.DataFrame):
 # ══════════════════════════════════════════════════════════════════
 
 def render_recent_feed(df: pd.DataFrame):
+    T = LANG[st.session_state.language]
     latest = df.sort_values("date_added", ascending=False).head(5)
     
     html = '<div style="display:flex; flex-direction:column; gap:16px;">'
     for _, row in latest.iterrows():
-        date_str = row["date_added"].strftime("%B %d, %Y") if pd.notna(row["date_added"]) else "Unknown Date"
+        date_str = row["date_added"].strftime("%B %d, %Y") if pd.notna(row["date_added"]) else T.get("feed_unknown", "Unknown Date")
         desc = str(row["description"])[:140] + "..." if pd.notna(row["description"]) else ""
+        
+        # Translate the type (Movie / TV Show)
+        row_type = T["movie"] if row['type'] == "Movie" else T["tv_show"]
+        
         html += f"""
 <div style="border-left: 3px solid var(--primary-color); padding-left: 16px;">
-<div style="font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
+<div style="font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row_type}</div>
 <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-color); margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:var(--secondary-background-color); border:1px solid gray; padding:2px 6px; border-radius:4px; margin-left:8px; color:gray; font-weight: 500;">{row['rating']}</span></div>
 <div style="font-size: 0.85rem; color: var(--text-color); opacity: 0.7; line-height: 1.5;">{desc}</div>
 </div>
@@ -1127,7 +1200,8 @@ def render_recent_feed(df: pd.DataFrame):
 
 
 def render_catalog_explorer(df: pd.DataFrame):
-    search_query = st.text_input("Search Titles, Directors, or Genres", placeholder="e.g. Sci-Fi, Christopher Nolan")
+    T = LANG[st.session_state.language]
+    search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
     if search_query:
         query_lower = search_query.lower()
         mask = (df["title"].str.lower().str.contains(query_lower, na=False) | df["director"].str.lower().str.contains(query_lower, na=False) | df["genres"].str.lower().str.contains(query_lower, na=False))
@@ -1136,9 +1210,32 @@ def render_catalog_explorer(df: pd.DataFrame):
         search_results = df
 
     display_cols = ["title", "type", "director", "country", "release_year", "rating", "duration", "genres"]
-    display_df = search_results[[c for c in display_cols if c in search_results.columns]].reset_index(drop=True)
+    display_df = search_results[[c for c in display_cols if c in search_results.columns]].reset_index(drop=True).copy()
 
-    st.caption(f"Showing {len(display_df):,} results")
+    # Rename columns based on translation map
+    col_map = {
+        "title": T.get("col_title", "Title"),
+        "type": T.get("col_type", "Type"),
+        "director": T.get("col_director", "Director"),
+        "country": T.get("col_country", "Country"),
+        "release_year": T.get("col_year", "Release Year"),
+        "rating": T.get("col_rating", "Rating"),
+        "duration": T.get("col_duration", "Duration"),
+        "genres": T.get("col_genres", "Genres")
+    }
+    display_df = display_df.rename(columns=col_map)
+    
+    # Translate types and genres inside the dataframe for non-English languages
+    if st.session_state.language != "English":
+        type_col = T.get("col_type", "Type")
+        genres_col = T.get("col_genres", "Genres")
+        if type_col in display_df.columns:
+            display_df[type_col] = display_df[type_col].apply(lambda x: T["movie"] if x == "Movie" else T["tv_show"] if pd.notna(x) else x)
+        if genres_col in display_df.columns:
+            from app import GENRE_MAP
+            display_df[genres_col] = display_df[genres_col].apply(lambda g: ", ".join([GENRE_MAP.get(st.session_state.language, {}).get(genre.strip(), genre.strip()) for genre in str(g).split(',')]) if pd.notna(g) else g)
+
+    st.caption(T.get("cat_showing_results", "Showing {0:,} results").format(len(display_df)))
     st.dataframe(display_df, use_container_width=True, height=500)
 
     csv_payload = display_df.to_csv(index=False).encode("utf-8")
@@ -1438,10 +1535,10 @@ def main():
     with tab3:
         col_ex1, col_ex2 = st.columns([2, 1], gap="large")
         with col_ex1:
-            st.markdown('<div class="section-header">Catalog Search & Export</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header">{T.get("cat_header", "Catalog Search & Export")}</div>', unsafe_allow_html=True)
             render_catalog_explorer(filtered_df)
         with col_ex2:
-            st.markdown('<div class="section-header">Live Ingestion Feed</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header">{T.get("feed_header", "Live Ingestion Feed")}</div>', unsafe_allow_html=True)
             render_recent_feed(filtered_df)
 
     with tab4:
