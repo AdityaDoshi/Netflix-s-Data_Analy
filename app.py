@@ -667,6 +667,52 @@ def render_sidebar(df: pd.DataFrame):
 #  MODULE 4: EXECUTIVE METRIC CARDS
 # ══════════════════════════════════════════════════════════════════
 
+
+def localize_number(num, lang):
+    if num is None or pd.isna(num): return ""
+    try:
+        num_str = f"{int(num):,}" if float(num).is_integer() else f"{float(num):,}"
+    except:
+        return str(num)
+        
+    if lang == "Hindi":
+        mapping = str.maketrans('0123456789', '०१२३४५६७८९')
+        return num_str.translate(mapping)
+    elif lang == "Gujarati":
+        mapping = str.maketrans('0123456789', '૦૧૨૩૪૫૬૭૮૯')
+        return num_str.translate(mapping)
+    elif lang == "Spanish":
+        return num_str.replace(',', '.')
+    return num_str
+
+GENRE_MAP = {
+    "Hindi": {
+        "Drama": "ड्रामा", "Comedies": "कॉमेडी", "Comedy": "कॉमेडी", "Action": "एक्शन", "Action & Adventure": "एक्शन", 
+        "Thriller": "थ्रिलर", "Thrillers": "थ्रिलर", "Romance": "रोमांस", "Romantic Movies": "रोमांस", "Romantic TV Shows": "रोमांस",
+        "Documentaries": "डॉक्यूमेंट्री", "Crime TV Shows": "क्राइम", "Crime": "क्राइम", "Kids' TV": "किड्स", "Children & Family Movies": "किड्स",
+        "International Movies": "अंतर्राष्ट्रीय", "International TV Shows": "अंतर्राष्ट्रीय", "Horror Movies": "हॉरर", "Stand-Up Comedy": "स्टैंड-अप",
+        "Anime Series": "एनीमे", "Sci-Fi & Fantasy": "सांसारिक फंतासी", "Mystery": "रहस्य", "Music & Musicals": "संगीत"
+    },
+    "Gujarati": {
+        "Drama": "ડ્રામા", "Comedies": "કોમેડી", "Comedy": "કોમેડી", "Action": "એક્શન", "Action & Adventure": "એક્શન", 
+        "Thriller": "થ્રિલર", "Thrillers": "થ્રિલર", "Romance": "રોમાંસ", "Romantic Movies": "રોમાંસ", "Romantic TV Shows": "રોમાંસ",
+        "Documentaries": "ડોક્યુમેન્ટરી", "Crime TV Shows": "ક્રાઈમ", "Crime": "ક્રાઈમ", "Kids' TV": "બાળકો", "Children & Family Movies": "બાળકો",
+        "International Movies": "આંતરરાષ્ટ્રીય", "International TV Shows": "આંતરરાષ્ટ્રીય", "Horror Movies": "હોરર", "Stand-Up Comedy": "સ્ટેન્ડ-અપ",
+        "Anime Series": "એનિમે", "Sci-Fi & Fantasy": "સાય-ફાઇ", "Mystery": "રહસ્ય", "Music & Musicals": "સંગીત"
+    },
+    "Spanish": {
+        "Drama": "Drama", "Comedies": "Comedias", "Comedy": "Comedia", "Action": "Acción", "Action & Adventure": "Acción", 
+        "Thriller": "Suspenso", "Thrillers": "Suspenso", "Romance": "Romance", "Romantic Movies": "Romance", "Romantic TV Shows": "Romance",
+        "Documentaries": "Documentales", "Crime TV Shows": "Crimen", "Crime": "Crimen", "Kids' TV": "Infantil", "Children & Family Movies": "Infantil",
+        "International Movies": "Internacional", "International TV Shows": "Internacional", "Horror Movies": "Terror", "Stand-Up Comedy": "Comedia en vivo",
+        "Anime Series": "Anime", "Sci-Fi & Fantasy": "Ciencia Ficción", "Mystery": "Misterio", "Music & Musicals": "Música"
+    }
+}
+
+def localize_genre(genre, lang):
+    if not isinstance(genre, str): return genre
+    return GENRE_MAP.get(lang, {}).get(genre, genre)
+
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color=theme_primary, fillcolor=hex_to_rgba(theme_primary, 0.1), line=dict(width=3)))
@@ -763,7 +809,7 @@ def chart_content_split(df: pd.DataFrame):
     type_counts["Type"] = type_counts["Type"].map({"Movie": T["movie"], "TV Show": T["tv_show"]}).fillna(type_counts["Type"])
     fig = go.Figure(go.Bar(
         x=type_counts["Type"], y=type_counts["Count"],
-        text=type_counts["Count"], textposition='auto',
+        text=type_counts["Count"].map(lambda x: localize_number(x, st.session_state.lang)), textposition='auto',
         marker=dict(color=[theme_primary, theme_primary], line=dict(color="rgba(0,0,0,0)", width=2)),
     ))
     fig.update_layout(title=dict(text=T["chart_distribution"], font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
@@ -783,6 +829,7 @@ def chart_top_genres(df: pd.DataFrame):
     genres = df["genres"].dropna().str.split(", ").explode()
     genre_counts = genres.value_counts().head(10).sort_values(ascending=True).reset_index()
     genre_counts.columns = ["Genre", "Titles"]
+    genre_counts["Genre"] = genre_counts["Genre"].map(lambda x: localize_genre(x, st.session_state.lang))
     fig = go.Figure(go.Bar(
         x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
@@ -793,7 +840,7 @@ def chart_top_genres(df: pd.DataFrame):
 def chart_rating_distribution(df: pd.DataFrame):
     rating_counts = df["rating"].dropna().value_counts().head(10).reset_index()
     rating_counts.columns = ["Rating", "Count"]
-    fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=[theme_primary])
+    fig = px.bar(rating_counts, x="Rating", y="Count", color_discrete_sequence=[theme_primary], text=rating_counts["Count"].map(lambda x: localize_number(x, st.session_state.lang)))
     fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
     fig.update_layout(title=dict(text=T["chart_rating"], font=dict(size=14, color="gray")), xaxis=dict(title="", gridcolor="rgba(0,0,0,0)"), yaxis=dict(title="", gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
     return fig
@@ -938,15 +985,15 @@ def render_top_bar(df=None):
     c1, c2, c3, c4 = st.columns([2, 2, 2, 5])
 
     with c1:
-        if st.button(f"**{total:,}** {T['metric_total']}", type="tertiary", use_container_width=True):
+        if st.button(f"**{localize_number(total, st.session_state.lang)}** {T['metric_total']}", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
             st.session_state.popup_page = 0
     with c2:
-        if st.button(f"**{movies:,}** {T['metric_movies']}", type="tertiary", use_container_width=True):
+        if st.button(f"**{localize_number(movies, st.session_state.lang)}** {T['metric_movies']}", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "Movie", "match": "exact"}
             st.session_state.popup_page = 0
     with c3:
-        if st.button(f"**{shows:,}** {T['metric_shows']}", type="tertiary", use_container_width=True):
+        if st.button(f"**{localize_number(shows, st.session_state.lang)}** {T['metric_shows']}", type="tertiary", use_container_width=True):
             st.session_state.popup_request = {"col": "type", "val": "TV Show", "match": "exact"}
             st.session_state.popup_page = 0
     with c4:
