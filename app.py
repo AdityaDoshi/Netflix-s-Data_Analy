@@ -76,6 +76,74 @@ css = """
         .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 4rem !important; }
 
     }
+
+    /* Premium Refinements */
+    
+    /* Background animated glow */
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        top: -10%; left: -10%; width: 120%; height: 120%;
+        background-image: radial-gradient(circle at 20% 30%, var(--primary-color) 0%, transparent 20%),
+                          radial-gradient(circle at 80% 70%, var(--primary-color) 0%, transparent 20%);
+        opacity: 0.05;
+        z-index: -1;
+        pointer-events: none;
+        animation: subtlePulse 8s infinite alternate;
+    }}
+
+    @keyframes subtlePulse {{
+        0% {{ transform: scale(1); opacity: 0.03; }}
+        100% {{ transform: scale(1.05); opacity: 0.08; }}
+    }}
+
+    /* Glassmorphism Sidebar */
+    [data-testid="stSidebar"] {{
+        background: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.05)) !important;
+    }}
+    
+    /* Glowing active tabs */
+    [data-testid="stTab"][aria-selected="true"] {{
+        border-bottom: 3px solid var(--primary-color) !important;
+        filter: drop-shadow(0 4px 6px var(--primary-color));
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(-2px);
+    }}
+    [data-testid="stTab"] {{
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+    [data-testid="stTab"]:hover {{
+        transform: translateY(-2px);
+        color: var(--primary-color) !important;
+    }}
+
+    /* Animated Title */
+    .main-title {{
+        filter: drop-shadow(0 0 10px var(--primary-color));
+        animation: titlePulse 3s infinite alternate;
+        position: relative;
+        display: inline-block;
+    }}
+    @keyframes titlePulse {{
+        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
+        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
+    }}
+
+    /* Glassmorphism for containers and charts */
+    .stDataFrame {{
+        border-radius: 12px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+    }}
+
+    /* Smooth Chart interactions */
+    .js-plotly-plot .plotly .nsewdrag {{
+        cursor: pointer;
+    }}
+
 </style>
 """
 
@@ -277,6 +345,74 @@ root_css = f"""
     --border-color: {border_color};
     --primary-color: {theme_primary};
 }}
+
+    /* Premium Refinements */
+    
+    /* Background animated glow */
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        top: -10%; left: -10%; width: 120%; height: 120%;
+        background-image: radial-gradient(circle at 20% 30%, var(--primary-color) 0%, transparent 20%),
+                          radial-gradient(circle at 80% 70%, var(--primary-color) 0%, transparent 20%);
+        opacity: 0.05;
+        z-index: -1;
+        pointer-events: none;
+        animation: subtlePulse 8s infinite alternate;
+    }}
+
+    @keyframes subtlePulse {{
+        0% {{ transform: scale(1); opacity: 0.03; }}
+        100% {{ transform: scale(1.05); opacity: 0.08; }}
+    }}
+
+    /* Glassmorphism Sidebar */
+    [data-testid="stSidebar"] {{
+        background: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.05)) !important;
+    }}
+    
+    /* Glowing active tabs */
+    [data-testid="stTab"][aria-selected="true"] {{
+        border-bottom: 3px solid var(--primary-color) !important;
+        filter: drop-shadow(0 4px 6px var(--primary-color));
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(-2px);
+    }}
+    [data-testid="stTab"] {{
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+    [data-testid="stTab"]:hover {{
+        transform: translateY(-2px);
+        color: var(--primary-color) !important;
+    }}
+
+    /* Animated Title */
+    .main-title {{
+        filter: drop-shadow(0 0 10px var(--primary-color));
+        animation: titlePulse 3s infinite alternate;
+        position: relative;
+        display: inline-block;
+    }}
+    @keyframes titlePulse {{
+        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
+        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
+    }}
+
+    /* Glassmorphism for containers and charts */
+    .stDataFrame {{
+        border-radius: 12px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+    }}
+
+    /* Smooth Chart interactions */
+    .js-plotly-plot .plotly .nsewdrag {{
+        cursor: pointer;
+    }}
+
 </style>
 """
 st.markdown(root_css + css, unsafe_allow_html=True)
@@ -559,6 +695,74 @@ def render_login_screen():
         .block-container, div[data-testid="stAppViewBlockContainer"] { padding-top: 4rem !important; }
 
     }
+
+    /* Premium Refinements */
+    
+    /* Background animated glow */
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        top: -10%; left: -10%; width: 120%; height: 120%;
+        background-image: radial-gradient(circle at 20% 30%, var(--primary-color) 0%, transparent 20%),
+                          radial-gradient(circle at 80% 70%, var(--primary-color) 0%, transparent 20%);
+        opacity: 0.05;
+        z-index: -1;
+        pointer-events: none;
+        animation: subtlePulse 8s infinite alternate;
+    }}
+
+    @keyframes subtlePulse {{
+        0% {{ transform: scale(1); opacity: 0.03; }}
+        100% {{ transform: scale(1.05); opacity: 0.08; }}
+    }}
+
+    /* Glassmorphism Sidebar */
+    [data-testid="stSidebar"] {{
+        background: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.05)) !important;
+    }}
+    
+    /* Glowing active tabs */
+    [data-testid="stTab"][aria-selected="true"] {{
+        border-bottom: 3px solid var(--primary-color) !important;
+        filter: drop-shadow(0 4px 6px var(--primary-color));
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(-2px);
+    }}
+    [data-testid="stTab"] {{
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+    [data-testid="stTab"]:hover {{
+        transform: translateY(-2px);
+        color: var(--primary-color) !important;
+    }}
+
+    /* Animated Title */
+    .main-title {{
+        filter: drop-shadow(0 0 10px var(--primary-color));
+        animation: titlePulse 3s infinite alternate;
+        position: relative;
+        display: inline-block;
+    }}
+    @keyframes titlePulse {{
+        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
+        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
+    }}
+
+    /* Glassmorphism for containers and charts */
+    .stDataFrame {{
+        border-radius: 12px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+    }}
+
+    /* Smooth Chart interactions */
+    .js-plotly-plot .plotly .nsewdrag {{
+        cursor: pointer;
+    }}
+
 </style>
 
 <div class="login-header-container">
@@ -998,7 +1202,75 @@ def render_top_bar(df=None):
             margin-top: 8px !important;
         }
     }
-    </style>
+    
+    /* Premium Refinements */
+    
+    /* Background animated glow */
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        top: -10%; left: -10%; width: 120%; height: 120%;
+        background-image: radial-gradient(circle at 20% 30%, var(--primary-color) 0%, transparent 20%),
+                          radial-gradient(circle at 80% 70%, var(--primary-color) 0%, transparent 20%);
+        opacity: 0.05;
+        z-index: -1;
+        pointer-events: none;
+        animation: subtlePulse 8s infinite alternate;
+    }}
+
+    @keyframes subtlePulse {{
+        0% {{ transform: scale(1); opacity: 0.03; }}
+        100% {{ transform: scale(1.05); opacity: 0.08; }}
+    }}
+
+    /* Glassmorphism Sidebar */
+    [data-testid="stSidebar"] {{
+        background: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(15px) !important;
+        -webkit-backdrop-filter: blur(15px) !important;
+        border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.05)) !important;
+    }}
+    
+    /* Glowing active tabs */
+    [data-testid="stTab"][aria-selected="true"] {{
+        border-bottom: 3px solid var(--primary-color) !important;
+        filter: drop-shadow(0 4px 6px var(--primary-color));
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateY(-2px);
+    }}
+    [data-testid="stTab"] {{
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }}
+    [data-testid="stTab"]:hover {{
+        transform: translateY(-2px);
+        color: var(--primary-color) !important;
+    }}
+
+    /* Animated Title */
+    .main-title {{
+        filter: drop-shadow(0 0 10px var(--primary-color));
+        animation: titlePulse 3s infinite alternate;
+        position: relative;
+        display: inline-block;
+    }}
+    @keyframes titlePulse {{
+        0% {{ filter: drop-shadow(0 0 5px var(--primary-color)); }}
+        100% {{ filter: drop-shadow(0 0 20px var(--primary-color)); }}
+    }}
+
+    /* Glassmorphism for containers and charts */
+    .stDataFrame {{
+        border-radius: 12px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
+    }}
+
+    /* Smooth Chart interactions */
+    .js-plotly-plot .plotly .nsewdrag {{
+        cursor: pointer;
+    }}
+
+</style>
     """, unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns([2, 2, 2, 5])
 
