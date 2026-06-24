@@ -318,7 +318,7 @@ THEMES = {
     "Netflix Dark (Default)": {"bg_color": "#141414", "sec_bg_color": "#000000", "text_color": "#FFFFFF", "border_color": "rgba(255,255,255,0.1)", "primary_color": "#E50914", "base": "dark"},
     "Netflix Light": {"bg_color": "#F9FAFB", "sec_bg_color": "#FFFFFF", "text_color": "#111827", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#E50914", "base": "light"},
     "Sunset Orange": {"bg_color": "#FFFBF0", "sec_bg_color": "#FFFFFF", "text_color": "#431407", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#F97316", "base": "light"},
-    "Autumn Gold": {"bg_color": "#FFF8E7", "sec_bg_color": "#FFFFFF", "text_color": "#4A3B22", "border_color": "rgba(0,0,0,0.1)", "primary_color": "#D97706", "base": "light"}
+    "Neon Pink": {"bg_color": "#1A0510", "sec_bg_color": "#0A0005", "text_color": "#FDF2F8", "border_color": "rgba(236,72,153,0.2)", "primary_color": "#EC4899", "base": "dark"}
 }
 
 if "theme" not in st.session_state:
