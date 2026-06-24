@@ -67,7 +67,7 @@ css = """
     .stDownloadButton > button:hover { background: var(--secondary-background-color) !important; border-color: var(--primary-color) !important; color: var(--text-color) !important; }
 
     .main-title-container { margin-bottom: 8px; }
-    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: #E50914; line-height: 1; text-transform: uppercase; text-shadow: 0px 2px 8px var(--primary-color); }
+    .main-title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; font-weight: normal; letter-spacing: 2px; color: var(--primary-color); line-height: 1; text-transform: uppercase; text-shadow: 0px 2px 8px var(--primary-color); }
     .main-description { color: var(--text-color); opacity: 0.7; font-size: 1rem; margin-bottom: 32px; font-weight: 400; max-width: 800px; }
 
     @media (max-width: 768px) {
@@ -204,7 +204,7 @@ def render_login_screen():
             right: 20%;
             width: 350px;
             height: 350px;
-            background: linear-gradient(135deg, #E50914 0%, #83050C 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #83050C 100%);
             border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
             z-index: 0;
             opacity: 0.6;
@@ -216,7 +216,7 @@ def render_login_screen():
             left: 15%;
             width: 250px;
             height: 200px;
-            background: linear-gradient(135deg, #E50914 0%, #330000 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #330000 100%);
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
             z-index: 0;
             opacity: 0.5;
@@ -289,7 +289,7 @@ def render_login_screen():
         [data-testid="stForm"] input:focus {
             background-color: rgba(255, 255, 255, 0.1) !important;
             border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 1px #E50914 !important;
+            box-shadow: 0 0 0 1px var(--primary-color) !important;
         }
         
         /* Pill Button (Primary) */
@@ -684,7 +684,7 @@ def render_recent_feed(df: pd.DataFrame):
         date_str = row["date_added"].strftime("%B %d, %Y") if pd.notna(row["date_added"]) else "Unknown Date"
         desc = str(row["description"])[:140] + "..." if pd.notna(row["description"]) else ""
         html += f"""
-<div style="border-left: 3px solid #E50914; padding-left: 16px;">
+<div style="border-left: 3px solid var(--primary-color); padding-left: 16px;">
 <div style="font-size: 0.75rem; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; font-weight: 500; text-transform: uppercase;">{date_str} &nbsp;&bull;&nbsp; {row['type']}</div>
 <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-color); margin-bottom: 6px;">{row['title']} <span style="font-size:0.7rem; background:var(--secondary-background-color); border:1px solid gray; padding:2px 6px; border-radius:4px; margin-left:8px; color:gray; font-weight: 500;">{row['rating']}</span></div>
 <div style="font-size: 0.85rem; color: var(--text-color); opacity: 0.7; line-height: 1.5;">{desc}</div>
