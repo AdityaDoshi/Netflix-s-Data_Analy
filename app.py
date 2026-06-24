@@ -176,6 +176,50 @@ LANG = {
         "col_year": "Release Year",
         "col_rating": "Rating",
         "col_duration": "Duration",
+                "chart_title_release_trend": "Content Release Trend (10 Years)",
+        "chart_title_split": "Content Type Split",
+        "chart_title_genres": "Top 10 Genres by Volume",
+        "chart_title_rating": "Maturity Rating Distribution",
+        "chart_title_directors": "Top 10 Directors by Volume",
+        "chart_title_map": "Global Content Production Heatmap",
+        "chart_title_actors": "Top 10 Most Featured Actors",
+        "chart_title_scatter": "Movie Runtime Trends (Scatter + Average)",
+        "chart_title_histogram": "Movie Runtime Histogram",
+        "axis_frequency": "Frequency",
+        "legend_avg_runtime": "Average Runtime",
+                "chart_title_release_trend": "સામગ્રી પ્રકાશન વલણ (10 વર્ષ)",
+        "chart_title_split": "સામગ્રી પ્રકાર વિભાજન",
+        "chart_title_genres": "વોલ્યુમ દ્વારા ટોચની 10 શૈલીઓ",
+        "chart_title_rating": "પરિપક્વતા રેટિંગ વિતરણ",
+        "chart_title_directors": "વોલ્યુમ દ્વારા ટોચના 10 દિગ્દર્શકો",
+        "chart_title_map": "વૈશ્વિક સામગ્રી ઉત્પાદન હીટમેપ",
+        "chart_title_actors": "ટોચના 10 સૌથી વધુ દર્શાવવામાં આવેલ કલાકારો",
+        "chart_title_scatter": "મૂવી રનટાઇમ વલણો (સ્કેટર + એવરેજ)",
+        "chart_title_histogram": "મૂવી રનટાઇમ હિસ્ટોગ્રામ",
+        "axis_frequency": "આવર્તન",
+        "legend_avg_runtime": "સરેરાશ રનટાઇમ",
+                "chart_title_release_trend": "सामग्री रिलीज़ रुझान (10 वर्ष)",
+        "chart_title_split": "सामग्री प्रकार विभाजन",
+        "chart_title_genres": "मात्रा के आधार पर शीर्ष 10 शैलियाँ",
+        "chart_title_rating": "परिपक्वता रेटिंग वितरण",
+        "chart_title_directors": "मात्रा के आधार पर शीर्ष 10 निर्देशक",
+        "chart_title_map": "वैश्विक सामग्री उत्पादन हीटमैप",
+        "chart_title_actors": "शीर्ष 10 सबसे अधिक प्रदर्शित अभिनेता",
+        "chart_title_scatter": "मूवी रनटाइम रुझान (स्कैटर + औसत)",
+        "chart_title_histogram": "मूवी रनटाइम हिस्टोग्राम",
+        "axis_frequency": "आवृत्ति",
+        "legend_avg_runtime": "औसत रनटाइम",
+                "chart_title_release_trend": "Tendencia de Lanzamiento de Contenido (10 Años)",
+        "chart_title_split": "División por Tipo de Contenido",
+        "chart_title_genres": "Top 10 Géneros por Volumen",
+        "chart_title_rating": "Distribución de Clasificación por Madurez",
+        "chart_title_directors": "Top 10 Directores por Volumen",
+        "chart_title_map": "Mapa de Calor Global de Producción de Contenido",
+        "chart_title_actors": "Top 10 Actores Más Destacados",
+        "chart_title_scatter": "Tendencias de Duración de Películas (Dispersión + Promedio)",
+        "chart_title_histogram": "Histograma de Duración de Películas",
+        "axis_frequency": "Frecuencia",
+        "legend_avg_runtime": "Duración Promedio",
         "col_genres": "Genres",
         "metric_total": "Total Content",
         "metric_genres": "Unique Genres",
@@ -1109,7 +1153,7 @@ def chart_top_genres(df: pd.DataFrame):
     fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("genre", "Genre"), title=dict(text=T["chart_genres"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
+    fig.update_layout(xaxis_title=T.get("count", "Count"), yaxis_title=T.get("genre", "Genre"), title=dict(text=T["chart_genres"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_rating_distribution(df: pd.DataFrame):
@@ -1127,14 +1171,14 @@ def chart_top_directors(df: pd.DataFrame):
     fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_directors"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
+    fig.update_layout(xaxis_title=T.get("count", "Count"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_directors"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
 def chart_runtime_distribution(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna())]
     fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"], labels={"duration_minutes": T.get("duration_minutes", "Duration (min)"), "count": T.get("count", "Count")})
     fig.update_traces(marker_line_color="rgba(0,0,0,0)", marker_line_width=0.5)
-    fig.update_layout(title=dict(text="Movie Runtime Histogram", font=dict(size=14, color="gray")), xaxis=dict(title=T.get("duration_minutes", "Duration (min)"), gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Frequency", gridcolor="rgba(128,128,128,0.2)"), bargap=0.06, height=350, clickmode="event+select")
+    fig.update_layout(title=dict(text=T.get("chart_title_histogram", "Movie Runtime Histogram"), font=dict(size=14, color="gray")), xaxis=dict(title=T.get("duration_minutes", "Duration (min)"), gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Frequency", gridcolor="rgba(128,128,128,0.2)"), bargap=0.06, height=350, clickmode="event+select")
     return fig
 
 # --- New Deep Dive Visualizations ---
@@ -1159,7 +1203,7 @@ def chart_top_cast(df: pd.DataFrame):
     fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=cast_counts["Titles"], y=cast_counts["Actor"], orientation="h",
         marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5))
     ))
-    fig.update_layout(xaxis_title=T.get("titles", "Titles"), yaxis_title="", title=dict(text="Top 10 Most Featured Actors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
+    fig.update_layout(xaxis_title=T.get("count", "Count"), yaxis_title="", title=dict(text=T.get("chart_title_actors", "Top 10 Most Featured Actors"), font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
     return fig
 
 def chart_duration_scatter(df: pd.DataFrame):
@@ -1167,8 +1211,8 @@ def chart_duration_scatter(df: pd.DataFrame):
     avg_duration = movies.groupby("release_year")["duration_minutes"].mean().reset_index()
     
     fig = px.scatter(movies, x="release_year", y="duration_minutes", opacity=0.3, color_discrete_sequence=["#404040"], labels={"release_year": T.get("release_year", "Release Year"), "duration_minutes": T.get("duration_minutes", "Duration (min)")})
-    fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color=theme_primary), line=dict(color=theme_primary, width=3), name="Average Runtime"))
-    fig.update_layout(title=dict(text="Movie Runtime Trends (Scatter + Average)", font=dict(size=14, color="gray")), xaxis=dict(title=T.get("release_year", "Release Year"), gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title="Duration (mins)", gridcolor="rgba(128,128,128,0.2)"), height=400, clickmode="event+select")
+    fig.add_trace(go.Scatter(x=avg_duration["release_year"], y=avg_duration["duration_minutes"], mode="lines+markers", marker=dict(size=6, color=theme_primary), line=dict(color=theme_primary, width=3), name=T.get("legend_avg_runtime", "Average Runtime")))
+    fig.update_layout(title=dict(text=T.get("chart_title_scatter", "Movie Runtime Trends (Scatter + Average)"), font=dict(size=14, color="gray")), xaxis=dict(title=T.get("release_year", "Release Year"), gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=T.get("duration_minutes", "Duration (mins)"), gridcolor="rgba(128,128,128,0.2)"), height=400, clickmode="event+select")
     return fig
 
 
