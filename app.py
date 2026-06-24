@@ -584,7 +584,7 @@ def chart_content_split(df: pd.DataFrame):
     fig = go.Figure(go.Bar(
         x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"], textposition='auto',
-        marker=dict(color=[theme_primary, "#F04438"], line=dict(color="rgba(0,0,0,0)", width=2)),
+        marker=dict(color=[theme_primary, theme_primary], line=dict(color="rgba(0,0,0,0)", width=2)),
     ))
     fig.update_layout(title=dict(text="Content Distribution", font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
     return fig
@@ -594,7 +594,7 @@ def chart_year_ingestion(df: pd.DataFrame):
     yearly.columns = ["Year", "Titles Added"]
     fig = go.Figure(go.Scatter(
         x=yearly["Year"], y=yearly["Titles Added"], mode="lines+markers",
-        line=dict(color=theme_primary, width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor="rgba(217, 45, 32, 0.05)",
+        line=dict(color=theme_primary, width=2, shape="spline"), marker=dict(size=6, color="gray"), fill="tozeroy", fillcolor=hex_to_rgba(theme_primary, 0.05),
     ))
     fig.update_layout(title=dict(text="Year-over-Year Ingestion", font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
     return fig
@@ -605,7 +605,7 @@ def chart_top_genres(df: pd.DataFrame):
     genre_counts.columns = ["Genre", "Titles"]
     fig = go.Figure(go.Bar(
         x=genre_counts["Titles"], y=genre_counts["Genre"], orientation="h",
-        marker=dict(color="#F04438", line=dict(color="rgba(0,0,0,0)", width=0.5)),
+        marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
     fig.update_layout(title=dict(text="Top 10 Genres", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
@@ -624,7 +624,7 @@ def chart_top_directors(df: pd.DataFrame):
     director_counts.columns = ["Director", "Titles"]
     fig = go.Figure(go.Bar(
         x=director_counts["Titles"], y=director_counts["Director"], orientation="h",
-        marker=dict(color="#F04438", line=dict(color="rgba(0,0,0,0)", width=0.5)),
+        marker=dict(color=theme_primary, line=dict(color="rgba(0,0,0,0)", width=0.5)),
     ))
     fig.update_layout(title=dict(text="Top 10 Directors", font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
@@ -642,7 +642,7 @@ def chart_top_countries_map(df: pd.DataFrame):
     country_counts.columns = ["Country", "Titles"]
     fig = px.choropleth(
         country_counts, locations="Country", locationmode="country names", color="Titles",
-        color_continuous_scale=["rgba(0,0,0,0)", "#F04438", "#7A271A"], labels={'Titles': 'Number of Titles'}
+        color_continuous_scale=["rgba(0,0,0,0)", theme_primary, "#7A271A"], labels={'Titles': 'Number of Titles'}
     )
     fig.update_layout(
         title=dict(text="Global Production Hubs", font=dict(size=14, color="gray")),
