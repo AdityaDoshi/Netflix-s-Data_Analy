@@ -119,7 +119,7 @@ LANG = {
         "items_per_page": "Items per page",
         "page": "Page",
         "of": "of",
-        "download_csv": "Download CSV"
+        "download_csv": "Download CSV", "header_trend": "Content Release Trend (10 Years)", "header_dist": "Distribution & Genres", "header_ratings": "Ratings & Directors", "header_granular": "Granular Analysis", "dataset_info": "Dataset Info", "source": "Source", "total_records": "Total Records", "year_span": "Year Span"
     },
     "Hindi": {
         "language_selector": "🌐 भाषा (Language)",
@@ -158,7 +158,7 @@ LANG = {
         "items_per_page": "प्रति पृष्ठ आइटम",
         "page": "पृष्ठ",
         "of": "का",
-        "download_csv": "सीएसवी डाउनलोड करें"
+        "download_csv": "सीएसवी डाउनलोड करें", "header_trend": "सामग्री रिलीज ट्रेंड (10 वर्ष)", "header_dist": "वितरण और शैलियां", "header_ratings": "रेटिंग और निर्देशक", "header_granular": "विस्तृत विश्लेषण", "dataset_info": "डेटासेट जानकारी", "source": "स्रोत", "total_records": "कुल रिकॉर्ड", "year_span": "वर्ष अवधि"
     },
     "Gujarati": {
         "language_selector": "🌐 ભાષા (Language)",
@@ -197,7 +197,7 @@ LANG = {
         "items_per_page": "પૃષ્ઠ દીઠ આઇટમ્સ",
         "page": "પૃષ્ઠ",
         "of": "નું",
-        "download_csv": "સીએસવી ડાઉનલોડ કરો"
+        "download_csv": "સીએસવી ડાઉનલોડ કરો", "header_trend": "સામગ્રી પ્રકાશન વલણ (10 વર્ષ)", "header_dist": "વિતરણ અને શૈલીઓ", "header_ratings": "રેટિંગ્સ અને દિગ્દર્શકો", "header_granular": "વિગતવાર વિશ્લેષણ", "dataset_info": "ડેટાસેટ માહિતી", "source": "સ્ત્રોત", "total_records": "કુલ રેકોર્ડ્સ", "year_span": "વર્ષનો સમયગાળો"
     },
     "Spanish": {
         "language_selector": "🌐 Idioma (Language)",
@@ -236,7 +236,7 @@ LANG = {
         "items_per_page": "Artículos por página",
         "page": "Página",
         "of": "de",
-        "download_csv": "Descargar CSV"
+        "download_csv": "Descargar CSV", "header_trend": "Tendencia de lanzamientos (10 Años)", "header_dist": "Distribución y Géneros", "header_ratings": "Calificaciones y Directores", "header_granular": "Análisis Granular", "dataset_info": "Info del Dataset", "source": "Fuente", "total_records": "Registros Totales", "year_span": "Lapso de Años"
     }
 }
 
@@ -646,14 +646,14 @@ def render_sidebar(df: pd.DataFrame):
         min_year, max_year = int(valid_years.min()), int(valid_years.max())
 
         year_range = st.slider(T["release_year"], min_value=min_year, max_value=max_year, value=(min_year, max_year), step=1)
-        selected_types = st.multiselect(T["content_type"], options=sorted(df["type"].dropna().unique()), default=sorted(df["type"].dropna().unique()))
-        selected_ratings = st.multiselect(T["maturity_rating"], options=sorted(df["rating"].dropna().unique()), default=[])
-        selected_countries = st.multiselect(T["production_country"], options=sorted(df["primary_country"].dropna().unique()), default=[])
+        selected_types = st.multiselect(T["content_type"], options=sorted(df["type"].dropna().unique()), default=sorted(df["type"].dropna().unique()), format_func=lambda x: T["movie"] if x == "Movie" else (T["tv_show"] if x == "TV Show" else x), placeholder=T["choose_options"])
+        selected_ratings = st.multiselect(T["maturity_rating"], options=sorted(df["rating"].dropna().unique()), default=[], placeholder=T["choose_options"])
+        selected_countries = st.multiselect(T["production_country"], options=sorted(df["primary_country"].dropna().unique()), default=[], placeholder=T["choose_options"])
 
         st.divider()
-        st.markdown("#### Dataset Info")
+        st.markdown(f"#### {T['dataset_info']}")
         st.caption(f"Source: netflix_titles.csv")
-        st.caption(f"Total Records: {len(df):,}")
+        st.caption(f"{T['total_records']}: {len(df):,}")
         st.caption(f"Year Span: {min_year} – {max_year}")
 
     filtered = df[(df["release_year"] >= year_range[0]) & (df["release_year"] <= year_range[1])]
@@ -760,6 +760,7 @@ def render_metric_cards(df: pd.DataFrame):
 def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
     type_counts.columns = ["Type", "Count"]
+    type_counts["Type"] = type_counts["Type"].map({"Movie": T["movie"], "TV Show": T["tv_show"]}).fillna(type_counts["Type"])
     fig = go.Figure(go.Bar(
         x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"], textposition='auto',
@@ -1058,11 +1059,11 @@ def main():
     tab1, tab2, tab3 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"]])
 
     with tab1:
-        st.markdown('<div class="section-header" style="margin-top: 24px;">Content Release Trend (10 Years)</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-header" style="margin-top: 24px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
         ev_hero = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
         process_selection(ev_hero, "tab1_year", "year_added", extract_key="x")
 
-        st.markdown('<div class="section-header">Distribution & Genres</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-header">{T["header_dist"]}</div>', unsafe_allow_html=True)
         col1, col2 = st.columns(2, gap="large")
         with col1:
             ev_split = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
@@ -1071,7 +1072,7 @@ def main():
             ev_genres = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
             process_selection(ev_genres, "tab1_genres", "genres", extract_key="y", match_type="contains")
 
-        st.markdown('<div class="section-header">Ratings & Directors</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-header">{T["header_ratings"]}</div>', unsafe_allow_html=True)
         col3, col4 = st.columns(2, gap="large")
         with col3:
             ev_rating = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
@@ -1081,7 +1082,7 @@ def main():
             process_selection(ev_directors, "tab1_directors", "director", extract_key="y", match_type="contains")
 
     with tab2:
-        st.markdown('<div class="section-header">Granular Analysis</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-header">{T["header_granular"]}</div>', unsafe_allow_html=True)
         ev_m = st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
         process_selection(ev_m, "tab2_map", "primary_country", extract_key="location", match_type="contains")
         
