@@ -1396,33 +1396,60 @@ def node_go_back():
 
 @st.cache_data(show_spinner=False, ttl=86400)
 def get_image(query, is_movie=False):
-    import urllib.request, urllib.parse, json
+    import urllib.request, urllib.parse, json, re
     
-    # 1. TVMaze for Movies/Shows
-    if is_movie:
-        try:
-            url = 'https://api.tvmaze.com/search/shows?q=' + urllib.parse.quote(query.replace(" movie", ""))
-            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            data = json.loads(urllib.request.urlopen(req, timeout=3).read().decode('utf-8'))
-            if len(data) > 0 and data[0]['show']['image']:
-                return data[0]['show']['image']['original']
-        except Exception:
-            pass
-            
-    # 2. Wikipedia for Actors and fallback for Movies
+    # --- LEVEL 1: TVMAZE (Most Reliable, No Auth, Great for Shows/Actors) ---
     try:
         if is_movie:
-            url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + urllib.parse.quote(query) + '&gsrlimit=1&prop=pageimages&format=json&pithumbsize=400'
+            url = 'https://api.tvmaze.com/search/shows?q=' + urllib.parse.quote(query.replace(" movie", ""))
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            data = json.loads(urllib.request.urlopen(req, timeout=2).read().decode('utf-8'))
+            if len(data) > 0 and data[0]['show']['image']:
+                return data[0]['show']['image']['original']
+        else:
+            url = 'https://api.tvmaze.com/search/people?q=' + urllib.parse.quote(query)
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            data = json.loads(urllib.request.urlopen(req, timeout=2).read().decode('utf-8'))
+            if len(data) > 0 and data[0]['person']['image']:
+                return data[0]['person']['image']['original']
+    except Exception:
+        pass
+
+    # --- LEVEL 2: WIKIPEDIA (Great for Theatrical Movies & Famous People not on TV) ---
+    try:
+        if is_movie:
+            url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + urllib.parse.quote(query.replace(" movie", "")) + '&gsrlimit=1&prop=pageimages&format=json&pithumbsize=400'
         else:
             url = 'https://en.wikipedia.org/w/api.php?action=query&titles=' + urllib.parse.quote(query) + '&prop=pageimages&format=json&pithumbsize=400'
             
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        data = json.loads(urllib.request.urlopen(req, timeout=3).read().decode('utf-8'))
+        data = json.loads(urllib.request.urlopen(req, timeout=2).read().decode('utf-8'))
         if 'query' in data and 'pages' in data['query']:
             pages = data['query']['pages']
             for page_id in pages:
                 if 'thumbnail' in pages[page_id]:
                     return pages[page_id]['thumbnail']['source']
+    except Exception:
+        pass
+        
+    # --- LEVEL 3: TMDB SCRAPER (Risky due to IP block, but good last resort) ---
+    try:
+        if not is_movie:
+            url = 'https://www.themoviedb.org/search/person?query=' + urllib.parse.quote(query)
+        else:
+            url = 'https://www.themoviedb.org/search?query=' + urllib.parse.quote(query.replace(" movie", ""))
+            
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+        html = urllib.request.urlopen(req, timeout=2).read().decode('utf-8')
+        
+        match = re.search(r'src="(https://media\.themoviedb\.org/t/p/w[^"]+\.jpg)"', html)
+        if not match: match = re.search(r'src="(/t/p/w[^"]+\.jpg)"', html)
+            
+        if match:
+            img_url = match.group(1)
+            if img_url.startswith('/'): img_url = "https://media.themoviedb.org" + img_url
+            img_url = re.sub(r'/w[0-9]+_and_h[0-9]+_[^/]+/', '/w600_and_h900_bestv2/', img_url)
+            return img_url
     except Exception:
         pass
         
