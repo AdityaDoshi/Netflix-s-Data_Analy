@@ -965,6 +965,7 @@ def localize_genre(genre, lang):
     if not isinstance(genre, str): return genre
     return GENRE_MAP.get(lang, {}).get(genre, genre)
 
+@st.cache_resource(show_spinner=False)
 def chart_kpi_line(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x_series, y=y_series, mode='lines+markers', marker=dict(size=6, color="gray"), fill='tozeroy', line_color=theme_primary, fillcolor=hex_to_rgba(theme_primary, 0.1), line=dict(width=3)))
@@ -982,6 +983,7 @@ def chart_kpi_line(value, title, x_series, y_series):
     )
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_kpi_bar(value, title, x_series, y_series):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=x_series, y=y_series, marker_color=theme_primary, opacity=0.8, marker_line_width=0))
@@ -999,6 +1001,7 @@ def chart_kpi_bar(value, title, x_series, y_series):
     )
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_kpi_donut(value, title, labels, values):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=labels, y=values, text=labels, textposition='inside', insidetextfont=dict(color="gray", size=14), marker_color=[theme_primary, "gray"], marker_line_width=0))
@@ -1062,6 +1065,7 @@ def render_metric_cards(df: pd.DataFrame):
 
 
 
+@st.cache_resource(show_spinner=False)
 def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
     type_counts.columns = ["Type", "Count"]
@@ -1073,6 +1077,7 @@ def chart_content_split(df: pd.DataFrame):
     fig.update_layout(xaxis_title=T.get("content_type", "Type"), yaxis_title=T.get("count", "Count"), title=dict(text=T["chart_distribution"], font=dict(size=14, color="gray")), showlegend=False, height=350, clickmode="event+select")
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_year_ingestion(df: pd.DataFrame):
     yearly = df["year_added"].dropna().astype(int).value_counts().sort_index().reset_index()
     yearly.columns = ["Year", "Titles Added"]
@@ -1083,6 +1088,7 @@ def chart_year_ingestion(df: pd.DataFrame):
     fig.update_layout(xaxis_title=T.get("year_added", "Year Added"), yaxis_title=T.get("count", "Count"), title=dict(text=T["chart_yoy"], font=dict(size=14, color="gray")), xaxis=dict(zeroline=False), yaxis=dict(zeroline=False), height=350, clickmode="event+select")
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_top_genres(df: pd.DataFrame):
     genres = df["genres"].dropna().str.split(", ").explode()
     genre_counts = genres.value_counts().head(10).sort_values(ascending=True).reset_index()
@@ -1094,6 +1100,7 @@ def chart_top_genres(df: pd.DataFrame):
     fig.update_layout(xaxis_title=T.get("count", "Count"), yaxis_title=T.get("genre", "Genre"), title=dict(text=T["chart_genres"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_rating_distribution(df: pd.DataFrame):
     rating_counts = df["rating"].dropna().value_counts().head(10).reset_index()
     rating_counts.columns = ["Rating", "Count"]
@@ -1102,6 +1109,7 @@ def chart_rating_distribution(df: pd.DataFrame):
     fig.update_layout(title=dict(text=T["chart_rating"], font=dict(size=14, color="gray")), xaxis=dict(title=T.get("rating", "Rating"), gridcolor="rgba(0,0,0,0)", type="category"), yaxis=dict(title=T.get("count", "Count"), gridcolor="rgba(128,128,128,0.2)"), bargap=0.2, height=350)
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_top_directors(df: pd.DataFrame):
     directors = df["director"].dropna().str.split(", ").explode()
     director_counts = directors.value_counts().head(10).sort_values(ascending=True).reset_index()
@@ -1112,6 +1120,7 @@ def chart_top_directors(df: pd.DataFrame):
     fig.update_layout(xaxis_title=T.get("count", "Count"), yaxis_title=T.get("director", "Director"), title=dict(text=T["chart_directors"], font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=350)
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_runtime_distribution(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna())]
     fig = px.histogram(movies, x="duration_minutes", nbins=40, color_discrete_sequence=["#404040"], labels={"duration_minutes": T.get("duration_minutes", "Duration (min)"), "count": T.get("count", "Count")})
@@ -1120,6 +1129,7 @@ def chart_runtime_distribution(df: pd.DataFrame):
     return fig
 
 # --- New Deep Dive Visualizations ---
+@st.cache_resource(show_spinner=False)
 def chart_top_countries_map(df: pd.DataFrame):
     country_counts = df["primary_country"].dropna().value_counts().reset_index()
     country_counts.columns = ["Country", "Titles"]
@@ -1134,6 +1144,7 @@ def chart_top_countries_map(df: pd.DataFrame):
     )
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_top_cast(df: pd.DataFrame):
     cast_list = df["cast"].dropna().str.split(", ").explode()
     cast_counts = cast_list.value_counts().head(10).sort_values(ascending=True).reset_index()
@@ -1144,6 +1155,7 @@ def chart_top_cast(df: pd.DataFrame):
     fig.update_layout(xaxis_title=T.get("count", "Count"), yaxis_title="", title=dict(text=T.get("chart_title_actors", "Top 10 Most Featured Actors"), font=dict(size=14, color="gray")), xaxis=dict(gridcolor="rgba(128,128,128,0.2)"), yaxis=dict(title=""), height=400, clickmode="event+select")
     return fig
 
+@st.cache_resource(show_spinner=False)
 def chart_duration_scatter(df: pd.DataFrame):
     movies = df[(df["type"] == "Movie") & (df["duration_minutes"].notna()) & (df["release_year"] >= 1970)]
     avg_duration = movies.groupby("release_year")["duration_minutes"].mean().reset_index()
@@ -1469,13 +1481,13 @@ def get_image(query, is_movie=False):
         if is_movie:
             url = 'https://api.tvmaze.com/search/shows?q=' + urllib.parse.quote(query.replace(" movie", ""))
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            data = json.loads(urllib.request.urlopen(req, timeout=2).read().decode('utf-8'))
+            data = json.loads(urllib.request.urlopen(req, timeout=1).read().decode('utf-8'))
             if len(data) > 0 and data[0]['show']['image']:
                 return data[0]['show']['image']['original']
         else:
             url = 'https://api.tvmaze.com/search/people?q=' + urllib.parse.quote(query)
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            data = json.loads(urllib.request.urlopen(req, timeout=2).read().decode('utf-8'))
+            data = json.loads(urllib.request.urlopen(req, timeout=1).read().decode('utf-8'))
             if len(data) > 0 and data[0]['person']['image']:
                 return data[0]['person']['image']['original']
     except Exception:
@@ -1489,7 +1501,7 @@ def get_image(query, is_movie=False):
             url = 'https://en.wikipedia.org/w/api.php?action=query&titles=' + urllib.parse.quote(query) + '&prop=pageimages&format=json&pithumbsize=400'
             
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        data = json.loads(urllib.request.urlopen(req, timeout=2).read().decode('utf-8'))
+        data = json.loads(urllib.request.urlopen(req, timeout=1).read().decode('utf-8'))
         if 'query' in data and 'pages' in data['query']:
             pages = data['query']['pages']
             for page_id in pages:
@@ -1506,7 +1518,7 @@ def get_image(query, is_movie=False):
             url = 'https://www.themoviedb.org/search?query=' + urllib.parse.quote(query.replace(" movie", ""))
             
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
-        html = urllib.request.urlopen(req, timeout=2).read().decode('utf-8')
+        html = urllib.request.urlopen(req, timeout=1).read().decode('utf-8')
         
         match = re.search(r'src="(https://media\.themoviedb\.org/t/p/w[^"]+\.jpg)"', html)
         if not match: match = re.search(r'src="(/t/p/w[^"]+\.jpg)"', html)
