@@ -1707,7 +1707,7 @@ def main():
         st.session_state.demo_credentials = {"admin": "admin123"}
     if "popup_request" not in st.session_state:
         st.session_state.popup_request = None
-        if "current_actor" not in st.session_state:
+    if "current_actor" not in st.session_state:
         st.session_state.current_actor = None
     if "actor_history" not in st.session_state:
         st.session_state.actor_history = []
