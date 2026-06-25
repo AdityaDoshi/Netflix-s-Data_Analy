@@ -1536,10 +1536,9 @@ def get_image(query, is_movie=False):
             
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         html = urllib.request.urlopen(req, timeout=1).read().decode('utf-8')
-        
-        img_tags = re.findall(r'<img[^>]+src=["']([^"']+\.jpg)["'][^>]+alt=["']([^"']+)["']', html)
+        img_tags = re.findall(r\'\'\'<img[^>]+src=["\']([^"\']+\.jpg)["\'][^>]+alt=["\']([^"\']+)["\']\'\'\', html)
         if not img_tags:
-            img_tags = re.findall(r'<img[^>]+alt=["']([^"']+)["'][^>]+src=["']([^"']+\.jpg)["']', html)
+            img_tags = re.findall(r\'\'\'<img[^>]+alt=["\']([^"\']+)["\'][^>]+src=["\']([^"\']+\.jpg)["\']\'\'\', html)
             img_tags = [(src, alt) for alt, src in img_tags]
             
         for src, alt in img_tags:
