@@ -140,6 +140,39 @@ css = """
         cursor: pointer;
     }}
 
+
+    /* Glassmorphism for bordered containers (Cards) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: rgba(255, 255, 255, 0.03) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* Soften Buttons (Glassmorphic) */
+    .stButton > button {
+        border-radius: 20px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .stButton > button:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        transform: translateY(-2px);
+    }
 </style>
 """
 
@@ -386,6 +419,39 @@ root_css = f"""
         cursor: pointer;
     }}
 
+
+    /* Glassmorphism for bordered containers (Cards) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: rgba(255, 255, 255, 0.03) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    [data-testid="stVerticalBlockBorderWrapper"]:hover {
+        background: rgba(255, 255, 255, 0.06) !important;
+        transform: translateY(-4px) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* Soften Buttons (Glassmorphic) */
+    .stButton > button {
+        border-radius: 20px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    
+    .stButton > button:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        transform: translateY(-2px);
+    }
 </style>
 """
 st.markdown(root_css + css, unsafe_allow_html=True)
