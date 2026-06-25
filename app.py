@@ -1476,7 +1476,7 @@ def render_cast_network(df):
             with mc2:
                 st.markdown(f"## {movie_row.title}")
                 st.markdown(f"**{movie_row.release_year}** • {movie_row.type} • **{movie_row.rating}** • {movie_row.duration}")
-                st.markdown(f"**{T.get('genre', 'Genre')}:** {movie_row.listed_in}")
+                st.markdown(f"**{T.get('genre', 'Genre')}:** {movie_row.genres}")
                 import pandas as pd
                 if pd.notna(movie_row.director):
                     st.markdown(f"**{T.get('director', 'Director')}:** {movie_row.director}")
