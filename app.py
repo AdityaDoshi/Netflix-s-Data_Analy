@@ -1706,11 +1706,43 @@ def main():
         unsafe_allow_html=True,
     )
 
+    with st.container():
+        st.markdown(f'<div class="section-header">{T.get("tab_ai", "🤖 AI Recommender")}</div>', unsafe_allow_html=True)
+        st.markdown(f'<p style="opacity:0.8;">{T.get("ai_desc", "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!")}</p>', unsafe_allow_html=True)
+        
+        s1, s2, s3 = st.columns(3)
+        if s1.button("🕵️‍♂️ Spooky Detective", use_container_width=True):
+            st.session_state.ai_query = "A spooky detective movie with a twist ending"
+        if s2.button("🍿 90s Comedy", use_container_width=True):
+            st.session_state.ai_query = "A lighthearted 90s comedy"
+        if s3.button("🛸 Mind-bending Sci-Fi", use_container_width=True):
+            st.session_state.ai_query = "Mind-bending sci-fi about time travel"
+            
+        search_query = st.text_input(T.get("ai_search_prompt", "🔍 Search query..."), value=st.session_state.get("ai_query", ""), placeholder=T.get("ai_search_placeholder", "e.g., A spooky detective movie with a twist ending"))
+        
+        if search_query:
+            with st.spinner("Analyzing..."):
+                vec, matrix = build_recommender_engine(df)
+                results = get_recommendations(search_query, vec, matrix, df)
+                
+            if results:
+                for r in results:
+                    st.markdown(f'''
+                    <div class="metric-card" style="margin-bottom: 16px;">
+                        <h3 style="margin:0; color:var(--primary-color)">{r['title']} <span style="font-size:0.9rem; opacity:0.6; color:var(--text-color);">({r['score']:.1f}% Match)</span></h3>
+                        <p style="font-size:0.85rem; font-weight:600; opacity:0.7; margin-top:4px;">{r['type']} • {r['genres']}</p>
+                        <p style="margin-top:8px; font-size:1rem;">{r['description']}</p>
+                    </div>
+                    ''', unsafe_allow_html=True)
+            else:
+                st.info(T.get("ai_no_match", "No matches found. Try describing it differently!"))
+
+    st.divider()
     render_metric_cards(filtered_df)
     st.markdown("<br>", unsafe_allow_html=True)
 
     # --- TABS IMPLEMENTATION ---
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], T.get("tab_ai", "🤖 AI Recommender"), T.get("tab_cast_network", "🎭 Cast Network")])
+    tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], T.get("tab_cast_network", "🎭 Cast Network")])
 
     with tab1:
         st.markdown(f'<div class="section-header" style="margin-top: 24px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
@@ -1761,37 +1793,6 @@ def main():
             render_recent_feed(filtered_df)
 
     with tab4:
-        st.markdown(f'<div class="section-header">{T.get("tab_ai", "🤖 AI Recommender")}</div>', unsafe_allow_html=True)
-        st.markdown(f'<p style="opacity:0.8;">{T.get("ai_desc", "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!")}</p>', unsafe_allow_html=True)
-        
-        s1, s2, s3 = st.columns(3)
-        if s1.button("🕵️‍♂️ Spooky Detective", use_container_width=True):
-            st.session_state.ai_query = "A spooky detective movie with a twist ending"
-        if s2.button("🍿 90s Comedy", use_container_width=True):
-            st.session_state.ai_query = "A lighthearted 90s comedy"
-        if s3.button("🛸 Mind-bending Sci-Fi", use_container_width=True):
-            st.session_state.ai_query = "Mind-bending sci-fi about time travel"
-            
-        search_query = st.text_input(T.get("ai_search_prompt", "🔍 Search query..."), value=st.session_state.get("ai_query", ""), placeholder=T.get("ai_search_placeholder", "e.g., A spooky detective movie with a twist ending"))
-        
-        if search_query:
-            with st.spinner("Analyzing..."):
-                vec, matrix = build_recommender_engine(df)
-                results = get_recommendations(search_query, vec, matrix, df)
-                
-            if results:
-                for r in results:
-                    st.markdown(f'''
-                    <div class="metric-card" style="margin-bottom: 16px;">
-                        <h3 style="margin:0; color:var(--primary-color)">{r['title']} <span style="font-size:0.9rem; opacity:0.6; color:var(--text-color);">({r['score']:.1f}% Match)</span></h3>
-                        <p style="font-size:0.85rem; font-weight:600; opacity:0.7; margin-top:4px;">{r['type']} • {r['genres']}</p>
-                        <p style="margin-top:8px; font-size:1rem;">{r['description']}</p>
-                    </div>
-                    ''', unsafe_allow_html=True)
-            else:
-                st.info(T.get("ai_no_match", "No matches found. Try describing it differently!"))
-
-    with tab5:
         render_cast_network(df)
 
     st.markdown(
