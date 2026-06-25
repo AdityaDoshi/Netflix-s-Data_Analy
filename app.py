@@ -177,7 +177,7 @@ LANG = {
         "col_year": "Release Year", "col_rating": "Rating", "col_duration": "Duration", "col_genres": "Genres",
         "cast_search_prompt": "Search for an actor...", "cast_search_btn": "Search Actor", "cast_back": "Go Back",
         "cast_total_titles": "Total Titles", "cast_filmography": "Filmography", "cast_costars": "Frequent Co-Stars",
-        "cast_no_costars": "No co-stars found."
+        "cast_no_costars": "No co-stars found.",\n        "dataset_info": "Dataset Information", "total_records": "Total Records"
     },
     "Gujarati": {
         "language_selector": "ભાષા", "logged_in_as": "લૉગ ઇન થયેલ છે", "ui_theme": "UI થીમ", "log_out": "લૉગ આઉટ",
@@ -210,7 +210,7 @@ LANG = {
         "col_year": "પ્રકાશન વર્ષ", "col_rating": "રેટિંગ", "col_duration": "સમયગાળો", "col_genres": "શૈલીઓ",
         "cast_search_prompt": "અભિનેતા માટે શોધો...", "cast_search_btn": "અભિનેતા શોધો", "cast_back": "પાછા જાઓ",
         "cast_total_titles": "કુલ શીર્ષકો", "cast_filmography": "ફિલ્મોગ્રાફી", "cast_costars": "વારંવાર સહ-કલાકારો",
-        "cast_no_costars": "કોઈ સહ-કલાકારો મળ્યા નથી."
+        "cast_no_costars": "કોઈ સહ-કલાકારો મળ્યા નથી.",\n        "dataset_info": "ડેટાસેટ માહિતી", "total_records": "કુલ રેકોર્ડ્સ"
     },
     "Hindi": {
         "language_selector": "भाषा", "logged_in_as": "लॉग इन किया है", "ui_theme": "यूआई थीम", "log_out": "लॉग आउट",
@@ -243,7 +243,7 @@ LANG = {
         "col_year": "रिलीज़ वर्ष", "col_rating": "रेटिंग", "col_duration": "अवधि", "col_genres": "शैलियां",
         "cast_search_prompt": "किसी अभिनेता को खोजें...", "cast_search_btn": "अभिनेता खोजें", "cast_back": "वापस जाएं",
         "cast_total_titles": "कुल शीर्षक", "cast_filmography": "फिल्मोग्राफी", "cast_costars": "लगातार सह-कलाकार",
-        "cast_no_costars": "कोई सह-कलाकार नहीं मिला।"
+        "cast_no_costars": "कोई सह-कलाकार नहीं मिला।",\n        "dataset_info": "डेटासेट जानकारी", "total_records": "कुल रिकॉर्ड"
     },
     "Spanish": {
         "language_selector": "Idioma", "logged_in_as": "Conectado como", "ui_theme": "Tema de UI", "log_out": "Cerrar sesión",
@@ -276,7 +276,7 @@ LANG = {
         "col_year": "Año de Lanzamiento", "col_rating": "Clasificación", "col_duration": "Duración", "col_genres": "Géneros",
         "cast_search_prompt": "Buscar un actor...", "cast_search_btn": "Buscar Actor", "cast_back": "Regresar",
         "cast_total_titles": "Títulos Totales", "cast_filmography": "Filmografía", "cast_costars": "Coprotagonistas Frecuentes",
-        "cast_no_costars": "No se encontraron coprotagonistas."
+        "cast_no_costars": "No se encontraron coprotagonistas.",\n        "dataset_info": "Información del Conjunto de Datos", "total_records": "Registros Totales"
     }
 }
 
