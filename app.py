@@ -1488,8 +1488,18 @@ def get_image(query, is_movie=False):
         if not res: return False
         q = q.lower().replace("movie", "").strip()
         res = res.lower().strip()
-        if q in res or res in q: return True
-        return difflib.SequenceMatcher(None, q, res).ratio() > 0.85
+        res = re.sub(r'\(\d{4}\)', '', res).strip()
+        if q == res: return True
+        
+        def clean(s):
+            s = re.sub(r'[^\w\s]', '', s)
+            s = re.sub(r'^(the|a|an)\s+', '', s).strip()
+            return s.replace(' ', '')
+            
+        q_clean = clean(q)
+        res_clean = clean(res)
+        if q_clean == res_clean: return True
+        return difflib.SequenceMatcher(None, q_clean, res_clean).ratio() > 0.85
 
     # --- LEVEL 1: TVMAZE ---
     try:
@@ -1573,9 +1583,28 @@ def render_cast_network(df):
                             all_cast.add(c.strip())
                     closest = [c for c in all_cast if search_query.lower() in c.lower()]
                     if closest:
-                        st.session_state.node_history = []
-                        st.session_state.current_node = {"type": "actor", "id": closest[0]}
-                        st.session_state.visible_limit = 6
+                        if len(closest) == 1 or search_query.lower() == closest[0].lower():
+                            st.session_state.node_history = []
+                            st.session_state.current_node = {"type": "actor", "id": closest[0]}
+                            st.session_state.visible_limit = 6
+                            st.session_state.ambiguous_results = None
+                        else:
+                            # Sort by shortest name (closest match usually) and take top 8
+                            closest.sort(key=len)
+                            st.session_state.ambiguous_results = closest[:8]
+                            st.session_state.current_node = None
+    
+    if st.session_state.get("ambiguous_results"):
+        st.markdown(f"**Found multiple actors matching \"{search_query}\". Which one did you mean?**")
+        ambig_cols = st.columns(4)
+        for idx, ac in enumerate(st.session_state.ambiguous_results):
+            if ambig_cols[idx % 4].button(ac, key=f"ambig_{ac}", use_container_width=True):
+                st.session_state.node_history = []
+                st.session_state.current_node = {"type": "actor", "id": ac}
+                st.session_state.visible_limit = 6
+                st.session_state.ambiguous_results = None
+                st.rerun()
+        st.markdown("<br>", unsafe_allow_html=True)
                         
     if st.session_state.node_history:
         if st.button(f"⬅ {T.get('cast_go_back', 'Go Back')}"):
