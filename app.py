@@ -1396,8 +1396,19 @@ def node_go_back():
 
 
 @st.cache_data(show_spinner=False, ttl=86400)
-def get_wiki_image(query, is_movie=False):
-    import urllib.request, json, urllib.parse
+def get_image(query, is_movie=False):
+    try:
+        from duckduckgo_search import DDGS
+        import urllib.parse
+        search_term = query + " movie poster english" if is_movie else query + " actor portrait photo"
+        results = DDGS().images(search_term, max_results=1)
+        if results and len(results) > 0:
+            return results[0]['thumbnail']
+    except Exception as e:
+        pass
+    
+    # Fallback to Wikipedia if DDG fails or is rate limited
+    import urllib.request, json
     try:
         if is_movie:
             url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + urllib.parse.quote(query) + '&gsrlimit=1&prop=pageimages&format=json&pithumbsize=400'
@@ -1451,7 +1462,7 @@ def render_cast_network(df):
         
         if n_type == "actor":
             ac1, ac2 = st.columns([1, 3])
-            img_url = get_wiki_image(n_id, is_movie=False)
+            img_url = get_image(n_id, is_movie=False)
             with ac1:
                 if img_url:
                     st.image(img_url, use_column_width=True)
@@ -1467,7 +1478,7 @@ def render_cast_network(df):
             cols = st.columns(3)
             for idx, row in enumerate(actor_movies.itertuples()):
                 with cols[idx % 3]:
-                    m_img = get_wiki_image(f"{row.title} movie", is_movie=True)
+                    m_img = get_image(f"{row.title} movie", is_movie=True)
                     if m_img:
                         st.image(m_img, use_column_width=True)
                     else:
@@ -1490,7 +1501,7 @@ def render_cast_network(df):
                 c_cols = st.columns(4)
                 for i, (cs, count) in enumerate(top_costars):
                     with c_cols[i % 4]:
-                        cs_img = get_wiki_image(cs, is_movie=False)
+                        cs_img = get_image(cs, is_movie=False)
                         if cs_img:
                             st.image(cs_img, use_column_width=True)
                         else:
@@ -1505,7 +1516,7 @@ def render_cast_network(df):
             movie_row = df[df['show_id'] == n_id].iloc[0]
             
             mc1, mc2 = st.columns([1, 2])
-            m_img = get_wiki_image(f"{movie_row.title} movie", is_movie=True)
+            m_img = get_image(f"{movie_row.title} movie", is_movie=True)
             with mc1:
                 if m_img:
                     st.image(m_img, use_column_width=True)
@@ -1535,7 +1546,7 @@ def render_cast_network(df):
                 c_cols = st.columns(4)
                 for i, c in enumerate(cast_list):
                     with c_cols[i % 4]:
-                        c_img = get_wiki_image(c, is_movie=False)
+                        c_img = get_image(c, is_movie=False)
                         if c_img:
                             st.image(c_img, use_column_width=True)
                         else:
