@@ -1763,9 +1763,6 @@ def main():
             st.markdown(f'<div class="section-header">{T.get("feed_header", "Live Ingestion Feed")}</div>', unsafe_allow_html=True)
             render_recent_feed(filtered_df)
 
-    with tab4:
-        render_cast_network(df)
-
     st.markdown(
         f"""
         <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid gray;">
