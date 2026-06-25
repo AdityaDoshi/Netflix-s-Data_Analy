@@ -1385,39 +1385,14 @@ def set_node(node_type, node_id):
     if st.session_state.current_node:
         st.session_state.node_history.append(st.session_state.current_node)
     st.session_state.current_node = {"type": node_type, "id": node_id}
+    st.session_state.visible_limit = 6
 
 def node_go_back():
     if st.session_state.node_history:
         st.session_state.current_node = st.session_state.node_history.pop()
     else:
         st.session_state.current_node = None
-
-
-
-
-@st.cache_data(show_spinner=False, ttl=86400)
-def get_image(query, is_movie=False):
-    import urllib.request, urllib.parse, re
-    try:
-        url = 'https://www.themoviedb.org/search?query=' + urllib.parse.quote(query)
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
-        html = urllib.request.urlopen(req, timeout=4).read().decode('utf-8')
-        
-        match = re.search(r'src="(https://media\.themoviedb\.org/t/p/w[^"]+\.jpg)"', html)
-        if not match:
-            match = re.search(r'src="(/t/p/w[^"]+\.jpg)"', html)
-            
-        if match:
-            img_url = match.group(1)
-            if img_url.startswith('/'):
-                img_url = "https://media.themoviedb.org" + img_url
-            
-            # Upgrade to high resolution
-            img_url = re.sub(r'/w[0-9]+_and_h[0-9]+_[^/]+/', '/w600_and_h900_bestv2/', img_url)
-            return img_url
-    except Exception:
-        pass
-    return None
+    st.session_state.visible_limit = 6
 
 def render_cast_network(df):
     import pandas as pd
@@ -1442,6 +1417,7 @@ def render_cast_network(df):
                     if closest:
                         st.session_state.node_history = []
                         st.session_state.current_node = {"type": "actor", "id": closest[0]}
+                        st.session_state.visible_limit = 6
                         
     if st.session_state.node_history:
         if st.button(f"⬅ {T.get('cast_go_back', 'Go Back')}"):
@@ -1459,9 +1435,9 @@ def render_cast_network(df):
             img_url = get_image(n_id, is_movie=False)
             with ac1:
                 if img_url:
-                    st.image(img_url, use_column_width=True)
+                    st.markdown(f'<div style="width:100%; aspect-ratio: 1/1; background: url({img_url}) center/cover; border-radius: 8px;"></div>', unsafe_allow_html=True)
                 else:
-                    st.markdown(f"<div style='background:#333; height:200px; display:flex; align-items:center; justify-content:center; border-radius:8px;'><span style='font-size:48px'>🎭</span></div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='width:100%; aspect-ratio: 1/1; background:#333; display:flex; align-items:center; justify-content:center; border-radius:8px;'><span style='font-size:48px'>🎭</span></div>", unsafe_allow_html=True)
             with ac2:
                 st.markdown(f"## {n_id}")
                 actor_movies = df[df['cast'].str.contains(n_id, case=False, na=False, regex=False)]
@@ -1470,16 +1446,24 @@ def render_cast_network(df):
             st.divider()
             st.markdown(f"#### {T.get('cast_filmography', 'Filmography')}")
             cols = st.columns(3)
-            for idx, row in enumerate(actor_movies.itertuples()):
+            limit = st.session_state.get("visible_limit", 6)
+            movie_list = list(actor_movies.itertuples())
+            for idx, row in enumerate(movie_list[:limit]):
                 with cols[idx % 3]:
-                    m_img = get_image(f"{row.title} movie", is_movie=True)
-                    if m_img:
-                        st.image(m_img, use_column_width=True)
-                    else:
-                        st.markdown(f"<div style='background:linear-gradient(45deg, #2b00ff, var(--primary-color)); height:120px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin-bottom: 8px;'><span style='font-size:14px; font-weight:bold; color:white; text-align:center;'>{row.title}</span></div>", unsafe_allow_html=True)
-                    if st.button(f"🎬 {row.title} ({row.release_year})", key=f"mov_{idx}_{row.show_id}", use_container_width=True):
-                        set_node("movie", row.show_id)
-                        st.rerun()
+                    with st.container(border=True):
+                        m_img = get_image(f"{row.title} movie", is_movie=True)
+                        if m_img:
+                            st.markdown(f'<div style="width:100%; aspect-ratio: 2/3; background: url({m_img}) center/cover; border-radius: 6px; margin-bottom: 8px;"></div>', unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"<div style='width:100%; aspect-ratio: 2/3; background:linear-gradient(45deg, #2b00ff, var(--primary-color)); display:flex; align-items:center; justify-content:center; border-radius:6px; margin-bottom: 8px;'><span style='font-size:14px; font-weight:bold; color:white; text-align:center;'>{row.title}</span></div>", unsafe_allow_html=True)
+                        if st.button(f"🎬 {row.release_year}", key=f"mov_{idx}_{row.show_id}", use_container_width=True):
+                            set_node("movie", row.show_id)
+                            st.rerun()
+                            
+            if len(movie_list) > limit:
+                if st.button("🔽 See More Movies", use_container_width=True):
+                    st.session_state.visible_limit += 6
+                    st.rerun()
                         
             st.divider()
             st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
@@ -1490,19 +1474,25 @@ def render_cast_network(df):
                     if c and c != n_id:
                         co_stars[c] = co_stars.get(c, 0) + 1
             
-            top_costars = sorted(co_stars.items(), key=lambda x: x[1], reverse=True)[:12]
+            top_costars = sorted(co_stars.items(), key=lambda x: x[1], reverse=True)
             if top_costars:
                 c_cols = st.columns(4)
-                for i, (cs, count) in enumerate(top_costars):
+                limit_cs = st.session_state.get("visible_limit", 6) * 2 
+                for i, (cs, count) in enumerate(top_costars[:limit_cs]):
                     with c_cols[i % 4]:
-                        cs_img = get_image(cs, is_movie=False)
-                        if cs_img:
-                            st.image(cs_img, use_column_width=True)
-                        else:
-                            st.markdown(f"<div style='background:#333; height:150px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin-bottom: 8px;'><span style='font-size:32px'>🎭</span></div>", unsafe_allow_html=True)
-                        if st.button(f"{cs} ({count})", key=f"cs_{i}", use_container_width=True):
-                            set_node("actor", cs)
-                            st.rerun()
+                        with st.container(border=True):
+                            cs_img = get_image(cs, is_movie=False)
+                            if cs_img:
+                                st.markdown(f'<div style="width:100%; aspect-ratio: 1/1; background: url({cs_img}) center/cover; border-radius: 50%; margin-bottom: 8px;"></div>', unsafe_allow_html=True)
+                            else:
+                                st.markdown(f"<div style='width:100%; aspect-ratio: 1/1; background:#333; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-bottom: 8px;'><span style='font-size:32px'>🎭</span></div>", unsafe_allow_html=True)
+                            if st.button(f"{cs} ({count})", key=f"cs_{i}", use_container_width=True):
+                                set_node("actor", cs)
+                                st.rerun()
+                if len(top_costars) > limit_cs:
+                    if st.button("🔽 See More Co-Stars", use_container_width=True):
+                        st.session_state.visible_limit += 6
+                        st.rerun()
             else:
                 st.info(T.get("cast_no_costars", "No co-stars found."))
                 
@@ -1513,13 +1503,13 @@ def render_cast_network(df):
             m_img = get_image(f"{movie_row.title} movie", is_movie=True)
             with mc1:
                 if m_img:
-                    st.image(m_img, use_column_width=True)
+                    st.markdown(f'<div style="width:100%; aspect-ratio: 2/3; background: url({m_img}) center/cover; border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);"></div>', unsafe_allow_html=True)
                 else:
                     st.markdown(f"""
-                    <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #2b00ff 100%); 
-                                border-radius: 12px; height: 350px; display: flex; align-items: center; justify-content: center;
+                    <div style="aspect-ratio: 2/3; width: 100%; background: linear-gradient(135deg, var(--primary-color) 0%, #2b00ff 100%); 
+                                border-radius: 12px; display: flex; align-items: center; justify-content: center;
                                 box-shadow: 0 10px 20px rgba(0,0,0,0.3); padding: 20px; text-align: center;">
-                        <h2 style="color: white; font-size: 32px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">{movie_row.title}</h2>
+                        <h2 style="color: white; font-size: 28px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">{movie_row.title}</h2>
                     </div>
                     """, unsafe_allow_html=True)
                 
@@ -1538,20 +1528,24 @@ def render_cast_network(df):
             if pd.notna(movie_row.cast):
                 cast_list = [c.strip() for c in str(movie_row.cast).split(',')]
                 c_cols = st.columns(4)
-                for i, c in enumerate(cast_list):
+                limit_mc = st.session_state.get("visible_limit", 6) * 2
+                for i, c in enumerate(cast_list[:limit_mc]):
                     with c_cols[i % 4]:
-                        c_img = get_image(c, is_movie=False)
-                        if c_img:
-                            st.image(c_img, use_column_width=True)
-                        else:
-                            st.markdown(f"<div style='background:#333; height:150px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin-bottom: 8px;'><span style='font-size:32px'>🎭</span></div>", unsafe_allow_html=True)
-                        if st.button(c, key=f"mcast_{i}", use_container_width=True):
-                            set_node("actor", c)
-                            st.rerun()
+                        with st.container(border=True):
+                            c_img = get_image(c, is_movie=False)
+                            if c_img:
+                                st.markdown(f'<div style="width:100%; aspect-ratio: 1/1; background: url({c_img}) center/cover; border-radius: 50%; margin-bottom: 8px;"></div>', unsafe_allow_html=True)
+                            else:
+                                st.markdown(f"<div style='width:100%; aspect-ratio: 1/1; background:#333; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-bottom: 8px;'><span style='font-size:32px'>🎭</span></div>", unsafe_allow_html=True)
+                            if st.button(c, key=f"mcast_{i}", use_container_width=True):
+                                set_node("actor", c)
+                                st.rerun()
+                if len(cast_list) > limit_mc:
+                    if st.button("🔽 See More Cast", use_container_width=True):
+                        st.session_state.visible_limit += 6
+                        st.rerun()
             else:
                 st.info("No cast information available for this title.")
-
-
 def main():
     if "demo_credentials" not in st.session_state:
         st.session_state.demo_credentials = {"admin": "admin123"}
@@ -1643,7 +1637,15 @@ def main():
         st.markdown(f'<div class="section-header">{T.get("tab_ai", "🤖 AI Recommender")}</div>', unsafe_allow_html=True)
         st.markdown(f'<p style="opacity:0.8;">{T.get("ai_desc", "Describe what you want to watch in natural language, and our AI will find the best matches based on plot descriptions!")}</p>', unsafe_allow_html=True)
         
-        search_query = st.text_input(T.get("ai_search_prompt", "🔍 Search query..."), placeholder=T.get("ai_search_placeholder", "e.g., A spooky detective movie with a twist ending"))
+        s1, s2, s3 = st.columns(3)
+        if s1.button("🕵️‍♂️ Spooky Detective", use_container_width=True):
+            st.session_state.ai_query = "A spooky detective movie with a twist ending"
+        if s2.button("🍿 90s Comedy", use_container_width=True):
+            st.session_state.ai_query = "A lighthearted 90s comedy"
+        if s3.button("🛸 Mind-bending Sci-Fi", use_container_width=True):
+            st.session_state.ai_query = "Mind-bending sci-fi about time travel"
+            
+        search_query = st.text_input(T.get("ai_search_prompt", "🔍 Search query..."), value=st.session_state.get("ai_query", ""), placeholder=T.get("ai_search_placeholder", "e.g., A spooky detective movie with a twist ending"))
         
         if search_query:
             with st.spinner("Analyzing..."):
