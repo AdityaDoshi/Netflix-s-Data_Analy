@@ -1158,72 +1158,6 @@ def render_catalog_explorer(df: pd.DataFrame):
     st.download_button(T["download_csv"], data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True)
 
 
-def render_cast_network(df: pd.DataFrame):
-    T = LANG[st.session_state.lang]
-    st.markdown(f'<div class="section-header">{T.get("tab_cast_network", "🎭 Cast Network")}</div>', unsafe_allow_html=True)
-    
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        search = st.text_input(T.get("cast_search_prompt", "Search for an actor..."), placeholder=T.get("cast_search_placeholder", "e.g., Leonardo DiCaprio"), key="cast_search_input")
-    with col2:
-        st.write("")
-        st.write("")
-        if st.button("Search", use_container_width=True, key="cast_search_btn"):
-            if search:
-                if st.session_state.current_actor and st.session_state.current_actor != search:
-                    st.session_state.actor_history.append(st.session_state.current_actor)
-                st.session_state.current_actor = search
-                st.rerun()
-
-    if len(st.session_state.actor_history) > 0:
-        if st.button(f"⬅ {T.get('cast_go_back', 'Go Back')}", key="cast_back_btn"):
-            st.session_state.current_actor = st.session_state.actor_history.pop()
-            st.rerun()
-
-    if not st.session_state.current_actor:
-        st.info(T.get("cast_search_prompt", "Search for an actor..."))
-        return
-
-    actor = st.session_state.current_actor
-    st.markdown(f"<h3 style='color: var(--primary-color);'>{actor}</h3>", unsafe_allow_html=True)
-
-    # Use regex to strictly find the actor's exact name
-    # Using simple contains is okay, but we add naive boundary handling
-    actor_escaped = re.escape(actor)
-    actor_mask = df["cast"].str.contains(actor_escaped, na=False, case=False)
-    actor_df = df[actor_mask]
-    
-    if len(actor_df) == 0:
-        st.warning("No titles found for this actor.")
-        return
-
-    st.markdown(f"**{T.get('cast_total_titles', 'Total Titles:')}** {len(actor_df)}")
-    
-    st.markdown(f"#### {T.get('cast_filmography', 'Filmography')}")
-    display_cols = ["title", "type", "release_year", "rating"]
-    display_df = actor_df[[c for c in display_cols if c in actor_df.columns]].reset_index(drop=True)
-    
-    col_map = {
-        "title": T.get("col_title", "Title"),
-        "type": T.get("col_type", "Type"),
-        "release_year": T.get("col_year", "Release Year"),
-        "rating": T.get("col_rating", "Rating"),
-    }
-    display_df = display_df.rename(columns=col_map)
-    st.dataframe(display_df, use_container_width=True)
-
-    st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
-    all_cast = actor_df["cast"].dropna().str.split(", ").explode()
-    co_stars = all_cast[all_cast.str.lower() != actor.lower()]
-    top_costars = co_stars.value_counts().head(20)
-    
-    cols = st.columns(4)
-    for i, (co_star, count) in enumerate(top_costars.items()):
-        with cols[i % 4]:
-            if st.button(f"{co_star} ({count})", key=f"costar_{i}_{co_star.replace(' ', '_')}"):
-                st.session_state.actor_history.append(actor)
-                st.session_state.current_actor = co_star
-                st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
 #  MAIN APPLICATION ENTRY POINT
@@ -1442,76 +1376,125 @@ def get_recommendations(query, vectorizer, tfidf_matrix, df, top_n=5):
     return results
 
 
-def set_actor(actor_name):
-    if st.session_state.current_actor:
-        st.session_state.actor_history.append(st.session_state.current_actor)
-    st.session_state.current_actor = actor_name
 
-def go_back():
-    if st.session_state.actor_history:
-        st.session_state.current_actor = st.session_state.actor_history.pop()
+
+
+
+
+def set_node(node_type, node_id):
+    if st.session_state.current_node:
+        st.session_state.node_history.append(st.session_state.current_node)
+    st.session_state.current_node = {"type": node_type, "id": node_id}
+
+def node_go_back():
+    if st.session_state.node_history:
+        st.session_state.current_node = st.session_state.node_history.pop()
     else:
-        st.session_state.current_actor = None
+        st.session_state.current_node = None
 
-def render_cast_network(df: pd.DataFrame):
+def render_cast_network(df):
+    import pandas as pd
     T = LANG[st.session_state.lang]
-    
-    st.markdown(f'<div class="section-header">{T.get("tab_cast_network", "🎭 Cast Network Explorer")}</div>', unsafe_allow_html=True)
+    st.markdown(f"### {T.get('tab_cast_network', 'Cast Network')}")
+    st.markdown("Explore the Netflix universe! Search for an actor or click on a movie to traverse the network.")
     
     col1, col2 = st.columns([3, 1])
     with col1:
         search_query = st.text_input(T.get("cast_search_prompt", "Search for an actor..."), key="actor_search")
     with col2:
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
         if st.button(T.get("cast_search_btn", "Search Actor"), use_container_width=True):
             if search_query:
                 mask = df['cast'].str.contains(search_query, case=False, na=False)
-                matching = df[mask]
-                if not matching.empty:
-                    all_cast = matching['cast'].str.split(', ').explode().dropna().unique()
+                if mask.any():
+                    all_cast = set()
+                    for c_str in df[mask]['cast'].dropna():
+                        for c in c_str.split(','):
+                            all_cast.add(c.strip())
                     closest = [c for c in all_cast if search_query.lower() in c.lower()]
                     if closest:
-                        st.session_state.actor_history = []
-                        st.session_state.current_actor = closest[0]
-                        st.rerun()
-
-    if st.session_state.current_actor:
+                        st.session_state.node_history = []
+                        st.session_state.current_node = {"type": "actor", "id": closest[0]}
+                        
+    if st.session_state.node_history:
+        if st.button(f"⬅ {T.get('cast_go_back', 'Go Back')}"):
+            node_go_back()
+            st.rerun()
+            
+    if st.session_state.current_node:
+        n_type = st.session_state.current_node["type"]
+        n_id = st.session_state.current_node["id"]
+        
         st.divider()
-        actor = st.session_state.current_actor
         
-        col_back, col_title = st.columns([1, 4])
-        with col_back:
-            if st.button(f"⬅ {T.get('cast_back', 'Go Back')}", use_container_width=True):
-                go_back()
-                st.rerun()
-                
-        st.markdown(f"<h2 style='color:var(--primary-color); margin-top:0;'>{actor}</h2>", unsafe_allow_html=True)
-        
-        actor_movies = df[df['cast'].str.contains(actor, case=False, na=False, regex=False)]
-        
-        st.markdown(f"#### {T.get('cast_filmography', 'Filmography')} ({len(actor_movies)})")
-        display_cols = ["title", "type", "release_year", "rating"]
-        st.dataframe(actor_movies[display_cols].rename(columns={
-            "title": T.get("col_title", "Title"),
-            "type": T.get("col_type", "Type"),
-            "release_year": T.get("col_year", "Release Year"),
-            "rating": T.get("col_rating", "Rating")
-        }), use_container_width=True, hide_index=True)
-        
-        st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
-        all_costars = actor_movies['cast'].str.split(', ').explode().dropna()
-        all_costars = all_costars[all_costars != actor]
-        top_costars = all_costars.value_counts().head(12)
-        
-        if top_costars.empty:
-            st.info(T.get("cast_no_costars", "No co-stars found."))
-        else:
-            cols = st.columns(4)
-            for i, (costar, count) in enumerate(top_costars.items()):
-                with cols[i % 4]:
-                    if st.button(f"{costar} ({count})", key=f"costar_{hash(costar)}_{i}", use_container_width=True):
-                        set_actor(costar)
+        if n_type == "actor":
+            st.markdown(f"## 🎭 {n_id}")
+            actor_movies = df[df['cast'].str.contains(n_id, case=False, na=False, regex=False)]
+            st.caption(f"{T.get('cast_total_titles', 'Total Titles')}: {len(actor_movies)}")
+            
+            st.markdown(f"#### {T.get('cast_filmography', 'Filmography')}")
+            
+            cols = st.columns(3)
+            for idx, row in enumerate(actor_movies.itertuples()):
+                with cols[idx % 3]:
+                    if st.button(f"🎬 {row.title}\n({row.release_year})", key=f"mov_{idx}_{row.show_id}", use_container_width=True):
+                        set_node("movie", row.show_id)
                         st.rerun()
+                        
+            st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
+            co_stars = {}
+            for cast_str in actor_movies['cast'].dropna():
+                for co_star in cast_str.split(','):
+                    c = co_star.strip()
+                    if c and c != n_id:
+                        co_stars[c] = co_stars.get(c, 0) + 1
+            
+            top_costars = sorted(co_stars.items(), key=lambda x: x[1], reverse=True)[:12]
+            if top_costars:
+                c_cols = st.columns(4)
+                for i, (cs, count) in enumerate(top_costars):
+                    with c_cols[i % 4]:
+                        if st.button(f"{cs} ({count})", key=f"cs_{i}", use_container_width=True):
+                            set_node("actor", cs)
+                            st.rerun()
+            else:
+                st.info(T.get("cast_no_costars", "No co-stars found."))
+                
+        elif n_type == "movie":
+            movie_row = df[df['show_id'] == n_id].iloc[0]
+            
+            mc1, mc2 = st.columns([1, 2])
+            with mc1:
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #2b00ff 100%); 
+                            border-radius: 12px; height: 350px; display: flex; align-items: center; justify-content: center;
+                            box-shadow: 0 10px 20px rgba(0,0,0,0.3); padding: 20px; text-align: center;">
+                    <h2 style="color: white; font-size: 32px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">{movie_row.title}</h2>
+                </div>
+                """, unsafe_allow_html=True)
+                
+            with mc2:
+                st.markdown(f"## {movie_row.title}")
+                st.markdown(f"**{movie_row.release_year}** • {movie_row.type} • **{movie_row.rating}** • {movie_row.duration}")
+                st.markdown(f"**{T.get('genre', 'Genre')}:** {movie_row.listed_in}")
+                import pandas as pd
+                if pd.notna(movie_row.director):
+                    st.markdown(f"**{T.get('director', 'Director')}:** {movie_row.director}")
+                st.markdown("---")
+                st.markdown(f"*{movie_row.description}*")
+                
+            st.divider()
+            st.markdown(f"#### 🎭 Cast")
+            if pd.notna(movie_row.cast):
+                cast_list = [c.strip() for c in str(movie_row.cast).split(',')]
+                c_cols = st.columns(4)
+                for i, c in enumerate(cast_list):
+                    with c_cols[i % 4]:
+                        if st.button(c, key=f"mcast_{i}", use_container_width=True):
+                            set_node("actor", c)
+                            st.rerun()
+            else:
+                st.info("No cast information available for this title.")
 
 
 def main():
@@ -1519,10 +1502,10 @@ def main():
         st.session_state.demo_credentials = {"admin": "admin123"}
     if "popup_request" not in st.session_state:
         st.session_state.popup_request = None
-    if "current_actor" not in st.session_state:
-        st.session_state.current_actor = None
-    if "actor_history" not in st.session_state:
-        st.session_state.actor_history = []
+    if "current_node" not in st.session_state:
+        st.session_state.current_node = None
+    if "node_history" not in st.session_state:
+        st.session_state.node_history = []
     if "chart_selections" not in st.session_state:
         st.session_state.chart_selections = {}
 
