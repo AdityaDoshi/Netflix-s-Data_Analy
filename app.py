@@ -1797,7 +1797,7 @@ def main():
         col3, col4 = st.columns(2, gap="large")
         with col3:
             ev_rating = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_rating, "tab1_ratings", "vote_average", is_range=True, bin_size=0.5)
+            process_selection(ev_rating, "tab1_ratings", "rating", extract_key="x", match_type="exact", is_range=False)
         with col4:
             ev_directors = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
             process_selection(ev_directors, "tab1_directors", "director", extract_key="y", match_type="contains")
