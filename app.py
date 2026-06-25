@@ -1506,11 +1506,11 @@ def render_cast_network(df):
             
             st.divider()
             st.markdown(f"#### {T.get('cast_filmography', 'Filmography')}")
-            cols = st.columns(3)
-            limit = st.session_state.get("visible_limit", 6)
+            cols = st.columns(4)
+            limit = st.session_state.get("visible_limit", 4)
             movie_list = list(actor_movies.itertuples())
             for idx, row in enumerate(movie_list[:limit]):
-                with cols[idx % 3]:
+                with cols[idx % 4]:
                     with st.container(border=True):
                         m_img = get_image(f"{row.title} movie", is_movie=True)
                         if m_img:
@@ -1523,7 +1523,7 @@ def render_cast_network(df):
                             
             if len(movie_list) > limit:
                 if st.button("🔽 See More Movies", use_container_width=True):
-                    st.session_state.visible_limit += 6
+                    st.session_state.visible_limit += 4
                     st.rerun()
                         
             st.divider()
@@ -1537,10 +1537,10 @@ def render_cast_network(df):
             
             top_costars = sorted(co_stars.items(), key=lambda x: x[1], reverse=True)
             if top_costars:
-                c_cols = st.columns(4)
-                limit_cs = st.session_state.get("visible_limit", 6) * 2 
+                c_cols = st.columns(6)
+                limit_cs = st.session_state.get("visible_limit", 4)
                 for i, (cs, count) in enumerate(top_costars[:limit_cs]):
-                    with c_cols[i % 4]:
+                    with c_cols[i % 6]:
                         with st.container(border=True):
                             cs_img = get_image(cs, is_movie=False)
                             if cs_img:
@@ -1588,10 +1588,10 @@ def render_cast_network(df):
             st.markdown(f"#### 🎭 Cast")
             if pd.notna(movie_row.cast):
                 cast_list = [c.strip() for c in str(movie_row.cast).split(',')]
-                c_cols = st.columns(4)
-                limit_mc = st.session_state.get("visible_limit", 6) * 2
+                c_cols = st.columns(6)
+                limit_mc = st.session_state.get("visible_limit", 4)
                 for i, c in enumerate(cast_list[:limit_mc]):
-                    with c_cols[i % 4]:
+                    with c_cols[i % 6]:
                         with st.container(border=True):
                             c_img = get_image(c, is_movie=False)
                             if c_img:
