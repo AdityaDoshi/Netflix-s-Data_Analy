@@ -1570,37 +1570,41 @@ def render_cast_network(df):
     
     col1, col2 = st.columns([3, 1])
     with col1:
-        search_query = st.text_input(T.get("cast_search_prompt", "Search for an actor..."), key="actor_search")
+        search_query = st.text_input("Search for an actor or movie...", key="actor_search")
     with col2:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
         if st.button(T.get("cast_search_btn", "Search Actor"), use_container_width=True):
-            if search_query:
-                mask = df['cast'].str.contains(search_query, case=False, na=False)
-                if mask.any():
-                    all_cast = set()
-                    for c_str in df[mask]['cast'].dropna():
+                actor_mask = df['cast'].str.contains(search_query, case=False, na=False)
+                all_cast = set()
+                if actor_mask.any():
+                    for c_str in df[actor_mask]['cast'].dropna():
                         for c in c_str.split(','):
                             all_cast.add(c.strip())
-                    closest = [c for c in all_cast if search_query.lower() in c.lower()]
-                    if closest:
-                        if len(closest) == 1 or search_query.lower() == closest[0].lower():
-                            st.session_state.node_history = []
-                            st.session_state.current_node = {"type": "actor", "id": closest[0]}
-                            st.session_state.visible_limit = 6
-                            st.session_state.ambiguous_results = None
-                        else:
-                            # Sort by shortest name (closest match usually) and take top 8
-                            closest.sort(key=len)
-                            st.session_state.ambiguous_results = closest[:8]
-                            st.session_state.current_node = None
+                closest_actors = [("actor", c) for c in all_cast if search_query.lower() in c.lower()]
+                
+                movie_mask = df['title'].str.contains(search_query, case=False, na=False)
+                closest_movies = [("movie", t) for t in df[movie_mask]['title'].dropna() if search_query.lower() in t.lower()]
+                
+                closest = closest_actors + closest_movies
+                if closest:
+                    if len(closest) == 1 or search_query.lower() == closest[0][1].lower():
+                        st.session_state.node_history = []
+                        st.session_state.current_node = {"type": closest[0][0], "id": closest[0][1]}
+                        st.session_state.visible_limit = 6
+                        st.session_state.ambiguous_results = None
+                    else:
+                        closest.sort(key=lambda x: len(x[1]))
+                        st.session_state.ambiguous_results = closest[:8]
+                        st.session_state.current_node = None
     
     if st.session_state.get("ambiguous_results"):
-        st.markdown(f"**Found multiple actors matching \"{search_query}\". Which one did you mean?**")
+        st.markdown(f"**Found multiple matches for \"{search_query}\". Which one did you mean?**")
         ambig_cols = st.columns(4)
-        for idx, ac in enumerate(st.session_state.ambiguous_results):
-            if ambig_cols[idx % 4].button(ac, key=f"ambig_{ac}", use_container_width=True):
+        for idx, (ntype, name) in enumerate(st.session_state.ambiguous_results):
+            icon = "🎭" if ntype == "actor" else "🎬"
+            if ambig_cols[idx % 4].button(f"{icon} {name}", key=f"ambig_{ntype}_{name}", use_container_width=True):
                 st.session_state.node_history = []
-                st.session_state.current_node = {"type": "actor", "id": ac}
+                st.session_state.current_node = {"type": ntype, "id": name}
                 st.session_state.visible_limit = 6
                 st.session_state.ambiguous_results = None
                 st.rerun()
