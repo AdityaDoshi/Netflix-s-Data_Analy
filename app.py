@@ -220,6 +220,38 @@ LANG = {
         "chart_title_histogram": "Histograma de Duración de Películas",
         "axis_frequency": "Frecuencia",
         "legend_avg_runtime": "Duración Promedio",
+                "tab_cast_network": "🎭 Cast Network",
+        "cast_search_prompt": "Search for an actor...",
+        "cast_search_btn": "Search Actor",
+        "cast_back": "Go Back",
+        "cast_total_titles": "Total Titles",
+        "cast_filmography": "Filmography",
+        "cast_costars": "Frequent Co-Stars",
+        "cast_no_costars": "No co-stars found.",
+                "tab_cast_network": "🎭 કાસ્ટ નેટવર્ક",
+        "cast_search_prompt": "અભિનેતા માટે શોધો...",
+        "cast_search_btn": "અભિનેતા શોધો",
+        "cast_back": "પાછા જાઓ",
+        "cast_total_titles": "કુલ શીર્ષકો",
+        "cast_filmography": "ફિલ્મોગ્રાફી",
+        "cast_costars": "વારંવાર સહ-કલાકારો",
+        "cast_no_costars": "કોઈ સહ-કલાકારો મળ્યા નથી.",
+                "tab_cast_network": "🎭 कास्ट नेटवर्क",
+        "cast_search_prompt": "किसी अभिनेता को खोजें...",
+        "cast_search_btn": "अभिनेता खोजें",
+        "cast_back": "वापस जाएं",
+        "cast_total_titles": "कुल शीर्षक",
+        "cast_filmography": "फिल्मोग्राफी",
+        "cast_costars": "लगातार सह-कलाकार",
+        "cast_no_costars": "कोई सह-कलाकार नहीं मिला।",
+                "tab_cast_network": "🎭 Red de Reparto",
+        "cast_search_prompt": "Buscar un actor...",
+        "cast_search_btn": "Buscar Actor",
+        "cast_back": "Regresar",
+        "cast_total_titles": "Títulos Totales",
+        "cast_filmography": "Filmografía",
+        "cast_costars": "Coprotagonistas Frecuentes",
+        "cast_no_costars": "No se encontraron coprotagonistas.",
         "col_genres": "Genres",
         "metric_total": "Total Content",
         "metric_genres": "Unique Genres",
@@ -1597,11 +1629,88 @@ def get_recommendations(query, vectorizer, tfidf_matrix, df, top_n=5):
             })
     return results
 
+
+def set_actor(actor_name):
+    if st.session_state.current_actor:
+        st.session_state.actor_history.append(st.session_state.current_actor)
+    st.session_state.current_actor = actor_name
+
+def go_back():
+    if st.session_state.actor_history:
+        st.session_state.current_actor = st.session_state.actor_history.pop()
+    else:
+        st.session_state.current_actor = None
+
+def render_cast_network(df: pd.DataFrame):
+    T = LANG[st.session_state.lang]
+    
+    st.markdown(f'<div class="section-header">{T.get("tab_cast_network", "🎭 Cast Network Explorer")}</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        search_query = st.text_input(T.get("cast_search_prompt", "Search for an actor..."), key="actor_search")
+    with col2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button(T.get("cast_search_btn", "Search Actor"), use_container_width=True):
+            if search_query:
+                mask = df['cast'].str.contains(search_query, case=False, na=False)
+                matching = df[mask]
+                if not matching.empty:
+                    all_cast = matching['cast'].str.split(', ').explode().dropna().unique()
+                    closest = [c for c in all_cast if search_query.lower() in c.lower()]
+                    if closest:
+                        st.session_state.actor_history = []
+                        st.session_state.current_actor = closest[0]
+                        st.rerun()
+
+    if st.session_state.current_actor:
+        st.divider()
+        actor = st.session_state.current_actor
+        
+        col_back, col_title = st.columns([1, 4])
+        with col_back:
+            if st.button(f"⬅ {T.get('cast_back', 'Go Back')}", use_container_width=True):
+                go_back()
+                st.rerun()
+                
+        st.markdown(f"<h2 style='color:var(--primary-color); margin-top:0;'>{actor}</h2>", unsafe_allow_html=True)
+        
+        actor_movies = df[df['cast'].str.contains(actor, case=False, na=False, regex=False)]
+        
+        st.markdown(f"#### {T.get('cast_filmography', 'Filmography')} ({len(actor_movies)})")
+        display_cols = ["title", "type", "release_year", "rating"]
+        st.dataframe(actor_movies[display_cols].rename(columns={
+            "title": T.get("col_title", "Title"),
+            "type": T.get("col_type", "Type"),
+            "release_year": T.get("col_year", "Release Year"),
+            "rating": T.get("col_rating", "Rating")
+        }), use_container_width=True, hide_index=True)
+        
+        st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
+        all_costars = actor_movies['cast'].str.split(', ').explode().dropna()
+        all_costars = all_costars[all_costars != actor]
+        top_costars = all_costars.value_counts().head(12)
+        
+        if top_costars.empty:
+            st.info(T.get("cast_no_costars", "No co-stars found."))
+        else:
+            cols = st.columns(4)
+            for i, (costar, count) in enumerate(top_costars.items()):
+                with cols[i % 4]:
+                    if st.button(f"{costar} ({count})", key=f"costar_{hash(costar)}_{i}", use_container_width=True):
+                        set_actor(costar)
+                        st.rerun()
+
+
 def main():
     if "demo_credentials" not in st.session_state:
         st.session_state.demo_credentials = {"admin": "admin123"}
     if "popup_request" not in st.session_state:
         st.session_state.popup_request = None
+        if "current_actor" not in st.session_state:
+        st.session_state.current_actor = None
+    if "actor_history" not in st.session_state:
+        st.session_state.actor_history = []
     if "chart_selections" not in st.session_state:
         st.session_state.chart_selections = {}
 
@@ -1702,6 +1811,9 @@ def main():
                     ''', unsafe_allow_html=True)
             else:
                 st.info(T.get("ai_no_match", "No matches found. Try describing it differently!"))
+
+    with tab5:
+        render_cast_network(df)
 
     st.markdown(
         f"""
