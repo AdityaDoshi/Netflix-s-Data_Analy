@@ -1474,29 +1474,38 @@ def node_go_back():
 
 @st.cache_data(show_spinner=False, ttl=86400)
 def get_image(query, is_movie=False):
-    import urllib.request, urllib.parse, json, re
+    import urllib.request, urllib.parse, json, re, difflib
     
-    # --- LEVEL 1: TVMAZE (Most Reliable, No Auth, Great for Shows/Actors) ---
+    def is_match(q, res):
+        if not res: return False
+        q = q.lower().replace("movie", "").strip()
+        res = res.lower().strip()
+        if q in res or res in q: return True
+        return difflib.SequenceMatcher(None, q, res).ratio() > 0.6
+
+    # --- LEVEL 1: TVMAZE ---
     try:
         if is_movie:
             url = 'https://api.tvmaze.com/search/shows?q=' + urllib.parse.quote(query.replace(" movie", ""))
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
             data = json.loads(urllib.request.urlopen(req, timeout=1).read().decode('utf-8'))
-            if len(data) > 0 and data[0]['show']['image']:
-                return data[0]['show']['image']['original']
+            for d in data:
+                if d['show']['image'] and is_match(query, d['show']['name']):
+                    return d['show']['image']['original']
         else:
             url = 'https://api.tvmaze.com/search/people?q=' + urllib.parse.quote(query)
             req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
             data = json.loads(urllib.request.urlopen(req, timeout=1).read().decode('utf-8'))
-            if len(data) > 0 and data[0]['person']['image']:
-                return data[0]['person']['image']['original']
+            for d in data:
+                if d['person']['image'] and is_match(query, d['person']['name']):
+                    return d['person']['image']['original']
     except Exception:
         pass
 
-    # --- LEVEL 2: WIKIPEDIA (Great for Theatrical Movies & Famous People not on TV) ---
+    # --- LEVEL 2: WIKIPEDIA ---
     try:
         if is_movie:
-            url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + urllib.parse.quote(query.replace(" movie", "")) + '&gsrlimit=1&prop=pageimages&format=json&pithumbsize=400'
+            url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + urllib.parse.quote(query.replace(" movie", "")) + '&gsrlimit=3&prop=pageimages&format=json&pithumbsize=400'
         else:
             url = 'https://en.wikipedia.org/w/api.php?action=query&titles=' + urllib.parse.quote(query) + '&prop=pageimages&format=json&pithumbsize=400'
             
@@ -1505,19 +1514,19 @@ def get_image(query, is_movie=False):
         if 'query' in data and 'pages' in data['query']:
             pages = data['query']['pages']
             for page_id in pages:
-                if 'thumbnail' in pages[page_id]:
+                if 'thumbnail' in pages[page_id] and is_match(query, pages[page_id].get('title', '')):
                     return pages[page_id]['thumbnail']['source']
     except Exception:
         pass
         
-    # --- LEVEL 3: TMDB SCRAPER (Risky due to IP block, but good last resort) ---
+    # --- LEVEL 3: TMDB SCRAPER ---
     try:
         if not is_movie:
             url = 'https://www.themoviedb.org/search/person?query=' + urllib.parse.quote(query)
         else:
             url = 'https://www.themoviedb.org/search?query=' + urllib.parse.quote(query.replace(" movie", ""))
             
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         html = urllib.request.urlopen(req, timeout=1).read().decode('utf-8')
         
         match = re.search(r'src="(https://media\.themoviedb\.org/t/p/w[^"]+\.jpg)"', html)
