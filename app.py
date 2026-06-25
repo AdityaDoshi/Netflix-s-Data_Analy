@@ -1416,7 +1416,15 @@ def process_selection(event, chart_key, filter_col, extract_key="x", match_type=
         val = pt.get(extract_key)
         if val is None: val = pt.get("label", pt.get("x"))
         if is_range:
-            val = float(pt.get("x", 0))
+            raw_val = pt.get("x")
+            try:
+                val = float(raw_val)
+            except (ValueError, TypeError):
+                if isinstance(raw_val, str) and '-' in raw_val:
+                    try: val = float(raw_val.split('-')[0])
+                    except: val = 0.0
+                else:
+                    val = 0.0
             if st.session_state.chart_selections.get(chart_key) != val:
                 st.session_state.chart_selections[chart_key] = val
                 st.session_state.popup_request = {"col": filter_col, "val": (val-(bin_size/2), val+(bin_size/2)), "match": "range"}
