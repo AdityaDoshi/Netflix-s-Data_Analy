@@ -1392,6 +1392,28 @@ def node_go_back():
     else:
         st.session_state.current_node = None
 
+
+
+
+@st.cache_data(show_spinner=False, ttl=86400)
+def get_wiki_image(query, is_movie=False):
+    import urllib.request, json, urllib.parse
+    try:
+        if is_movie:
+            url = 'https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=' + urllib.parse.quote(query) + '&gsrlimit=1&prop=pageimages&format=json&pithumbsize=400'
+        else:
+            url = 'https://en.wikipedia.org/w/api.php?action=query&titles=' + urllib.parse.quote(query) + '&prop=pageimages&format=json&pithumbsize=400'
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        data = json.loads(urllib.request.urlopen(req, timeout=3).read().decode('utf-8'))
+        if 'query' in data and 'pages' in data['query']:
+            pages = data['query']['pages']
+            for page_id in pages:
+                if 'thumbnail' in pages[page_id]:
+                    return pages[page_id]['thumbnail']['source']
+    except Exception:
+        pass
+    return None
+
 def render_cast_network(df):
     import pandas as pd
     T = LANG[st.session_state.lang]
@@ -1428,19 +1450,33 @@ def render_cast_network(df):
         st.divider()
         
         if n_type == "actor":
-            st.markdown(f"## 🎭 {n_id}")
-            actor_movies = df[df['cast'].str.contains(n_id, case=False, na=False, regex=False)]
-            st.caption(f"{T.get('cast_total_titles', 'Total Titles')}: {len(actor_movies)}")
+            ac1, ac2 = st.columns([1, 3])
+            img_url = get_wiki_image(n_id, is_movie=False)
+            with ac1:
+                if img_url:
+                    st.image(img_url, use_column_width=True)
+                else:
+                    st.markdown(f"<div style='background:#333; height:200px; display:flex; align-items:center; justify-content:center; border-radius:8px;'><span style='font-size:48px'>🎭</span></div>", unsafe_allow_html=True)
+            with ac2:
+                st.markdown(f"## {n_id}")
+                actor_movies = df[df['cast'].str.contains(n_id, case=False, na=False, regex=False)]
+                st.caption(f"{T.get('cast_total_titles', 'Total Titles')}: {len(actor_movies)}")
             
+            st.divider()
             st.markdown(f"#### {T.get('cast_filmography', 'Filmography')}")
-            
             cols = st.columns(3)
             for idx, row in enumerate(actor_movies.itertuples()):
                 with cols[idx % 3]:
-                    if st.button(f"🎬 {row.title}\n({row.release_year})", key=f"mov_{idx}_{row.show_id}", use_container_width=True):
+                    m_img = get_wiki_image(f"{row.title} movie", is_movie=True)
+                    if m_img:
+                        st.image(m_img, use_column_width=True)
+                    else:
+                        st.markdown(f"<div style='background:linear-gradient(45deg, #2b00ff, var(--primary-color)); height:120px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin-bottom: 8px;'><span style='font-size:14px; font-weight:bold; color:white; text-align:center;'>{row.title}</span></div>", unsafe_allow_html=True)
+                    if st.button(f"🎬 {row.title} ({row.release_year})", key=f"mov_{idx}_{row.show_id}", use_container_width=True):
                         set_node("movie", row.show_id)
                         st.rerun()
                         
+            st.divider()
             st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
             co_stars = {}
             for cast_str in actor_movies['cast'].dropna():
@@ -1454,6 +1490,11 @@ def render_cast_network(df):
                 c_cols = st.columns(4)
                 for i, (cs, count) in enumerate(top_costars):
                     with c_cols[i % 4]:
+                        cs_img = get_wiki_image(cs, is_movie=False)
+                        if cs_img:
+                            st.image(cs_img, use_column_width=True)
+                        else:
+                            st.markdown(f"<div style='background:#333; height:150px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin-bottom: 8px;'><span style='font-size:32px'>🎭</span></div>", unsafe_allow_html=True)
                         if st.button(f"{cs} ({count})", key=f"cs_{i}", use_container_width=True):
                             set_node("actor", cs)
                             st.rerun()
@@ -1464,14 +1505,18 @@ def render_cast_network(df):
             movie_row = df[df['show_id'] == n_id].iloc[0]
             
             mc1, mc2 = st.columns([1, 2])
+            m_img = get_wiki_image(f"{movie_row.title} movie", is_movie=True)
             with mc1:
-                st.markdown(f"""
-                <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #2b00ff 100%); 
-                            border-radius: 12px; height: 350px; display: flex; align-items: center; justify-content: center;
-                            box-shadow: 0 10px 20px rgba(0,0,0,0.3); padding: 20px; text-align: center;">
-                    <h2 style="color: white; font-size: 32px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">{movie_row.title}</h2>
-                </div>
-                """, unsafe_allow_html=True)
+                if m_img:
+                    st.image(m_img, use_column_width=True)
+                else:
+                    st.markdown(f"""
+                    <div style="background: linear-gradient(135deg, var(--primary-color) 0%, #2b00ff 100%); 
+                                border-radius: 12px; height: 350px; display: flex; align-items: center; justify-content: center;
+                                box-shadow: 0 10px 20px rgba(0,0,0,0.3); padding: 20px; text-align: center;">
+                        <h2 style="color: white; font-size: 32px; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">{movie_row.title}</h2>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
             with mc2:
                 st.markdown(f"## {movie_row.title}")
@@ -1490,6 +1535,11 @@ def render_cast_network(df):
                 c_cols = st.columns(4)
                 for i, c in enumerate(cast_list):
                     with c_cols[i % 4]:
+                        c_img = get_wiki_image(c, is_movie=False)
+                        if c_img:
+                            st.image(c_img, use_column_width=True)
+                        else:
+                            st.markdown(f"<div style='background:#333; height:150px; display:flex; align-items:center; justify-content:center; border-radius:8px; margin-bottom: 8px;'><span style='font-size:32px'>🎭</span></div>", unsafe_allow_html=True)
                         if st.button(c, key=f"mcast_{i}", use_container_width=True):
                             set_node("actor", c)
                             st.rerun()
