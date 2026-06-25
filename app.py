@@ -1396,26 +1396,43 @@ def node_go_back():
 
 @st.cache_data(show_spinner=False, ttl=86400)
 def get_image(query, is_movie=False):
-    import urllib.request, urllib.parse, re
+    import urllib.request, urllib.parse, re, json
+    
+    # Try TMDB First
     try:
-        url = 'https://www.themoviedb.org/search?query=' + urllib.parse.quote(query)
+        if not is_movie:
+            url = 'https://www.themoviedb.org/search/person?query=' + urllib.parse.quote(query)
+        else:
+            url = 'https://www.themoviedb.org/search?query=' + urllib.parse.quote(query)
+            
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'})
-        html = urllib.request.urlopen(req, timeout=4).read().decode('utf-8')
+        html = urllib.request.urlopen(req, timeout=3).read().decode('utf-8')
         
         match = re.search(r'src="(https://media\.themoviedb\.org/t/p/w[^"]+\.jpg)"', html)
-        if not match:
-            match = re.search(r'src="(/t/p/w[^"]+\.jpg)"', html)
+        if not match: match = re.search(r'src="(/t/p/w[^"]+\.jpg)"', html)
             
         if match:
             img_url = match.group(1)
-            if img_url.startswith('/'):
-                img_url = "https://media.themoviedb.org" + img_url
-            
-            # Upgrade to high resolution
+            if img_url.startswith('/'): img_url = "https://media.themoviedb.org" + img_url
             img_url = re.sub(r'/w[0-9]+_and_h[0-9]+_[^/]+/', '/w600_and_h900_bestv2/', img_url)
             return img_url
     except Exception:
         pass
+        
+    # Fallback to Wikipedia (Very stable for Actors)
+    if not is_movie:
+        try:
+            url = 'https://en.wikipedia.org/w/api.php?action=query&titles=' + urllib.parse.quote(query) + '&prop=pageimages&format=json&pithumbsize=400'
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            data = json.loads(urllib.request.urlopen(req, timeout=3).read().decode('utf-8'))
+            if 'query' in data and 'pages' in data['query']:
+                pages = data['query']['pages']
+                for page_id in pages:
+                    if 'thumbnail' in pages[page_id]:
+                        return pages[page_id]['thumbnail']['source']
+        except Exception:
+            pass
+            
     return None
 
 def render_cast_network(df):
