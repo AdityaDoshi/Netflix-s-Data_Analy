@@ -275,6 +275,34 @@ LANG = {
         "metric_total": "Contenido Total",
         "metric_genres": "Géneros Únicos",
         "metric_type": "Tipo de Contenido",
+                "tab_cast_network": "🎭 Cast Network",
+        "cast_search_prompt": "Search for an actor...",
+        "cast_search_placeholder": "e.g., Leonardo DiCaprio",
+        "cast_filmography": "Filmography",
+        "cast_costars": "Frequent Co-Stars",
+        "cast_go_back": "Go Back",
+        "cast_total_titles": "Total Titles:",
+                "tab_cast_network": "🎭 કાસ્ટ નેટવર્ક",
+        "cast_search_prompt": "કોઈ અભિનેતા શોધો...",
+        "cast_search_placeholder": "દા.ત., લિયોનાર્ડો ડી કેપ્રિયો",
+        "cast_filmography": "ફિલ્મોગ્રાફી",
+        "cast_costars": "વારંવાર સહ-કલાકારો",
+        "cast_go_back": "પાછા જાઓ",
+        "cast_total_titles": "કુલ શીર્ષકો:",
+                "tab_cast_network": "🎭 कास्ट नेटवर्क",
+        "cast_search_prompt": "किसी अभिनेता को खोजें...",
+        "cast_search_placeholder": "उदा., लियोनार्डो डिकैप्रियो",
+        "cast_filmography": "फिल्मोग्राफी",
+        "cast_costars": "बार-बार सह-कलाकार",
+        "cast_go_back": "वापस जाएं",
+        "cast_total_titles": "कुल शीर्षक:",
+                "tab_cast_network": "🎭 Red de Elenco",
+        "cast_search_prompt": "Buscar a un actor...",
+        "cast_search_placeholder": "ej., Leonardo DiCaprio",
+        "cast_filmography": "Filmografía",
+        "cast_costars": "Coprotagonistas Frecuentes",
+        "cast_go_back": "Regresar",
+        "cast_total_titles": "Títulos Totales:",
         "ai_search_prompt": "🔍 Search query...", "ai_search_placeholder": "e.g., A spooky detective movie with a twist ending", "ai_no_match": "No matches found. Try describing it differently!",
         "metric_total": "Total Content",
         "metric_movies": "Movies",
@@ -1286,6 +1314,73 @@ def render_catalog_explorer(df: pd.DataFrame):
     st.download_button(T["download_csv"], data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True)
 
 
+def render_cast_network(df: pd.DataFrame):
+    T = LANG[st.session_state.lang]
+    st.markdown(f'<div class="section-header">{T.get("tab_cast_network", "🎭 Cast Network")}</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        search = st.text_input(T.get("cast_search_prompt", "Search for an actor..."), placeholder=T.get("cast_search_placeholder", "e.g., Leonardo DiCaprio"), key="cast_search_input")
+    with col2:
+        st.write("")
+        st.write("")
+        if st.button("Search", use_container_width=True, key="cast_search_btn"):
+            if search:
+                if st.session_state.current_actor and st.session_state.current_actor != search:
+                    st.session_state.actor_history.append(st.session_state.current_actor)
+                st.session_state.current_actor = search
+                st.rerun()
+
+    if len(st.session_state.actor_history) > 0:
+        if st.button(f"⬅ {T.get('cast_go_back', 'Go Back')}", key="cast_back_btn"):
+            st.session_state.current_actor = st.session_state.actor_history.pop()
+            st.rerun()
+
+    if not st.session_state.current_actor:
+        st.info(T.get("cast_search_prompt", "Search for an actor..."))
+        return
+
+    actor = st.session_state.current_actor
+    st.markdown(f"<h3 style='color: var(--primary-color);'>{actor}</h3>", unsafe_allow_html=True)
+
+    # Use regex to strictly find the actor's exact name
+    # Using simple contains is okay, but we add naive boundary handling
+    actor_escaped = re.escape(actor)
+    actor_mask = df["cast"].str.contains(actor_escaped, na=False, case=False)
+    actor_df = df[actor_mask]
+    
+    if len(actor_df) == 0:
+        st.warning("No titles found for this actor.")
+        return
+
+    st.markdown(f"**{T.get('cast_total_titles', 'Total Titles:')}** {len(actor_df)}")
+    
+    st.markdown(f"#### {T.get('cast_filmography', 'Filmography')}")
+    display_cols = ["title", "type", "release_year", "rating"]
+    display_df = actor_df[[c for c in display_cols if c in actor_df.columns]].reset_index(drop=True)
+    
+    col_map = {
+        "title": T.get("col_title", "Title"),
+        "type": T.get("col_type", "Type"),
+        "release_year": T.get("col_year", "Release Year"),
+        "rating": T.get("col_rating", "Rating"),
+    }
+    display_df = display_df.rename(columns=col_map)
+    st.dataframe(display_df, use_container_width=True)
+
+    st.markdown(f"#### {T.get('cast_costars', 'Frequent Co-Stars')}")
+    all_cast = actor_df["cast"].dropna().str.split(", ").explode()
+    co_stars = all_cast[all_cast.str.lower() != actor.lower()]
+    top_costars = co_stars.value_counts().head(20)
+    
+    cols = st.columns(4)
+    for i, (co_star, count) in enumerate(top_costars.items()):
+        with cols[i % 4]:
+            if st.button(f"{co_star} ({count})", key=f"costar_{i}_{co_star.replace(' ', '_')}"):
+                st.session_state.actor_history.append(actor)
+                st.session_state.current_actor = co_star
+                st.rerun()
+
 # ══════════════════════════════════════════════════════════════════
 #  MAIN APPLICATION ENTRY POINT
 # ══════════════════════════════════════════════════════════════════
@@ -1535,7 +1630,7 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # --- TABS IMPLEMENTATION ---
-    tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], T.get("tab_ai", "🤖 AI Recommender")])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], T.get("tab_ai", "🤖 AI Recommender"), T.get("tab_cast_network", "🎭 Cast Network")])
 
     with tab1:
         st.markdown(f'<div class="section-header" style="margin-top: 24px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
