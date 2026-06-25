@@ -1489,7 +1489,7 @@ def get_image(query, is_movie=False):
         q = q.lower().replace("movie", "").strip()
         res = res.lower().strip()
         if q in res or res in q: return True
-        return difflib.SequenceMatcher(None, q, res).ratio() > 0.6
+        return difflib.SequenceMatcher(None, q, res).ratio() > 0.85
 
     # --- LEVEL 1: TVMAZE ---
     try:
@@ -1537,14 +1537,17 @@ def get_image(query, is_movie=False):
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         html = urllib.request.urlopen(req, timeout=1).read().decode('utf-8')
         
-        match = re.search(r'src="(https://media\.themoviedb\.org/t/p/w[^"]+\.jpg)"', html)
-        if not match: match = re.search(r'src="(/t/p/w[^"]+\.jpg)"', html)
+        img_tags = re.findall(r'<img[^>]+src=["']([^"']+\.jpg)["'][^>]+alt=["']([^"']+)["']', html)
+        if not img_tags:
+            img_tags = re.findall(r'<img[^>]+alt=["']([^"']+)["'][^>]+src=["']([^"']+\.jpg)["']', html)
+            img_tags = [(src, alt) for alt, src in img_tags]
             
-        if match:
-            img_url = match.group(1)
-            if img_url.startswith('/'): img_url = "https://media.themoviedb.org" + img_url
-            img_url = re.sub(r'/w[0-9]+_and_h[0-9]+_[^/]+/', '/w600_and_h900_bestv2/', img_url)
-            return img_url
+        for src, alt in img_tags:
+            if '/t/p/' in src and is_match(query, alt):
+                img_url = src
+                if img_url.startswith('/'): img_url = "https://media.themoviedb.org" + img_url
+                img_url = re.sub(r'/w[0-9]+_and_h[0-9]+_[^/]+/', '/w600_and_h900_bestv2/', img_url)
+                return img_url
     except Exception:
         pass
         
