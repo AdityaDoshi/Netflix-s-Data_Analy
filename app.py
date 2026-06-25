@@ -488,7 +488,7 @@ update_theme_config(st.session_state.theme)
 # ══════════════════════════════════════════════════════════════════
 
 @st.cache_data(show_spinner=False)
-def load_and_preprocess_data():
+def load_and_preprocess_data(_cache_buster=1):
     df = pd.read_csv("netflix_titles_2025.csv")
     df["date_added"] = pd.to_datetime(df["date_added"].str.strip(), errors="coerce")
     df["year_added"] = df["date_added"].dt.year.astype("Int64")
