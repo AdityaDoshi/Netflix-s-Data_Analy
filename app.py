@@ -885,6 +885,10 @@ def render_sidebar(df: pd.DataFrame):
         year_range = st.slider(T["release_year"], min_value=min_year, max_value=max_year, value=(min_year, max_year), step=1)
         selected_types = st.multiselect(T["content_type"], options=sorted(df["type"].dropna().unique()), default=sorted(df["type"].dropna().unique()), format_func=lambda x: T["movie"] if x == "Movie" else (T["tv_show"] if x == "TV Show" else x), placeholder=T["choose_options"])
         selected_ratings = st.multiselect(T["maturity_rating"], options=sorted(df["rating"].dropna().unique()), default=[], placeholder=T["choose_options"])
+        if "vote_average" in df.columns:
+            vote_range = st.slider("Show Rating (10)", min_value=0.0, max_value=10.0, value=(0.0, 10.0), step=0.1)
+        else:
+            vote_range = (0.0, 10.0)
         selected_countries = st.multiselect(T["production_country"], options=sorted(df["primary_country"].dropna().unique()), default=[], placeholder=T["choose_options"])
 
         st.divider()
@@ -897,6 +901,7 @@ def render_sidebar(df: pd.DataFrame):
     if selected_types: filtered = filtered[filtered["type"].isin(selected_types)]
     if selected_ratings: filtered = filtered[filtered["rating"].isin(selected_ratings)]
     if selected_countries: filtered = filtered[filtered["primary_country"].isin(selected_countries)]
+    if "vote_average" in filtered.columns: filtered = filtered[(filtered["vote_average"] >= vote_range[0]) & (filtered["vote_average"] <= vote_range[1])]
     return filtered
 
 
@@ -1203,7 +1208,7 @@ def render_catalog_explorer(df: pd.DataFrame):
     else:
         search_results = df
 
-    display_cols = ["title", "type", "director", "country", "release_year", "rating", "duration", "genres"]
+    display_cols = ["title", "type", "director", "country", "release_year", "rating", "vote_average", "duration", "genres"]
     display_df = search_results[[c for c in display_cols if c in search_results.columns]].reset_index(drop=True).copy()
 
     # Rename columns based on translation map
@@ -1214,6 +1219,7 @@ def render_catalog_explorer(df: pd.DataFrame):
         "country": T.get("col_country", "Country"),
         "release_year": T.get("col_year", "Release Year"),
         "rating": T.get("col_rating", "Rating"),
+        "vote_average": "Show Rating (10)",
         "duration": T.get("col_duration", "Duration"),
         "genres": T.get("col_genres", "Genres")
     }
