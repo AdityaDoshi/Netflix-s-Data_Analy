@@ -1694,7 +1694,10 @@ def render_cast_network(df):
                 st.info(T.get("cast_no_costars", "No co-stars found."))
                 
         elif n_type == "movie":
-            movie_row = df[df['show_id'] == n_id].iloc[0]
+            matches = df[df['show_id'] == n_id]
+            if matches.empty:
+                matches = df[df['title'] == n_id]
+            movie_row = matches.iloc[0]
             
             mc1, mc2 = st.columns([1, 2])
             m_img = get_image(f"{movie_row.title} movie", is_movie=True)
