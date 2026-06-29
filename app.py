@@ -1384,7 +1384,7 @@ def render_catalog_explorer(df: pd.DataFrame):
     else:
         search_results = df
 
-    display_cols = ["title", "type", "director", "country", "release_year", "rating", "vote_average", "duration", "genres", "show_id"]
+    display_cols = ["title", "type", "director", "country", "release_year", "rating", "vote_average", "duration", "genres", "show_id", "description"]
     display_df = search_results[[c for c in display_cols if c in search_results.columns]].reset_index(drop=True).copy()
 
     # Rename columns based on translation map
@@ -1422,8 +1422,14 @@ def render_catalog_explorer(df: pd.DataFrame):
                 
                 score = f"{row.get('vote_average', '')}" if pd.notna(row.get('vote_average')) else "NR"
                 year = f"{row.get('release_year', '')}"
+                rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
+                director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
                 genres = f"{row.get('genres', 'N/A')}"
                 duration = f"{row.get('duration', 'N/A')} min"
+                
+                desc = str(row.get('description', ''))
+                if pd.isna(row.get('description')) or desc == 'nan': desc = ""
+                elif len(desc) > 70: desc = desc[:67] + "..."
                 
                 html = f'''
                 <div class="simkl-card">
@@ -1431,7 +1437,10 @@ def render_catalog_explorer(df: pd.DataFrame):
                         <div class="simkl-badge badge-top-right">★ {score}</div>
                         <div class="simkl-badge badge-top-left">{year}</div>
                         <div class="simkl-overlay">
-                            <div class="simkl-genres">{genres}</div>
+                            <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
+                            <div class="simkl-genres" style="margin-bottom: 4px;">{genres}</div>
+                            <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
+                            <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
                             <div class="simkl-duration">{duration}</div>
                         </div>
                     </div>
