@@ -526,7 +526,7 @@ def show_forgot_dialog():
             st.error("Account not found.")
 
 def render_login_screen():
-    st.markdown(f"""
+    st.markdown("""
         <style>
         .stApp {
             background-image: linear-gradient(to top, rgba(0,0,0,0.8) 0, rgba(0,0,0,0) 60%, rgba(0,0,0,0.8) 100%), url("https://assets.nflxext.com/ffe/siteui/vlv3/a73c4363-1dcd-4125-b746-8ed73c46646f/fe242f4b-1dda-4a5d-b054-9547d51ee939/US-en-20231016-popsignuptwoweeks-perspective_alpha_website_large.jpg");
@@ -856,7 +856,7 @@ def render_login_screen():
 </style>
 
 <div class="login-header-container">
-{get_netflix_logo_svg('160px', 'margin: 0 auto 16px auto; display: block; filter: drop-shadow(0 4px 6px rgba(229, 9, 20, 0.4));')}
+""" + f"""{get_netflix_logo_svg('160px', 'margin: 0 auto 16px auto; display: block; filter: drop-shadow(0 4px 6px rgba(229, 9, 20, 0.4));')}""" + """
 <h1>Good to see you again</h1>
 </div>
     """, unsafe_allow_html=True)
