@@ -1517,6 +1517,11 @@ def render_top_5_genre(df: pd.DataFrame):
                 </div>
                 '''
                 st.markdown(html, unsafe_allow_html=True)
+                
+                if st.button("Cast Network", key=f"top5_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                    set_node("movie", row.get('show_id', row['title']))
+                    st.session_state.active_tab = "tab3_search"
+                    st.rerun()
 
 # ══════════════════════════════════════════════════════════════════
 #  MAIN APPLICATION ENTRY POINT
