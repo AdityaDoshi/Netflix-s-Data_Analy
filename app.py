@@ -1365,7 +1365,10 @@ def render_catalog_explorer(df: pd.DataFrame):
     
     col_search, col_view = st.columns([4, 1])
     with col_search:
-        search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
+        default_q = st.session_state.get('global_search_query', '')
+    search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), value=default_q, placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
+    if search_query != default_q:
+        st.session_state.global_search_query = search_query
     with col_view:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
         view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed")
@@ -1469,59 +1472,68 @@ def render_catalog_explorer(df: pd.DataFrame):
 
 
 
-def render_top_5_genre(df: pd.DataFrame):
-    popular_genres = ["Action", "Anime Features", "Comedy", "Documentaries", "Drama", "Horror", "Sci-Fi", "Thrillers"]
+def render_top_categories(df: pd.DataFrame):
+    popular_genres = ["Action", "Comedy", "Sci-Fi", "Horror", "Thrillers", "Drama"]
     
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        st.markdown('<div class="section-header" style="margin-bottom: 0;">🏆 Top 5 by Genre</div>', unsafe_allow_html=True)
-    with col2:
-        selected_genre = st.selectbox("Select a Genre", popular_genres, label_visibility="collapsed")
+    if st.session_state.get('view_all_clicked'):
+        st.success(f"Search filter applied for '{st.session_state.view_all_clicked}'. Please switch to the **Data Explorer** tab to view the full list!")
+        st.session_state.view_all_clicked = None
     
-    genre_df = df[df["genres"].str.contains(selected_genre, case=False, na=False)].copy()
-    genre_df['vote_numeric'] = pd.to_numeric(genre_df['vote_average'], errors='coerce').fillna(0)
-    genre_df = genre_df.sort_values(by="vote_numeric", ascending=False).head(5)
-    
-    if len(genre_df) > 0:
-        cols = st.columns(5)
-        for i, (_, row) in enumerate(genre_df.iterrows()):
-            with cols[i % 5]:
-                m_img = get_image(f"{row['title']} movie", is_movie=True)
-                bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
+    for genre in popular_genres:
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            st.markdown(f'<div class="section-header" style="margin-bottom: 8px; font-size: 1.4rem;">🎬 Top 5 {genre} Movies</div>', unsafe_allow_html=True)
+        with col2:
+            if st.button(f"View All {genre}", key=f"view_{genre}", use_container_width=True):
+                st.session_state.global_search_query = genre
+                st.session_state.view_all_clicked = genre
+                st.rerun()
                 
-                score = f"{float(row.get('vote_average', 0)):.1f}" if pd.notna(row.get('vote_average')) else "NR"
-                year = f"{row.get('release_year', '')}"
-                rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
-                director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
-                genres_str = f"{row.get('genres', 'N/A')}"
-                duration = f"{row.get('duration', 'N/A')} min"
-                
-                desc = str(row.get('description', ''))
-                if pd.isna(row.get('description')) or desc == 'nan': desc = ""
-                elif len(desc) > 70: desc = desc[:67] + "..."
-                
-                html = f'''
-                <div class="simkl-card">
-                    <div class="simkl-poster" style="{bg_style}">
-                        <div class="simkl-badge badge-top-right">★ {score}</div>
-                        <div class="simkl-badge badge-top-left">{year}</div>
-                        <div class="simkl-overlay">
-                            <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
-                            <div class="simkl-genres" style="margin-bottom: 4px;">{genres_str}</div>
-                            <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
-                            <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
-                            <div class="simkl-duration">{duration}</div>
+        genre_df = df[df["genres"].str.contains(genre, case=False, na=False)].copy()
+        genre_df['vote_numeric'] = pd.to_numeric(genre_df['vote_average'], errors='coerce').fillna(0)
+        genre_df = genre_df.sort_values(by="vote_numeric", ascending=False).head(5)
+        
+        if len(genre_df) > 0:
+            cols = st.columns(5)
+            for i, (_, row) in enumerate(genre_df.iterrows()):
+                with cols[i % 5]:
+                    m_img = get_image(f"{row['title']} movie", is_movie=True)
+                    bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
+                    
+                    score = f"{float(row.get('vote_average', 0)):.1f}" if pd.notna(row.get('vote_average')) else "NR"
+                    year = f"{row.get('release_year', '')}"
+                    rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
+                    director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
+                    genres_str = f"{row.get('genres', 'N/A')}"
+                    duration = f"{row.get('duration', 'N/A')} min"
+                    
+                    desc = str(row.get('description', ''))
+                    if pd.isna(row.get('description')) or desc == 'nan': desc = ""
+                    elif len(desc) > 70: desc = desc[:67] + "..."
+                    
+                    html = f'''
+                    <div class="simkl-card">
+                        <div class="simkl-poster" style="{bg_style}">
+                            <div class="simkl-badge badge-top-right">★ {score}</div>
+                            <div class="simkl-badge badge-top-left">{year}</div>
+                            <div class="simkl-overlay">
+                                <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
+                                <div class="simkl-genres" style="margin-bottom: 4px;">{genres_str}</div>
+                                <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
+                                <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
+                                <div class="simkl-duration">{duration}</div>
+                            </div>
                         </div>
+                        <div class="simkl-title" title="{row['title']}">{row['title']}</div>
                     </div>
-                    <div class="simkl-title" title="{row['title']}">{row['title']}</div>
-                </div>
-                '''
-                st.markdown(html, unsafe_allow_html=True)
-                
-                if st.button("Cast Network", key=f"top5_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
-                    set_node("movie", row.get('show_id', row['title']))
-                    st.session_state.active_tab = "tab3_search"
-                    st.rerun()
+                    '''
+                    st.markdown(html, unsafe_allow_html=True)
+                    
+                    if st.button("Cast Network", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                        set_node("movie", row.get('show_id', row['title']))
+                        st.session_state.active_tab = "tab3_search"
+                        st.rerun()
+        st.markdown("<hr style='margin: 24px 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════
 #  MAIN APPLICATION ENTRY POINT
@@ -2101,7 +2113,11 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
 
     # --- TABS IMPLEMENTATION ---
-    tab1, tab2, tab3 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"]])
+    tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], "🎬 Top Categories"])
+
+    with tab4:
+        render_top_categories(filtered_df)
+
 
     with tab1:
         st.markdown(f'<div class="section-header" style="margin-top: 24px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
@@ -2144,8 +2160,6 @@ def main():
 
 
     with tab3:
-        render_top_5_genre(filtered_df)
-        st.markdown('<br>', unsafe_allow_html=True)
         
         col_ex1, col_ex2 = st.columns([2, 1], gap="large")
 
