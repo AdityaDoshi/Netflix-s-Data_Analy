@@ -1446,7 +1446,7 @@ def render_catalog_explorer(df: pd.DataFrame):
                     st.rerun()
                         
         if len(display_df) > limit:
-            st.info(f"Showing top {limit} results. Switch to Table View to see all {len(display_df)} results or refine your search.")} results or refine your search.")
+            st.info(f"Showing top {limit} results. Switch to Table View to see all {len(display_df)} results or refine your search.")
             
     else:
         display_df = display_df.rename(columns=col_map)
