@@ -1468,6 +1468,56 @@ def render_catalog_explorer(df: pd.DataFrame):
 
 
 
+
+def render_top_5_genre(df: pd.DataFrame):
+    popular_genres = ["Action", "Anime Features", "Comedy", "Documentaries", "Drama", "Horror", "Sci-Fi", "Thrillers"]
+    
+    col1, col2 = st.columns([1, 4])
+    with col1:
+        st.markdown('<div class="section-header" style="margin-bottom: 0;">🏆 Top 5 by Genre</div>', unsafe_allow_html=True)
+    with col2:
+        selected_genre = st.selectbox("Select a Genre", popular_genres, label_visibility="collapsed")
+    
+    genre_df = df[df["genres"].str.contains(selected_genre, case=False, na=False)].copy()
+    genre_df['vote_numeric'] = pd.to_numeric(genre_df['vote_average'], errors='coerce').fillna(0)
+    genre_df = genre_df.sort_values(by="vote_numeric", ascending=False).head(5)
+    
+    if len(genre_df) > 0:
+        cols = st.columns(5)
+        for i, (_, row) in enumerate(genre_df.iterrows()):
+            with cols[i % 5]:
+                m_img = get_image(f"{row['title']} movie", is_movie=True)
+                bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
+                
+                score = f"{row.get('vote_average', '')}" if pd.notna(row.get('vote_average')) else "NR"
+                year = f"{row.get('release_year', '')}"
+                rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
+                director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
+                genres_str = f"{row.get('genres', 'N/A')}"
+                duration = f"{row.get('duration', 'N/A')} min"
+                
+                desc = str(row.get('description', ''))
+                if pd.isna(row.get('description')) or desc == 'nan': desc = ""
+                elif len(desc) > 70: desc = desc[:67] + "..."
+                
+                html = f'''
+                <div class="simkl-card">
+                    <div class="simkl-poster" style="{bg_style}">
+                        <div class="simkl-badge badge-top-right">★ {score}</div>
+                        <div class="simkl-badge badge-top-left">{year}</div>
+                        <div class="simkl-overlay">
+                            <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
+                            <div class="simkl-genres" style="margin-bottom: 4px;">{genres_str}</div>
+                            <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
+                            <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
+                            <div class="simkl-duration">{duration}</div>
+                        </div>
+                    </div>
+                    <div class="simkl-title" title="{row['title']}">{row['title']}</div>
+                </div>
+                '''
+                st.markdown(html, unsafe_allow_html=True)
+
 # ══════════════════════════════════════════════════════════════════
 #  MAIN APPLICATION ENTRY POINT
 # ══════════════════════════════════════════════════════════════════
@@ -2087,8 +2137,13 @@ def main():
         ev_r = st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
         process_selection(ev_r, "tab2_histogram", "duration_minutes", is_range=True)
 
+
     with tab3:
+        render_top_5_genre(filtered_df)
+        st.markdown('<br>', unsafe_allow_html=True)
+        
         col_ex1, col_ex2 = st.columns([2, 1], gap="large")
+
         with col_ex1:
             st.markdown(f'<div class="section-header">{T.get("cat_header", "Catalog Search & Export")}</div>', unsafe_allow_html=True)
             render_catalog_explorer(filtered_df)
