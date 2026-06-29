@@ -856,7 +856,7 @@ def render_login_screen():
 </style>
 
 <div class="login-header-container">
-""" + f"""{get_netflix_logo_svg('160px', 'margin: 0 auto 16px auto; display: block; filter: drop-shadow(0 4px 6px rgba(229, 9, 20, 0.4));')}""" + """
+""" + f"""{get_netflix_logo_svg('120px', 'margin: 0 auto 16px auto; display: block; filter: drop-shadow(0 4px 6px rgba(229, 9, 20, 0.4));')}""" + """
 <h1>Good to see you again</h1>
 </div>
     """, unsafe_allow_html=True)
