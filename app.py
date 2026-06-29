@@ -175,38 +175,38 @@ css = """
     }}
 
     /* SIMKL UI OVERHAUL */
-    .simkl-card { position: relative; margin-bottom: 4px; }
-    .simkl-poster {
+    .simkl-card {{ position: relative; margin-bottom: 4px; }}
+    .simkl-poster {{
         width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
         overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
         background-color: #1a1a1a;
-    }
-    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    }}
+    .simkl-poster:hover {{ transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }}
     
-    .simkl-badge {
+    .simkl-badge {{
         position: absolute; background: rgba(0,0,0,0.85); color: white;
         padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
         letter-spacing: 0.5px;
-    }
-    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
-    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+    }}
+    .badge-top-right {{ top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }}
+    .badge-top-left {{ top: 6px; left: 6px; background: #e50914; }}
 
-    .simkl-overlay {
+    .simkl-overlay {{
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
         padding: 12px; text-align: center; border-radius: 8px;
-    }
-    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    }}
+    .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
-    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
-    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    .simkl-genres {{ color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }}
+    .simkl-duration {{ color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }}
     
-    .simkl-title {
+    .simkl-title {{
         font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
-    }
-    .simkl-btn-container { margin-top: 4px; }
+    }}
+    .simkl-btn-container {{ margin-top: 4px; }}
 
 </style>
 """
@@ -489,38 +489,38 @@ root_css = f"""
     }}
 
     /* SIMKL UI OVERHAUL */
-    .simkl-card { position: relative; margin-bottom: 4px; }
-    .simkl-poster {
+    .simkl-card {{ position: relative; margin-bottom: 4px; }}
+    .simkl-poster {{
         width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
         overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
         background-color: #1a1a1a;
-    }
-    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    }}
+    .simkl-poster:hover {{ transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }}
     
-    .simkl-badge {
+    .simkl-badge {{
         position: absolute; background: rgba(0,0,0,0.85); color: white;
         padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
         letter-spacing: 0.5px;
-    }
-    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
-    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+    }}
+    .badge-top-right {{ top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }}
+    .badge-top-left {{ top: 6px; left: 6px; background: #e50914; }}
 
-    .simkl-overlay {
+    .simkl-overlay {{
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
         padding: 12px; text-align: center; border-radius: 8px;
-    }
-    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    }}
+    .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
-    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
-    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    .simkl-genres {{ color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }}
+    .simkl-duration {{ color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }}
     
-    .simkl-title {
+    .simkl-title {{
         font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
-    }
-    .simkl-btn-container { margin-top: 4px; }
+    }}
+    .simkl-btn-container {{ margin-top: 4px; }}
 
 </style>
 """
@@ -925,38 +925,38 @@ def render_login_screen():
 
 
     /* SIMKL UI OVERHAUL */
-    .simkl-card { position: relative; margin-bottom: 4px; }
-    .simkl-poster {
+    .simkl-card {{ position: relative; margin-bottom: 4px; }}
+    .simkl-poster {{
         width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
         overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
         background-color: #1a1a1a;
-    }
-    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    }}
+    .simkl-poster:hover {{ transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }}
     
-    .simkl-badge {
+    .simkl-badge {{
         position: absolute; background: rgba(0,0,0,0.85); color: white;
         padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
         letter-spacing: 0.5px;
-    }
-    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
-    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+    }}
+    .badge-top-right {{ top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }}
+    .badge-top-left {{ top: 6px; left: 6px; background: #e50914; }}
 
-    .simkl-overlay {
+    .simkl-overlay {{
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
         padding: 12px; text-align: center; border-radius: 8px;
-    }
-    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    }}
+    .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
-    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
-    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    .simkl-genres {{ color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }}
+    .simkl-duration {{ color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }}
     
-    .simkl-title {
+    .simkl-title {{
         font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
-    }
-    .simkl-btn-container { margin-top: 4px; }
+    }}
+    .simkl-btn-container {{ margin-top: 4px; }}
 
 </style>
 
@@ -1563,38 +1563,38 @@ def render_top_bar(df=None):
 
 
     /* SIMKL UI OVERHAUL */
-    .simkl-card { position: relative; margin-bottom: 4px; }
-    .simkl-poster {
+    .simkl-card {{ position: relative; margin-bottom: 4px; }}
+    .simkl-poster {{
         width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
         overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
         background-color: #1a1a1a;
-    }
-    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    }}
+    .simkl-poster:hover {{ transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }}
     
-    .simkl-badge {
+    .simkl-badge {{
         position: absolute; background: rgba(0,0,0,0.85); color: white;
         padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
         letter-spacing: 0.5px;
-    }
-    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
-    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+    }}
+    .badge-top-right {{ top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }}
+    .badge-top-left {{ top: 6px; left: 6px; background: #e50914; }}
 
-    .simkl-overlay {
+    .simkl-overlay {{
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
         padding: 12px; text-align: center; border-radius: 8px;
-    }
-    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    }}
+    .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
-    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
-    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    .simkl-genres {{ color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }}
+    .simkl-duration {{ color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }}
     
-    .simkl-title {
+    .simkl-title {{
         font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
-    }
-    .simkl-btn-container { margin-top: 4px; }
+    }}
+    .simkl-btn-container {{ margin-top: 4px; }}
 
 </style>
     """, unsafe_allow_html=True)
