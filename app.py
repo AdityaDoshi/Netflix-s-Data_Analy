@@ -1475,9 +1475,7 @@ def render_catalog_explorer(df: pd.DataFrame):
 def render_top_categories(df: pd.DataFrame):
     popular_genres = ["Action", "Comedy", "Sci-Fi", "Horror", "Thrillers", "Drama"]
     
-    if st.session_state.get('view_all_clicked'):
-        st.success(f"Search filter applied for '{st.session_state.view_all_clicked}'. Please switch to the **Data Explorer** tab to view the full list!")
-        st.session_state.view_all_clicked = None
+
     
     for genre in popular_genres:
         col1, col2 = st.columns([4, 1])
@@ -2111,6 +2109,11 @@ def main():
     st.markdown("<br>", unsafe_allow_html=True)
     render_metric_cards(filtered_df)
     st.markdown("<br>", unsafe_allow_html=True)
+
+    if st.session_state.get('view_all_clicked'):
+        st.info(f"🔍 **Search filter applied for '{st.session_state.view_all_clicked}'!** Click on the **Data Explorer** tab below to view the full list of movies.", icon="🎯")
+        st.toast(f"Filter set to {st.session_state.view_all_clicked}! Open Data Explorer tab.", icon="🔍")
+        st.session_state.view_all_clicked = None
 
     # --- TABS IMPLEMENTATION ---
     tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], "🎬 Top Categories"])
