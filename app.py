@@ -607,7 +607,7 @@ def render_login_screen():
         
         
         .login-header-container h1 {
-            font-size: 2.6rem;
+            font-size: 1.8rem;
             background: linear-gradient(to right, #ffffff, #a3a3a3);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -767,7 +767,7 @@ def render_login_screen():
             .blob-2 { width: 150px !important; height: 150px !important; left: -20px !important; bottom: 0px !important; opacity: 0.3 !important; filter: blur(10px) !important; }
             
         .login-header-container h1 {
-            font-size: 2.6rem;
+            font-size: 1.8rem;
             background: linear-gradient(to right, #ffffff, #a3a3a3);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -856,7 +856,7 @@ def render_login_screen():
 </style>
 
 <div class="login-header-container">
-""" + f"""{get_netflix_logo_svg('120px', 'margin: 0 auto 16px auto; display: block; filter: drop-shadow(0 4px 6px rgba(229, 9, 20, 0.4));')}""" + """
+""" + f"""{get_netflix_logo_svg('95px', 'margin: 0 auto 16px auto; display: block; filter: drop-shadow(0 4px 6px rgba(229, 9, 20, 0.4));')}""" + """
 <h1>Good to see you again</h1>
 </div>
     """, unsafe_allow_html=True)
