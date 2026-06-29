@@ -1257,15 +1257,29 @@ def render_recent_feed(df: pd.DataFrame):
 
 def render_catalog_explorer(df: pd.DataFrame):
     T = LANG[st.session_state.lang]
-    search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
+    
+    col_search, col_view = st.columns([4, 1])
+    with col_search:
+        search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
+    with col_view:
+        st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
+        view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed")
+        
     if search_query:
-        query_lower = search_query.lower()
-        mask = (df["title"].str.lower().str.contains(query_lower, na=False) | df["director"].str.lower().str.contains(query_lower, na=False) | df["genres"].str.lower().str.contains(query_lower, na=False))
-        search_results = df[mask]
+        try:
+            from rapidfuzz import process, fuzz
+            search_corpus = (df['title'].fillna('') + ' ' + df['director'].fillna('') + ' ' + df['genres'].fillna('')).tolist()
+            matches = process.extract(search_query, search_corpus, scorer=fuzz.WRatio, limit=100, score_cutoff=60)
+            matched_indices = [idx for _, _, idx in matches]
+            search_results = df.iloc[matched_indices].copy()
+        except ImportError:
+            query_lower = search_query.lower()
+            mask = (df["title"].str.lower().str.contains(query_lower, na=False) | df["director"].str.lower().str.contains(query_lower, na=False) | df["genres"].str.lower().str.contains(query_lower, na=False))
+            search_results = df[mask]
     else:
         search_results = df
 
-    display_cols = ["title", "type", "director", "country", "release_year", "rating", "vote_average", "duration", "genres"]
+    display_cols = ["title", "type", "director", "country", "release_year", "rating", "vote_average", "duration", "genres", "show_id"]
     display_df = search_results[[c for c in display_cols if c in search_results.columns]].reset_index(drop=True).copy()
 
     # Rename columns based on translation map
@@ -1280,12 +1294,11 @@ def render_catalog_explorer(df: pd.DataFrame):
         "duration": T.get("col_duration", "Duration"),
         "genres": T.get("col_genres", "Genres")
     }
-    display_df = display_df.rename(columns=col_map)
     
     # Translate types and genres inside the dataframe for non-English languages
     if st.session_state.lang != "English":
-        type_col = T.get("col_type", "Type")
-        genres_col = T.get("col_genres", "Genres")
+        type_col = "type"
+        genres_col = "genres"
         if type_col in display_df.columns:
             display_df[type_col] = display_df[type_col].apply(lambda x: T["movie"] if x == "Movie" else T["tv_show"] if pd.notna(x) else x)
         if genres_col in display_df.columns:
@@ -1293,10 +1306,39 @@ def render_catalog_explorer(df: pd.DataFrame):
             display_df[genres_col] = display_df[genres_col].apply(lambda g: ", ".join([GENRE_MAP.get(st.session_state.lang, {}).get(genre.strip(), genre.strip()) for genre in str(g).split(',')]) if pd.notna(g) else g)
 
     st.caption(T.get("cat_showing_results", "Showing {0:,} results").format(len(display_df)))
-    st.dataframe(display_df, use_container_width=True, height=500)
+    
+    if "Grid" in view_mode:
+        cols = st.columns(5)
+        limit = min(60, len(display_df))
+        for i, (_, row) in enumerate(display_df.head(limit).iterrows()):
+            with cols[i % 5]:
+                with st.container(border=True):
+                    m_img = get_image(f"{row['title']} movie", is_movie=True)
+                    if m_img:
+                        st.markdown(f'<div style="width:100%; aspect-ratio: 2/3; background: url({m_img}) center/cover; border-radius: 6px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);"></div>', unsafe_allow_html=True)
+                    else:
+                        st.markdown(f"<div style='width:100%; aspect-ratio: 2/3; background:linear-gradient(45deg, #2b00ff, var(--primary-color)); display:flex; align-items:center; justify-content:center; border-radius:6px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);'><span style='font-size:14px; font-weight:bold; color:white; text-align:center;'>{row['title']}</span></div>", unsafe_allow_html=True)
+                    
+                    st.markdown(f"<div style='font-weight:700; font-size:0.95rem; line-height:1.2; margin-bottom:4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;' title='{row['title']}'>{row['title']}</div>", unsafe_allow_html=True)
+                    rating_str = f" • {row['vote_average']}⭐" if pd.notna(row.get('vote_average')) else ""
+                    st.markdown(f"<div style='font-size:0.8rem; color:gray;'>{row['release_year']}{rating_str}</div>", unsafe_allow_html=True)
+                    
+                    if st.button("Cast Network", key=f"grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                        set_node("movie", row.get('show_id', row['title']))
+                        st.session_state.active_tab = "tab3_search"
+                        st.rerun()
+                        
+        if len(display_df) > limit:
+            st.info(f"Showing top {limit} results. Switch to Table View to see all {len(display_df)} results or refine your search.")
+            
+    else:
+        display_df = display_df.rename(columns=col_map)
+        display_df = display_df.drop(columns=["show_id"], errors='ignore')
+        st.dataframe(display_df, use_container_width=True, height=500)
 
-    csv_payload = display_df.to_csv(index=False).encode("utf-8")
+    csv_payload = search_results.to_csv(index=False).encode("utf-8")
     st.download_button(T["download_csv"], data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True)
+
 
 
 
