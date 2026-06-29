@@ -173,6 +173,41 @@ css = """
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
         transform: translateY(-2px);
     }}
+
+    /* SIMKL UI OVERHAUL */
+    .simkl-card { position: relative; margin-bottom: 4px; }
+    .simkl-poster {
+        width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
+        overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #1a1a1a;
+    }
+    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    
+    .simkl-badge {
+        position: absolute; background: rgba(0,0,0,0.85); color: white;
+        padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
+        letter-spacing: 0.5px;
+    }
+    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
+    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+
+    .simkl-overlay {
+        position: absolute; bottom: 0; left: 0; right: 0; top: 0;
+        background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
+        justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
+        padding: 12px; text-align: center; border-radius: 8px;
+    }
+    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    
+    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
+    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    
+    .simkl-title {
+        font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
+    }
+    .simkl-btn-container { margin-top: 4px; }
+
 </style>
 """
 
@@ -452,6 +487,41 @@ root_css = f"""
         border: 1px solid rgba(255, 255, 255, 0.3) !important;
         transform: translateY(-2px);
     }}
+
+    /* SIMKL UI OVERHAUL */
+    .simkl-card { position: relative; margin-bottom: 4px; }
+    .simkl-poster {
+        width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
+        overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #1a1a1a;
+    }
+    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    
+    .simkl-badge {
+        position: absolute; background: rgba(0,0,0,0.85); color: white;
+        padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
+        letter-spacing: 0.5px;
+    }
+    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
+    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+
+    .simkl-overlay {
+        position: absolute; bottom: 0; left: 0; right: 0; top: 0;
+        background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
+        justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
+        padding: 12px; text-align: center; border-radius: 8px;
+    }
+    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    
+    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
+    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    
+    .simkl-title {
+        font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
+    }
+    .simkl-btn-container { margin-top: 4px; }
+
 </style>
 """
 st.markdown(root_css + css, unsafe_allow_html=True)
@@ -852,6 +922,41 @@ def render_login_screen():
     .js-plotly-plot .plotly .nsewdrag {{
         cursor: pointer;
     }}
+
+
+    /* SIMKL UI OVERHAUL */
+    .simkl-card { position: relative; margin-bottom: 4px; }
+    .simkl-poster {
+        width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
+        overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #1a1a1a;
+    }
+    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    
+    .simkl-badge {
+        position: absolute; background: rgba(0,0,0,0.85); color: white;
+        padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
+        letter-spacing: 0.5px;
+    }
+    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
+    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+
+    .simkl-overlay {
+        position: absolute; bottom: 0; left: 0; right: 0; top: 0;
+        background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
+        justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
+        padding: 12px; text-align: center; border-radius: 8px;
+    }
+    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    
+    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
+    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    
+    .simkl-title {
+        font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
+    }
+    .simkl-btn-container { margin-top: 4px; }
 
 </style>
 
@@ -1312,24 +1417,36 @@ def render_catalog_explorer(df: pd.DataFrame):
         limit = min(60, len(display_df))
         for i, (_, row) in enumerate(display_df.head(limit).iterrows()):
             with cols[i % 5]:
-                with st.container(border=True):
-                    m_img = get_image(f"{row['title']} movie", is_movie=True)
-                    if m_img:
-                        st.markdown(f'<div style="width:100%; aspect-ratio: 2/3; background: url({m_img}) center/cover; border-radius: 6px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);"></div>', unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"<div style='width:100%; aspect-ratio: 2/3; background:linear-gradient(45deg, #2b00ff, var(--primary-color)); display:flex; align-items:center; justify-content:center; border-radius:6px; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);'><span style='font-size:14px; font-weight:bold; color:white; text-align:center;'>{row['title']}</span></div>", unsafe_allow_html=True)
-                    
-                    st.markdown(f"<div style='font-weight:700; font-size:0.95rem; line-height:1.2; margin-bottom:4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;' title='{row['title']}'>{row['title']}</div>", unsafe_allow_html=True)
-                    rating_str = f" • {row['vote_average']}⭐" if pd.notna(row.get('vote_average')) else ""
-                    st.markdown(f"<div style='font-size:0.8rem; color:gray;'>{row['release_year']}{rating_str}</div>", unsafe_allow_html=True)
-                    
-                    if st.button("Cast Network", key=f"grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
-                        set_node("movie", row.get('show_id', row['title']))
-                        st.session_state.active_tab = "tab3_search"
-                        st.rerun()
+                m_img = get_image(f"{row['title']} movie", is_movie=True)
+                bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
+                
+                score = f"{row.get('vote_average', '')}" if pd.notna(row.get('vote_average')) else "NR"
+                year = f"{row.get('release_year', '')}"
+                genres = f"{row.get('genres', 'N/A')}"
+                duration = f"{row.get('duration', 'N/A')} min"
+                
+                html = f'''
+                <div class="simkl-card">
+                    <div class="simkl-poster" style="{bg_style}">
+                        <div class="simkl-badge badge-top-right">★ {score}</div>
+                        <div class="simkl-badge badge-top-left">{year}</div>
+                        <div class="simkl-overlay">
+                            <div class="simkl-genres">{genres}</div>
+                            <div class="simkl-duration">{duration}</div>
+                        </div>
+                    </div>
+                    <div class="simkl-title" title="{row['title']}">{row['title']}</div>
+                </div>
+                '''
+                st.markdown(html, unsafe_allow_html=True)
+                
+                if st.button("Cast Network", key=f"grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                    set_node("movie", row.get('show_id', row['title']))
+                    st.session_state.active_tab = "tab3_search"
+                    st.rerun()
                         
         if len(display_df) > limit:
-            st.info(f"Showing top {limit} results. Switch to Table View to see all {len(display_df)} results or refine your search.")
+            st.info(f"Showing top {limit} results. Switch to Table View to see all {len(display_df)} results or refine your search.")} results or refine your search.")
             
     else:
         display_df = display_df.rename(columns=col_map)
@@ -1443,6 +1560,41 @@ def render_top_bar(df=None):
     .js-plotly-plot .plotly .nsewdrag {{
         cursor: pointer;
     }}
+
+
+    /* SIMKL UI OVERHAUL */
+    .simkl-card { position: relative; margin-bottom: 4px; }
+    .simkl-poster {
+        width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
+        overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background-color: #1a1a1a;
+    }
+    .simkl-poster:hover { transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }
+    
+    .simkl-badge {
+        position: absolute; background: rgba(0,0,0,0.85); color: white;
+        padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
+        letter-spacing: 0.5px;
+    }
+    .badge-top-right { top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }
+    .badge-top-left { top: 6px; left: 6px; background: #e50914; }
+
+    .simkl-overlay {
+        position: absolute; bottom: 0; left: 0; right: 0; top: 0;
+        background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
+        justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
+        padding: 12px; text-align: center; border-radius: 8px;
+    }
+    .simkl-poster:hover .simkl-overlay { opacity: 1; backdrop-filter: blur(2px); }
+    
+    .simkl-genres { color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }
+    .simkl-duration { color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }
+    
+    .simkl-title {
+        font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
+    }
+    .simkl-btn-container { margin-top: 4px; }
 
 </style>
     """, unsafe_allow_html=True)
