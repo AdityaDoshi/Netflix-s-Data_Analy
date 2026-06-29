@@ -544,31 +544,53 @@ def render_login_screen():
         
         
 
+        
+        @keyframes floatBlob1 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(30px, -50px) scale(1.1) rotate(45deg); }
+            66% { transform: translate(-20px, 20px) scale(0.9) rotate(-45deg); }
+            100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        }
+        @keyframes floatBlob2 {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(-40px, 30px) scale(1.2) rotate(-30deg); }
+            66% { transform: translate(20px, -40px) scale(0.8) rotate(30deg); }
+            100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+        }
+
         /* Netflix-Themed Blobs */
         .blob-1 {
             position: absolute;
-            top: 15%;
-            right: 20%;
-            width: 350px;
-            height: 350px;
+            top: 10%;
+            right: 15%;
+            width: 400px;
+            height: 400px;
             background: linear-gradient(135deg, var(--primary-color) 0%, #83050C 100%);
             border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
             z-index: 0;
-            opacity: 0.6;
-            filter: blur(16px);
+            opacity: 0.5;
+            filter: blur(25px);
+            animation: floatBlob1 15s ease-in-out infinite;
         }
         .blob-2 {
             position: absolute;
-            bottom: 15%;
-            left: 15%;
-            width: 250px;
-            height: 200px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #330000 100%);
+            bottom: 10%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #4a0000 100%);
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
             z-index: 0;
-            opacity: 0.5;
-            filter: blur(12px);
+            opacity: 0.4;
+            filter: blur(20px);
+            animation: floatBlob2 18s ease-in-out infinite reverse;
         }
+        
+        @keyframes loginFadeIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
         
         .login-header-container {
             text-align: center;
@@ -583,31 +605,39 @@ def render_login_screen():
             margin-bottom: 16px;
         }
         
+        
         .login-header-container h1 {
-            font-size: 2.2rem;
-            color: var(--text-color);
+            font-size: 2.6rem;
+            background: linear-gradient(to right, #ffffff, #a3a3a3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-weight: 800;
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: -0.5px;
         }
+
+        
         
         /* The Card */
         [data-testid="stForm"] {
-            background-color: rgba(0, 0, 0, 0.75) !important;
-            backdrop-filter: blur(20px) !important;
-            -webkit-backdrop-filter: blur(20px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            border-radius: 20px !important;
+            animation: loginFadeIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            background-color: rgba(10, 10, 10, 0.6) !important;
+            backdrop-filter: blur(30px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 24px !important;
             padding: 48px !important;
             max-width: 450px !important;
             margin: 0 auto !important;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05) !important;
             position: relative;
             z-index: 10;
             min-height: auto !important;
         }
+
         
         /* Labels */
         [data-testid="stForm"] label {
@@ -619,67 +649,82 @@ def render_login_screen():
             text-transform: none !important;
         }
         
+        
         /* Inputs */
         [data-testid="stForm"] input {
-            background-color: rgba(255, 255, 255, 0.05) !important;
+            background-color: rgba(0, 0, 0, 0.35) !important;
             color: #FFFFFF !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 8px !important;
-            padding: 14px 16px !important;
-            font-size: 1rem !important;
-            margin-bottom: 20px !important;
-            transition: all 0.3s ease !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-radius: 12px !important;
+            padding: 16px 18px !important;
+            font-size: 1.05rem !important;
+            margin-bottom: 24px !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2) !important;
         }
         [data-testid="stForm"] input:hover {
-            border-color: rgba(255, 255, 255, 0.4) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
         }
         [data-testid="stForm"] input:focus {
-            background-color: rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(0, 0, 0, 0.6) !important;
             border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 1px var(--primary-color) !important;
+            box-shadow: 0 0 15px rgba(229,9,20, 0.25), inset 0 2px 4px rgba(0,0,0,0.2) !important;
         }
+
         
+        
+        @keyframes shimmerBtn {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
         /* Pill Button (Primary) */
         [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"],
         [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):not([data-testid="baseButton-tertiaryFormSubmit"]) {
-            background-color: var(--primary-color) !important;
+            background: linear-gradient(90deg, var(--primary-color) 0%, #ff4b53 50%, var(--primary-color) 100%) !important;
+            background-size: 200% auto !important;
+            animation: shimmerBtn 3s infinite linear !important;
             color: white !important;
             border-radius: 50px !important;
             font-weight: 700 !important;
-            padding: 12px 14px !important;
+            padding: 14px 16px !important;
             margin-top: 16px !important;
             width: 100% !important;
             border: none !important;
-            font-size: 1.05rem !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
+            font-size: 1.1rem !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: 0 6px 20px rgba(229,9,20,0.4) !important;
         }
         [data-testid="stForm"] button[data-testid="baseButton-primaryFormSubmit"]:hover,
         [data-testid="stForm"] .stButton > button:not([data-testid="baseButton-secondaryFormSubmit"]):hover {
-            background-color: #C11119 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 12px rgba(229, 9, 20, 0.4) !important;
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 10px 25px rgba(229, 9, 20, 0.6) !important;
         }
 
+
+        
         /* Pill Button (Secondary / Demo) */
         [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"] {
             background-color: rgba(255, 255, 255, 0.05) !important;
             color: #E5E5E5 !important;
             border-radius: 50px !important;
             font-weight: 600 !important;
-            padding: 12px 14px !important;
+            padding: 14px 16px !important;
             margin-top: 16px !important;
             width: 100% !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            font-size: 1.05rem !important;
-            transition: all 0.3s ease !important;
+            font-size: 1.1rem !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            backdrop-filter: blur(5px) !important;
         }
         [data-testid="stForm"] button[data-testid="baseButton-secondaryFormSubmit"]:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
+            background-color: rgba(255, 255, 255, 0.15) !important;
             color: #FFFFFF !important;
-            border-color: rgba(255, 255, 255, 0.4) !important;
-            transform: translateY(-2px) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
         }
+
 
         /* Pill Button (Tertiary / Links) */
         [data-testid="stForm"] button[data-testid="baseButton-tertiaryFormSubmit"] {
@@ -720,7 +765,19 @@ def render_login_screen():
         @media (max-width: 768px) {
             .blob-1 { width: 200px !important; height: 200px !important; right: -50px !important; top: -50px !important; opacity: 0.4 !important; filter: blur(12px) !important; }
             .blob-2 { width: 150px !important; height: 150px !important; left: -20px !important; bottom: 0px !important; opacity: 0.3 !important; filter: blur(10px) !important; }
-            .login-header-container h1 { font-size: 1.8rem !important; }
+            
+        .login-header-container h1 {
+            font-size: 2.6rem;
+            background: linear-gradient(to right, #ffffff, #a3a3a3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.5px;
+        }
+
             [data-testid="stForm"] { padding: 24px !important; width: 90% !important; margin-top: 24px !important; }
         }
         
