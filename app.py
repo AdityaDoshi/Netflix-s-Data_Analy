@@ -1420,7 +1420,7 @@ def render_catalog_explorer(df: pd.DataFrame):
                 m_img = get_image(f"{row['title']} movie", is_movie=True)
                 bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
                 
-                score = f"{row.get('vote_average', '')}" if pd.notna(row.get('vote_average')) else "NR"
+                score = f"{float(row.get('vote_average', 0)):.1f}" if pd.notna(row.get('vote_average')) else "NR"
                 year = f"{row.get('release_year', '')}"
                 rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
                 director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
@@ -1489,7 +1489,7 @@ def render_top_5_genre(df: pd.DataFrame):
                 m_img = get_image(f"{row['title']} movie", is_movie=True)
                 bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
                 
-                score = f"{row.get('vote_average', '')}" if pd.notna(row.get('vote_average')) else "NR"
+                score = f"{float(row.get('vote_average', 0)):.1f}" if pd.notna(row.get('vote_average')) else "NR"
                 year = f"{row.get('release_year', '')}"
                 rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
                 director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
