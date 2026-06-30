@@ -1608,6 +1608,7 @@ def render_top_bar(df=None):
             search_query = st.text_input("Global Search", placeholder="🔍 Search catalog... (Press Enter to search)", label_visibility="collapsed", key="global_search_input")
             if search_query and search_query != st.session_state.get('last_global_search'):
                 st.session_state.active_page = "Data Explorer"
+                st.session_state.nav_radio = "Data Explorer"
                 st.session_state['tab3_search_input'] = search_query
                 st.session_state['last_global_search'] = search_query
                 st.rerun()
@@ -2159,6 +2160,7 @@ def main():
         if st.session_state.get('view_all_clicked'):
             genre = st.session_state.view_all_clicked
             st.session_state.active_page = "Data Explorer"
+            st.session_state.nav_radio = "Data Explorer"
             st.session_state['tab3_search_input'] = genre
             st.session_state['tab3_last_search_query'] = genre
             st.session_state.view_all_clicked = None
