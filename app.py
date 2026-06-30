@@ -1388,7 +1388,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
             st.session_state[last_query_key] = search_query
     with col_view:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
-        view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed", key=f"{key_prefix}view_mode")
+        view_mode = st.radio("View Mode", [":material/grid_view: Grid", ":material/table_rows: CSV"], horizontal=True, label_visibility="collapsed", key=f"{key_prefix}view_mode")
         
     if search_query:
         try:
