@@ -1018,6 +1018,16 @@ def check_auth():
 def render_sidebar(df: pd.DataFrame):
     with st.sidebar:
         st.markdown(get_netflix_logo_svg("38px", "display:block;margin-bottom:16px;"), unsafe_allow_html=True)
+        
+        if "active_page" not in st.session_state:
+            st.session_state.active_page = "Dashboard"
+            
+        selected_page = st.radio("Navigation", ["Dashboard", "Deep Dive", "Data Explorer", "Top Categories"], label_visibility="collapsed", key="nav_radio")
+        if selected_page != st.session_state.active_page:
+            st.session_state.active_page = selected_page
+            st.rerun()
+            
+        st.divider()
 
         st.markdown(f"#### {T['filter_controls']}")
 
@@ -2064,19 +2074,7 @@ def main():
     df = load_and_preprocess_data()
     filtered_df = render_sidebar(df)
     
-    # --- Sidebar Navigation ---
-    with st.sidebar:
-        st.markdown("<h2 style='color: var(--primary-color); font-family: Bebas Neue; font-size: 2.8rem; letter-spacing: 2px; margin-bottom: 4px; line-height: 1;'>NETFLIX</h2><div style='color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 32px; letter-spacing: 1px; font-weight: 500;'>INSIGHTS ENGINE</div>", unsafe_allow_html=True)
-        st.markdown("<div style='font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 12px; font-weight: 600; letter-spacing: 1px;'>MENU</div>", unsafe_allow_html=True)
-        
-        if "active_page" not in st.session_state:
-            st.session_state.active_page = "Dashboard"
-        
-        # We manually map the radio to session state
-        selected_page = st.radio("Navigation", ["Dashboard", "Deep Dive", "Data Explorer", "Top Categories"], label_visibility="collapsed", key="nav_radio")
-        if selected_page != st.session_state.active_page:
-            st.session_state.active_page = selected_page
-            st.rerun()
+
 
         # --- Global Header ---
     render_top_bar(filtered_df)
