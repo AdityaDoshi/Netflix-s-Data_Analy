@@ -1360,19 +1360,15 @@ def render_recent_feed(df: pd.DataFrame):
     st.markdown(html, unsafe_allow_html=True)
 
 
-def render_catalog_explorer(df: pd.DataFrame):
+def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
     T = LANG[st.session_state.lang]
     
     col_search, col_view = st.columns([4, 1])
     with col_search:
-        # Initialize the state if it doesn't exist so the text_input key works correctly
-        if "global_search_query" not in st.session_state:
-            st.session_state.global_search_query = ""
-            
-        search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), key="global_search_query", placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
+        search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), key=f"{key_prefix}search_input", placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
     with col_view:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
-        view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed")
+        view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed", key=f"{key_prefix}view_mode")
         
     if search_query:
         try:
@@ -1453,7 +1449,7 @@ def render_catalog_explorer(df: pd.DataFrame):
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
-                if st.button("Cast Network", key=f"grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                if st.button("Cast Network", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
                     set_node("movie", row.get('show_id', row['title']))
                     st.session_state.active_tab = "tab3_search"
                     st.rerun()
@@ -1467,7 +1463,7 @@ def render_catalog_explorer(df: pd.DataFrame):
         st.dataframe(display_df, use_container_width=True, height=500)
 
     csv_payload = search_results.to_csv(index=False).encode("utf-8")
-    st.download_button(T["download_csv"], data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True)
+    st.download_button(T["download_csv"], data=csv_payload, file_name="netflix_export.csv", mime="text/csv", use_container_width=True, key=f"{key_prefix}dl_btn")
 
 
 
@@ -1484,8 +1480,9 @@ def render_top_categories(df: pd.DataFrame):
             st.markdown(f'<div class="section-header" style="margin-bottom: 8px; font-size: 1.4rem;">🎬 Top 5 {genre} Movies</div>', unsafe_allow_html=True)
         with col2:
             if st.button(f"View All {genre}", key=f"view_{genre}", use_container_width=True):
-                st.session_state.global_search_query = genre
                 st.session_state.view_all_clicked = genre
+                st.session_state['tab3_search_input'] = genre
+                st.session_state['tab4_search_input'] = genre
                 st.rerun()
                 
         genre_df = df[df["genres"].str.contains(genre, case=False, na=False)].copy()
@@ -2118,10 +2115,11 @@ def main():
         if st.session_state.get('view_all_clicked'):
             if st.button("⬅️ Back to Categories", use_container_width=False):
                 st.session_state.view_all_clicked = None
-                st.session_state.global_search_query = ""
+                st.session_state['tab3_search_input'] = ""
+                st.session_state['tab4_search_input'] = ""
                 st.rerun()
             st.markdown(f"<h3 style='margin-bottom: 24px;'>Exploring all <b>{st.session_state.view_all_clicked}</b> titles</h3>", unsafe_allow_html=True)
-            render_catalog_explorer(filtered_df)
+            render_catalog_explorer(filtered_df, key_prefix='tab3_')
         else:
             render_top_categories(filtered_df)
 
@@ -2172,7 +2170,7 @@ def main():
 
         with col_ex1:
             st.markdown(f'<div class="section-header">{T.get("cat_header", "Catalog Search & Export")}</div>', unsafe_allow_html=True)
-            render_catalog_explorer(filtered_df)
+            render_catalog_explorer(filtered_df, key_prefix='tab4_')
         with col_ex2:
             st.markdown(f'<div class="section-header">{T.get("feed_header", "Live Ingestion Feed")}</div>', unsafe_allow_html=True)
             render_recent_feed(filtered_df)
