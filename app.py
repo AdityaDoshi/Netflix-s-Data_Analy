@@ -2111,16 +2111,19 @@ def main():
     render_metric_cards(filtered_df)
     st.markdown("<br>", unsafe_allow_html=True)
 
-    if st.session_state.get('view_all_clicked'):
-        st.info(f"🔍 **Search filter applied for '{st.session_state.view_all_clicked}'!** Click on the **Data Explorer** tab below to view the full list of movies.", icon="🎯")
-        st.toast(f"Filter set to {st.session_state.view_all_clicked}! Open Data Explorer tab.", icon="🔍")
-        st.session_state.view_all_clicked = None
-
     # --- TABS IMPLEMENTATION ---
     tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], "🎬 Top Categories"])
 
     with tab4:
-        render_top_categories(filtered_df)
+        if st.session_state.get('view_all_clicked'):
+            if st.button("⬅️ Back to Categories", use_container_width=False):
+                st.session_state.view_all_clicked = None
+                st.session_state.global_search_query = ""
+                st.rerun()
+            st.markdown(f"<h3 style='margin-bottom: 24px;'>Exploring all <b>{st.session_state.view_all_clicked}</b> titles</h3>", unsafe_allow_html=True)
+            render_catalog_explorer(filtered_df)
+        else:
+            render_top_categories(filtered_df)
 
 
     with tab1:
