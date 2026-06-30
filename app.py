@@ -1360,7 +1360,43 @@ def render_recent_feed(df: pd.DataFrame):
     st.markdown(html, unsafe_allow_html=True)
 
 
+
+import urllib.request
+import urllib.parse
+import re
+
+@st.cache_data(show_spinner=False)
+def get_youtube_trailer_url(movie_title, release_year):
+    query = urllib.parse.quote(f"{movie_title} {release_year} official trailer")
+    url = f"https://www.youtube.com/results?search_query={query}"
+    try:
+        req = urllib.request.Request(
+            url, 
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        )
+        html = urllib.request.urlopen(req, timeout=3).read().decode('utf-8')
+        video_ids = re.findall(r"watch\?v=([a-zA-Z0-9_-]{11})", html)
+        if video_ids:
+            return f"https://www.youtube.com/watch?v={video_ids[0]}"
+    except Exception as e:
+        pass
+    return None
+
+@st.dialog("🎬 Watch Trailer", width="large")
+def play_trailer_dialog(title, year):
+    with st.spinner(f"Searching for official trailer for {title}..."):
+        url = get_youtube_trailer_url(title, year)
+    
+    if url:
+        st.video(url)
+        st.markdown(f"<div style='text-align: center; margin-top: 10px;'><a href='{url}' target='_blank' style='color: #e50914; text-decoration: none; font-weight: bold;'>Watch directly on YouTube</a></div>", unsafe_allow_html=True)
+    else:
+        st.error("Could not find a trailer for this title automatically.")
+        search_query = urllib.parse.quote(f"{title} {year} official trailer")
+        st.markdown(f"<div style='text-align: center;'><a href='https://www.youtube.com/results?search_query={search_query}' target='_blank' style='color: white; text-decoration: underline;'>Search on YouTube manually</a></div>", unsafe_allow_html=True)
+
 def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
+
     T = LANG[st.session_state.lang]
     
     col_search, col_view = st.columns([4, 1])
@@ -1471,10 +1507,15 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
-                if st.button("Cast Network", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
-                    set_node("movie", row.get('show_id', row['title']))
-                    st.session_state.active_tab = "tab3_search"
-                    st.rerun()
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    if st.button("🎭 Cast", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                        set_node("movie", row.get('show_id', row['title']))
+                        st.session_state.active_tab = "tab3_search"
+                        st.rerun()
+                with col_b2:
+                    if st.button("🎬 Trailer", key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                        play_trailer_dialog(row['title'], row.get('release_year', ''))
                         
         if total_pages > 1:
             st.markdown("<br>", unsafe_allow_html=True)
@@ -1560,10 +1601,15 @@ def render_top_categories(df: pd.DataFrame):
                     '''
                     st.markdown(html, unsafe_allow_html=True)
                     
-                    if st.button("Cast Network", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
-                        set_node("movie", row.get('show_id', row['title']))
-                        st.session_state.active_tab = "tab3_search"
-                        st.rerun()
+                    col_b1, col_b2 = st.columns(2)
+                    with col_b1:
+                        if st.button("🎭 Cast", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                            set_node("movie", row.get('show_id', row['title']))
+                            st.session_state.active_tab = "tab3_search"
+                            st.rerun()
+                    with col_b2:
+                        if st.button("🎬 Trailer", key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                            play_trailer_dialog(row['title'], row.get('release_year', ''))
         st.markdown("<hr style='margin: 24px 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════
