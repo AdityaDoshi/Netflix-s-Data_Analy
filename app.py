@@ -1366,6 +1366,12 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
     col_search, col_view = st.columns([4, 1])
     with col_search:
         search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), key=f"{key_prefix}search_input", placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
+        
+        last_query_key = f"{key_prefix}last_search_query"
+        page_key = f"{key_prefix}current_page"
+        if st.session_state.get(last_query_key) != search_query:
+            st.session_state[page_key] = 1
+            st.session_state[last_query_key] = search_query
     with col_view:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
         view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed", key=f"{key_prefix}view_mode")
@@ -1413,9 +1419,25 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
     st.caption(T.get("cat_showing_results", "Showing {0:,} results").format(len(display_df)))
     
     if "Grid" in view_mode:
+        ITEMS_PER_PAGE = 30
+        total_items = len(display_df)
+        total_pages = max(1, (total_items + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE)
+        
+        page_key = f"{key_prefix}current_page"
+        if page_key not in st.session_state:
+            st.session_state[page_key] = 1
+            
+        current_page = st.session_state[page_key]
+        if current_page > total_pages:
+            current_page = 1
+            st.session_state[page_key] = 1
+            
+        start_idx = (current_page - 1) * ITEMS_PER_PAGE
+        end_idx = min(start_idx + ITEMS_PER_PAGE, total_items)
+        page_df = display_df.iloc[start_idx:end_idx]
+        
         cols = st.columns(5)
-        limit = min(60, len(display_df))
-        for i, (_, row) in enumerate(display_df.head(limit).iterrows()):
+        for i, (_, row) in enumerate(page_df.iterrows()):
             with cols[i % 5]:
                 m_img = get_image(f"{row['title']} movie", is_movie=True)
                 bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
@@ -1454,9 +1476,22 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                     st.session_state.active_tab = "tab3_search"
                     st.rerun()
                         
-        if len(display_df) > limit:
-            st.info(f"Showing top {limit} results. Switch to Table View to see all {len(display_df)} results or refine your search.")
-            
+        if total_pages > 1:
+            st.markdown("<br>", unsafe_allow_html=True)
+            p_col1, p_col2, p_col3 = st.columns([1, 2, 1])
+            with p_col1:
+                if current_page > 1:
+                    if st.button("⬅️ Previous Page", key=f"{key_prefix}prev_page", use_container_width=True):
+                        st.session_state[page_key] = current_page - 1
+                        st.rerun()
+            with p_col2:
+                st.markdown(f"<div style='text-align: center; padding-top: 8px;'>Page <b>{current_page}</b> of <b>{total_pages}</b></div>", unsafe_allow_html=True)
+            with p_col3:
+                if current_page < total_pages:
+                    if st.button("Next Page ➡️", key=f"{key_prefix}next_page", use_container_width=True):
+                        st.session_state[page_key] = current_page + 1
+                        st.rerun()
+                        
     else:
         display_df = display_df.rename(columns=col_map)
         display_df = display_df.drop(columns=["show_id"], errors='ignore')
