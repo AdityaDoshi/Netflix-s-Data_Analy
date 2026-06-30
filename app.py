@@ -605,8 +605,8 @@ def render_login_screen():
         }
         
         .top-bar { display: none !important; }
-        [data-testid="stSidebarCollapsedControl"] { display: none !important; }
-        [data-testid="stSidebar"] { display: none !important; }
+        
+        
         
         
         
@@ -1558,7 +1558,7 @@ def render_top_categories(df: pd.DataFrame):
             if st.button(f"View All {genre}", key=f"view_{genre}", use_container_width=True):
                 st.session_state.view_all_clicked = genre
                 st.session_state['tab3_search_input'] = genre
-                st.session_state['tab4_search_input'] = genre
+                st.session_state.active_page = "Data Explorer"
                 st.rerun()
                 
         genre_df = df[df["genres"].str.contains(genre, case=False, na=False)].copy()
@@ -2150,6 +2150,46 @@ def render_cast_network(df):
                         st.rerun()
             else:
                 st.info("No cast information available for this title.")
+
+def render_top_metrics_dashboard(df: pd.DataFrame):
+    total_titles = len(df)
+    total_movies = len(df[df['type'] == 'Movie'])
+    total_shows = len(df[df['type'] == 'TV Show'])
+    total_directors = df['director'].nunique()
+
+    st.markdown(f'''
+    <div style="display: flex; gap: 24px; margin-bottom: 32px; flex-wrap: wrap;">
+        <!-- Highlighted Card -->
+        <div style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #e50914 0%, #b20710 100%); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white;">↗</div>
+            <div style="color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Total Titles</div>
+            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_titles:,}</div>
+            <div style="color: rgba(255,255,255,0.7); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Entire Catalog</div>
+        </div>
+        <!-- Card 2 -->
+        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5);">↗</div>
+            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Movies</div>
+            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_movies:,}</div>
+            <div style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Feature films</div>
+        </div>
+        <!-- Card 3 -->
+        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5);">↗</div>
+            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">TV Shows</div>
+            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_shows:,}</div>
+            <div style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Series & miniseries</div>
+        </div>
+        <!-- Card 4 -->
+        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5);">↗</div>
+            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Directors</div>
+            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_directors:,}</div>
+            <div style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Unique creators</div>
+        </div>
+    </div>
+    ''', unsafe_allow_html=True)
+
 def main():
     if "demo_credentials" not in st.session_state:
         st.session_state.demo_credentials = {"admin": "admin123"}
@@ -2169,101 +2209,134 @@ def main():
 
     df = load_and_preprocess_data()
     filtered_df = render_sidebar(df)
-    render_top_bar(filtered_df)
+    
+    # --- Sidebar Navigation ---
+    with st.sidebar:
+        st.markdown("<h2 style='color: var(--primary-color); font-family: Bebas Neue; font-size: 2.8rem; letter-spacing: 2px; margin-bottom: 4px; line-height: 1;'>NETFLIX</h2><div style='color: rgba(255,255,255,0.5); font-size: 0.85rem; margin-bottom: 32px; letter-spacing: 1px; font-weight: 500;'>INSIGHTS ENGINE</div>", unsafe_allow_html=True)
+        st.markdown("<div style='font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 12px; font-weight: 600; letter-spacing: 1px;'>MENU</div>", unsafe_allow_html=True)
+        
+        if "active_page" not in st.session_state:
+            st.session_state.active_page = "Dashboard"
+        
+        # We manually map the radio to session state
+        selected_page = st.radio("Navigation", ["Dashboard", "Deep Dive", "Data Explorer", "Top Categories"], label_visibility="collapsed", key="nav_radio")
+        if selected_page != st.session_state.active_page:
+            st.session_state.active_page = selected_page
+            st.rerun()
 
-    st.markdown(
-        """
-        <div class="main-title-container">
-            <div class="main-title">Content Insights Engine</div>
+    # --- Global Header ---
+    st.markdown('''
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 16px 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); min-width: 300px;">
+            🔍 <span style="font-size: 0.9rem;">Search catalog...</span> <span style="margin-left: auto; font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">⌘F</span>
         </div>
-        <p class="main-description">
-            Enterprise analytics dashboard. Adjust filters in the sidebar to explore streaming content trends.
-        </p>
-        """,
-        unsafe_allow_html=True,
-    )
+        <div style="display: flex; gap: 24px; align-items: center;">
+            <div style="display: flex; gap: 16px; color: rgba(255,255,255,0.6); font-size: 1.2rem;">
+                ✉️ 🔔
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 24px;">
+                <div style="text-align: right;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: white;">Admin User</div>
+                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">admin@netflix.com</div>
+                </div>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: url('https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png') center/cover; border: 2px solid rgba(255,255,255,0.1);"></div>
+            </div>
+        </div>
+    </div>
+    ''', unsafe_allow_html=True)
 
-    st.divider()
-    render_cast_network(df)
-    st.markdown("<br>", unsafe_allow_html=True)
-    render_metric_cards(filtered_df)
-    st.markdown("<br>", unsafe_allow_html=True)
+    page = st.session_state.active_page
+    T = LANG[st.session_state.lang]
 
-    # --- TABS IMPLEMENTATION ---
-    tab1, tab2, tab3, tab4 = st.tabs([T["tab_overview"], T["tab_deep_dive"], T["tab_data"], "🎬 Top Categories"])
+    if page == "Dashboard":
+        render_top_metrics_dashboard(filtered_df)
+        
+        st.markdown(f'<div class="section-header" style="margin-top: 16px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            ev_hero = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_hero, "tab1_year", "year_added", extract_key="x")
 
-    with tab4:
+        col1, col2 = st.columns(2, gap="large")
+        with col1:
+            st.markdown(f'<div class="section-header">{T["header_dist"]}</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                ev_split = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+                process_selection(ev_split, "tab1_split", "type", extract_key="x")
+        with col2:
+            st.markdown(f'<div class="section-header">Top Categories</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                ev_genres = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+                process_selection(ev_genres, "tab1_genres", "genres", extract_key="y", match_type="contains")
+
+        col3, col4 = st.columns(2, gap="large")
+        with col3:
+            st.markdown(f'<div class="section-header">{T["header_ratings"]}</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                ev_rating = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+                process_selection(ev_rating, "tab1_ratings", "rating", extract_key="x", match_type="exact", is_range=False)
+        with col4:
+            st.markdown(f'<div class="section-header">Top Creators</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                ev_directors = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+                process_selection(ev_directors, "tab1_directors", "director", extract_key="y", match_type="contains")
+                
+        st.markdown(f'<div class="section-header">Key Performance Indicators</div>', unsafe_allow_html=True)
+        render_metric_cards(filtered_df)
+
+    elif page == "Deep Dive":
+        st.markdown(f'<div class="section-header" style="margin-top: 16px;">{T["header_granular"]}</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            ev_m = st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_m, "tab2_map", "primary_country", extract_key="location", match_type="contains")
+        
+        st.divider()
+        render_cast_network(df)
+        
+        col_dd1, col_dd2 = st.columns(2, gap="large")
+        with col_dd1:
+            st.markdown(f'<div class="section-header">Top Cast</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                ev_c = st.plotly_chart(chart_top_cast(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+                process_selection(ev_c, "tab2_cast", "cast", extract_key="y", match_type="contains")
+        with col_dd2:
+            st.markdown(f'<div class="section-header">Duration Trends</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                ev_d = st.plotly_chart(chart_duration_scatter(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+                process_selection(ev_d, "tab2_scatter", "release_year", extract_key="x")
+            
+        st.markdown(f'<div class="section-header">Runtime Distribution</div>', unsafe_allow_html=True)
+        with st.container(border=True):
+            ev_r = st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
+            process_selection(ev_r, "tab2_histogram", "duration_minutes", is_range=True)
+
+    elif page == "Data Explorer":
+        col_ex1, col_ex2 = st.columns([2, 1], gap="large")
+        with col_ex1:
+            st.markdown(f'<div class="section-header" style="margin-top: 16px;">{T.get("cat_header", "Catalog Search & Export")}</div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                render_catalog_explorer(filtered_df, key_prefix='tab3_')
+        with col_ex2:
+            st.markdown(f'<div class="section-header" style="margin-top: 16px;">{T.get("feed_header", "Live Ingestion Feed")}</div>', unsafe_allow_html=True)
+            render_recent_feed(filtered_df)
+
+    elif page == "Top Categories":
+        st.markdown("<h2 style='margin-bottom: 24px; font-weight: 600;'>🎬 Top Categories</h2>", unsafe_allow_html=True)
+        # Ensure redirect logic routes them to Data Explorer automatically
         if st.session_state.get('view_all_clicked'):
-            if st.button("⬅️ Back to Categories", use_container_width=False):
-                st.session_state.view_all_clicked = None
-                st.session_state['tab3_search_input'] = ""
-                st.session_state['tab4_search_input'] = ""
-                st.rerun()
-            st.markdown(f"<h3 style='margin-bottom: 24px;'>Exploring all <b>{st.session_state.view_all_clicked}</b> titles</h3>", unsafe_allow_html=True)
-            render_catalog_explorer(filtered_df, key_prefix='tab3_')
+            st.session_state.active_page = "Data Explorer"
+            st.rerun()
         else:
             render_top_categories(filtered_df)
 
 
-    with tab1:
-        st.markdown(f'<div class="section-header" style="margin-top: 24px;">{T["header_trend"]}</div>', unsafe_allow_html=True)
-        ev_hero = st.plotly_chart(chart_year_ingestion(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        process_selection(ev_hero, "tab1_year", "year_added", extract_key="x")
-
-        st.markdown(f'<div class="section-header">{T["header_dist"]}</div>', unsafe_allow_html=True)
-        col1, col2 = st.columns(2, gap="large")
-        with col1:
-            ev_split = st.plotly_chart(chart_content_split(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_split, "tab1_split", "type", extract_key="x")
-        with col2:
-            ev_genres = st.plotly_chart(chart_top_genres(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_genres, "tab1_genres", "genres", extract_key="y", match_type="contains")
-
-        st.markdown(f'<div class="section-header">{T["header_ratings"]}</div>', unsafe_allow_html=True)
-        col3, col4 = st.columns(2, gap="large")
-        with col3:
-            ev_rating = st.plotly_chart(chart_rating_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_rating, "tab1_ratings", "rating", extract_key="x", match_type="exact", is_range=False)
-        with col4:
-            ev_directors = st.plotly_chart(chart_top_directors(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_directors, "tab1_directors", "director", extract_key="y", match_type="contains")
-
-    with tab2:
-        st.markdown(f'<div class="section-header">{T["header_granular"]}</div>', unsafe_allow_html=True)
-        ev_m = st.plotly_chart(chart_top_countries_map(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        process_selection(ev_m, "tab2_map", "primary_country", extract_key="location", match_type="contains")
-        
-        col_dd1, col_dd2 = st.columns(2, gap="large")
-        with col_dd1:
-            ev_c = st.plotly_chart(chart_top_cast(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_c, "tab2_cast", "cast", extract_key="y", match_type="contains")
-        with col_dd2:
-            ev_d = st.plotly_chart(chart_duration_scatter(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-            process_selection(ev_d, "tab2_scatter", "release_year", extract_key="x")
-            
-        ev_r = st.plotly_chart(chart_runtime_distribution(filtered_df), use_container_width=True, on_select="rerun", selection_mode="points")
-        process_selection(ev_r, "tab2_histogram", "duration_minutes", is_range=True)
-
-
-    with tab3:
-        
-        col_ex1, col_ex2 = st.columns([2, 1], gap="large")
-
-        with col_ex1:
-            st.markdown(f'<div class="section-header">{T.get("cat_header", "Catalog Search & Export")}</div>', unsafe_allow_html=True)
-            render_catalog_explorer(filtered_df, key_prefix='tab4_')
-        with col_ex2:
-            st.markdown(f'<div class="section-header">{T.get("feed_header", "Live Ingestion Feed")}</div>', unsafe_allow_html=True)
-            render_recent_feed(filtered_df)
-
     st.markdown(
-        f"""
-        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid gray;">
-            <span style="color: var(--text-color); opacity: 0.7; font-size: 0.8rem;">
-                Netflix Content Insights Engine &nbsp;|&nbsp; Enterprise Edition
+        f'''
+        <div style="text-align: center; padding: 24px 0 12px; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <span style="color: var(--text-color); opacity: 0.5; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.5px;">
+                Netflix Content Insights Engine &nbsp;|&nbsp; Enterprise Dashboard
             </span>
         </div>
-        """,
+        ''',
         unsafe_allow_html=True,
     )
 
