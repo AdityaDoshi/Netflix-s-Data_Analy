@@ -1450,9 +1450,9 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
         end_idx = min(start_idx + ITEMS_PER_PAGE, total_items)
         page_df = display_df.iloc[start_idx:end_idx]
         
-        cols = st.columns(5)
+        cols = st.columns(4)
         for i, (_, row) in enumerate(page_df.iterrows()):
-            with cols[i % 5]:
+            with cols[i % 4]:
                 m_img = get_image(f"{row['title']} movie", is_movie=True)
                 bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
                 
@@ -1544,9 +1544,9 @@ def render_top_categories(df: pd.DataFrame):
         genre_df = genre_df.sort_values(by="vote_numeric", ascending=False).head(5)
         
         if len(genre_df) > 0:
-            cols = st.columns(5)
+            cols = st.columns(4)
             for i, (_, row) in enumerate(genre_df.iterrows()):
-                with cols[i % 5]:
+                with cols[i % 4]:
                     m_img = get_image(f"{row['title']} movie", is_movie=True)
                     bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
                     
