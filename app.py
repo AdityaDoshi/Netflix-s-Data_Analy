@@ -1018,27 +1018,7 @@ def check_auth():
 def render_sidebar(df: pd.DataFrame):
     with st.sidebar:
         st.markdown(get_netflix_logo_svg("38px", "display:block;margin-bottom:16px;"), unsafe_allow_html=True)
-        st.caption(f"{T['logged_in_as']} {st.session_state.get('user', 'unknown')}")
 
-        selected_lang = st.selectbox(T["language_selector"], options=list(LANG.keys()), index=list(LANG.keys()).index(st.session_state.lang))
-        if selected_lang != st.session_state.lang:
-            st.session_state.lang = selected_lang
-            st.rerun()
-
-
-
-        selected_theme = st.selectbox(T["ui_theme"], options=list(THEMES.keys()), index=list(THEMES.keys()).index(st.session_state.theme))
-        if selected_theme != st.session_state.theme:
-            st.session_state.theme = selected_theme
-            update_theme_config(selected_theme)
-            st.rerun()
-
-        if st.button(T["log_out"], use_container_width=True):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
-
-        st.divider()
         st.markdown(f"#### {T['filter_controls']}")
 
         valid_years = df["release_year"].dropna().astype(int)
@@ -1619,157 +1599,43 @@ def render_top_categories(df: pd.DataFrame):
 def render_top_bar(df=None):
     if df is None:
         return
+        
+    user = st.session_state.get('user', 'unknown')
+    T = LANG[st.session_state.lang]
     
-    total = len(df)
-    movies = len(df[df["type"] == "Movie"])
-    shows = len(df[df["type"] == "TV Show"])
-    now = datetime.datetime.now().strftime("%H:%M UTC")
-    user = st.session_state.get('user', '')
-    user_status = f"User: {user}" if check_auth() else "Guest"
-    
-    st.markdown(get_netflix_logo_svg("24px", "margin: 12px 0;"), unsafe_allow_html=True)
-    
-    
-    st.markdown("""
-    <style>
-    @media (max-width: 768px) {
-        [data-testid="stHorizontalBlock"]:first-of-type {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: 4px !important;
-            align-items: center !important;
-        }
-        [data-testid="stHorizontalBlock"]:first-of-type > div {
-            flex: 1 1 30% !important;
-            width: 30% !important;
-            min-width: 100px !important;
-        }
-        [data-testid="stHorizontalBlock"]:first-of-type > div:last-child {
-            flex: 1 1 100% !important;
-            width: 100% !important;
-            text-align: center !important;
-            margin-top: 8px !important;
-        }
-    }
-    
-    /* Premium Refinements */
-    
-    /* Background animated glow */
-    .stApp::before {{
-        content: "";
-        position: fixed;
-        top: -10%; left: -10%; width: 120%; height: 120%;
-        background-image: radial-gradient(circle at 20% 30%, var(--primary-color) 0%, transparent 20%),
-                          radial-gradient(circle at 80% 70%, var(--primary-color) 0%, transparent 20%);
-        opacity: 0.05;
-        z-index: -1;
-        pointer-events: none;
-        animation: subtlePulse 8s infinite alternate;
-    }}
+    with st.container(border=True):
+        col1, col2, col3, col4, col5 = st.columns([3, 1, 1, 1.5, 1], gap="medium", vertical_alignment="center")
+        
+        with col1:
+            search_query = st.text_input("Global Search", placeholder="🔍 Search catalog... (Press Enter to search)", label_visibility="collapsed", key="global_search_input")
+            if search_query and search_query != st.session_state.get('last_global_search'):
+                st.session_state.active_page = "Data Explorer"
+                st.session_state['tab3_search_input'] = search_query
+                st.session_state['last_global_search'] = search_query
+                st.rerun()
 
-    @keyframes subtlePulse {{
-        0% {{ transform: scale(1); opacity: 0.03; }}
-        100% {{ transform: scale(1.05); opacity: 0.08; }}
-    }}
+        with col2:
+            selected_lang = st.selectbox(T["language_selector"], options=list(LANG.keys()), index=list(LANG.keys()).index(st.session_state.lang), label_visibility="collapsed", key="top_lang")
+            if selected_lang != st.session_state.lang:
+                st.session_state.lang = selected_lang
+                st.rerun()
 
-    /* Glassmorphism Sidebar */
-    [data-testid="stSidebar"] {{
-        background: rgba(0, 0, 0, 0.2) !important;
-        backdrop-filter: blur(15px) !important;
-        -webkit-backdrop-filter: blur(15px) !important;
-        border-right: 1px solid var(--border-color, rgba(255, 255, 255, 0.05)) !important;
-    }}
-    
-    /* Glowing active tabs */
-    [data-testid="stTab"][aria-selected="true"] {{
-        border-bottom: 3px solid var(--primary-color) !important;
-        filter: drop-shadow(0 4px 6px var(--primary-color));
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        transform: translateY(-2px);
-    }}
-    [data-testid="stTab"] {{
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }}
-    [data-testid="stTab"]:hover {{
-        transform: translateY(-2px);
-        color: var(--primary-color) !important;
-    }}
+        with col3:
+            selected_theme = st.selectbox(T["ui_theme"], options=list(THEMES.keys()), index=list(THEMES.keys()).index(st.session_state.theme), label_visibility="collapsed", key="top_theme")
+            if selected_theme != st.session_state.theme:
+                st.session_state.theme = selected_theme
+                update_theme_config(selected_theme)
+                st.rerun()
 
-    /* Static Title */
-    .main-title {{
-        position: relative;
-        display: inline-block;
-    }}
+        with col4:
+            st.markdown(f"<div style='text-align: right; line-height: 1.2;'><b style='font-size:0.9rem; color:var(--text-color);'>{user.capitalize()}</b><br><span style='font-size:0.7rem; color:var(--text-color); opacity:0.6;'>{user}@netflix.com</span></div>", unsafe_allow_html=True)
 
-    /* Glassmorphism for containers and charts */
-    .stDataFrame {{
-        border-radius: 12px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--border-color, rgba(255, 255, 255, 0.05));
-    }}
+        with col5:
+            if st.button("Log Out", use_container_width=True, type="primary"):
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                st.rerun()
 
-    /* Smooth Chart interactions */
-    .js-plotly-plot .plotly .nsewdrag {{
-        cursor: pointer;
-    }}
-
-
-    /* SIMKL UI OVERHAUL */
-    .simkl-card {{ position: relative; margin-bottom: 4px; }}
-    .simkl-poster {{
-        width: 100%; aspect-ratio: 2/3; border-radius: 8px; position: relative;
-        overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.6); transition: transform 0.2s ease, box-shadow 0.2s ease;
-        background-color: #1a1a1a;
-    }}
-    .simkl-poster:hover {{ transform: scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.8); z-index: 10; }}
-    
-    .simkl-badge {{
-        position: absolute; background: rgba(0,0,0,0.85); color: white;
-        padding: 4px 6px; font-size: 0.7rem; font-weight: 800; border-radius: 4px; z-index: 2;
-        letter-spacing: 0.5px;
-    }}
-    .badge-top-right {{ top: 6px; right: 6px; border: 1px solid #444; color: #f5c518; }}
-    .badge-top-left {{ top: 6px; left: 6px; background: #e50914; }}
-
-    .simkl-overlay {{
-        position: absolute; bottom: 0; left: 0; right: 0; top: 0;
-        background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
-        justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
-        padding: 12px; text-align: center; border-radius: 8px;
-    }}
-    .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
-    
-    .simkl-genres {{ color: #aaa; font-size: 0.75rem; margin-bottom: 8px; font-weight: 500; line-height: 1.4; }}
-    .simkl-duration {{ color: #fff; font-size: 0.85rem; font-weight: 700; border-top: 1px solid #333; padding-top: 8px; width: 80%; }}
-    
-    .simkl-title {{
-        font-weight: 700; font-size: 0.9rem; margin-top: 8px; margin-bottom: 4px;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;
-    }}
-    .simkl-btn-container {{ margin-top: 4px; }}
-
-</style>
-    """, unsafe_allow_html=True)
-    c1, c2, c3, c4 = st.columns([2, 2, 2, 5])
-
-    with c1:
-        if st.button(f"**{localize_number(total, st.session_state.lang)}** {T['metric_total']}", type="tertiary", use_container_width=True):
-            st.session_state.popup_request = {"col": "type", "val": "", "match": "all"}
-            st.session_state.popup_page = 0
-    with c2:
-        if st.button(f"**{localize_number(movies, st.session_state.lang)}** {T['metric_movies']}", type="tertiary", use_container_width=True):
-            st.session_state.popup_request = {"col": "type", "val": "Movie", "match": "exact"}
-            st.session_state.popup_page = 0
-    with c3:
-        if st.button(f"**{localize_number(shows, st.session_state.lang)}** {T['metric_shows']}", type="tertiary", use_container_width=True):
-            st.session_state.popup_request = {"col": "type", "val": "TV Show", "match": "exact"}
-            st.session_state.popup_page = 0
-    with c4:
-        st.markdown(f"<div style='text-align:right; color:#808080; padding-top:10px; font-size: 0.85rem;'>Last Sync: {now} | {user_status}</div>", unsafe_allow_html=True)
-
-
-@st.dialog("Explore Data", width="large")
 def show_data_popup(df, filter_col, filter_val, match_type="exact"):
     with st.spinner("Analyzing and retrieving data..."):
         if "page_size" not in st.session_state:
@@ -2162,30 +2028,30 @@ def render_top_metrics_dashboard(df: pd.DataFrame):
         <!-- Highlighted Card -->
         <div style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #e50914 0%, #b20710 100%); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(229, 9, 20, 0.3); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
             <div style="position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.2); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white;">↗</div>
-            <div style="color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Total Titles</div>
+            <div style="color: white; opacity: 0.9; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Total Titles</div>
             <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_titles:,}</div>
-            <div style="color: rgba(255,255,255,0.7); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Entire Catalog</div>
+            <div style="color: white; opacity: 0.7; font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Entire Catalog</div>
         </div>
         <!-- Card 2 -->
-        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
-            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5);">↗</div>
-            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Movies</div>
-            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_movies:,}</div>
-            <div style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Feature films</div>
+        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-color); opacity: 0.5;">↗</div>
+            <div style="color: var(--text-color); opacity: 0.7; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Movies</div>
+            <div style="color: var(--text-color); font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_movies:,}</div>
+            <div style="color: var(--text-color); opacity: 0.5; font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Feature films</div>
         </div>
         <!-- Card 3 -->
-        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
-            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5);">↗</div>
-            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">TV Shows</div>
-            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_shows:,}</div>
-            <div style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Series & miniseries</div>
+        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-color); opacity: 0.5;">↗</div>
+            <div style="color: var(--text-color); opacity: 0.7; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">TV Shows</div>
+            <div style="color: var(--text-color); font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_shows:,}</div>
+            <div style="color: var(--text-color); opacity: 0.5; font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Series & miniseries</div>
         </div>
         <!-- Card 4 -->
-        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
-            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(255,255,255,0.5);">↗</div>
-            <div style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Directors</div>
-            <div style="color: white; font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_directors:,}</div>
-            <div style="color: rgba(255,255,255,0.4); font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Unique creators</div>
+        <div style="flex: 1; min-width: 200px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 16px; padding: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; position: relative;">
+            <div style="position: absolute; top: 16px; right: 16px; border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-color); opacity: 0.5;">↗</div>
+            <div style="color: var(--text-color); opacity: 0.7; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px;">Directors</div>
+            <div style="color: var(--text-color); font-size: 2.8rem; font-weight: 700; line-height: 1; font-family: 'Bebas Neue', sans-serif;">{total_directors:,}</div>
+            <div style="color: var(--text-color); opacity: 0.5; font-size: 0.75rem; margin-top: 12px; display: flex; align-items: center; gap: 4px;"><span style="color: #4ade80;">↑</span> Unique creators</div>
         </div>
     </div>
     ''', unsafe_allow_html=True)
@@ -2224,26 +2090,7 @@ def main():
             st.session_state.active_page = selected_page
             st.rerun()
 
-    # --- Global Header ---
-    st.markdown('''
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 16px 24px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <div style="display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); min-width: 300px;">
-            🔍 <span style="font-size: 0.9rem;">Search catalog...</span> <span style="margin-left: auto; font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">⌘F</span>
-        </div>
-        <div style="display: flex; gap: 24px; align-items: center;">
-            <div style="display: flex; gap: 16px; color: rgba(255,255,255,0.6); font-size: 1.2rem;">
-                ✉️ 🔔
-            </div>
-            <div style="display: flex; align-items: center; gap: 12px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 24px;">
-                <div style="text-align: right;">
-                    <div style="font-size: 0.85rem; font-weight: 600; color: white;">Admin User</div>
-                    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">admin@netflix.com</div>
-                </div>
-                <div style="width: 40px; height: 40px; border-radius: 50%; background: url('https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png') center/cover; border: 2px solid rgba(255,255,255,0.1);"></div>
-            </div>
-        </div>
-    </div>
-    ''', unsafe_allow_html=True)
+    # --- Global Header (Rendered previously) ---
 
     page = st.session_state.active_page
     T = LANG[st.session_state.lang]
