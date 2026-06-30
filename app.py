@@ -1629,6 +1629,7 @@ def render_top_bar(df=None):
                     del st.session_state[key]
                 st.rerun()
 
+@st.dialog("Detailed Data View", width="large")
 def show_data_popup(df, filter_col, filter_val, match_type="exact"):
     with st.spinner("Analyzing and retrieving data..."):
         if "page_size" not in st.session_state:
