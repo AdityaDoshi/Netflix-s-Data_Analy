@@ -1450,9 +1450,9 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
         end_idx = min(start_idx + ITEMS_PER_PAGE, total_items)
         page_df = display_df.iloc[start_idx:end_idx]
         
-        cols = st.columns(4)
+        cols = st.columns(5)
         for i, (_, row) in enumerate(page_df.iterrows()):
-            with cols[i % 4]:
+            with cols[i % 5]:
                 m_img = get_image(f"{row['title']} movie", is_movie=True)
                 bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
                 
