@@ -1489,7 +1489,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 with col_b1:
                     if st.button("Cast", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
                         set_node("movie", row.get('show_id', row['title']))
-                        st.session_state.active_tab = "tab3_search"
+                        st.session_state.cast_button_clicked = True
                         st.rerun()
                 with col_b2:
                     if st.button("Trailer", key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
@@ -1583,7 +1583,7 @@ def render_top_categories(df: pd.DataFrame):
                     with col_b1:
                         if st.button("Cast", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
                             set_node("movie", row.get('show_id', row['title']))
-                            st.session_state.active_tab = "tab3_search"
+                            st.session_state.cast_button_clicked = True
                             st.rerun()
                     with col_b2:
                         if st.button("Trailer", key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
@@ -2067,6 +2067,11 @@ def main():
         return
 
     # --- STATE INTERCEPTORS ---
+    if st.session_state.get('cast_button_clicked'):
+        st.session_state.active_page = "Deep Dive"
+        st.session_state.nav_radio = "Deep Dive"
+        st.session_state.cast_button_clicked = False
+
     if st.session_state.get('view_all_clicked'):
         genre = st.session_state.view_all_clicked
         st.session_state.active_page = "Data Explorer"
