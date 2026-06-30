@@ -1469,7 +1469,10 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 
                 import urllib.parse
                 safe_title = urllib.parse.quote(str(row['title']))
-                watch_link = f"<a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='display:inline-block; margin-top:8px; background:var(--primary-color); color:white; padding:4px 12px; border-radius:4px; text-decoration:none; font-size:0.75rem; font-weight:bold; width:100%; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>▶ Watch on Netflix</a>"
+                watch_link = f"""<div style='display:flex; gap:6px; margin-top:8px; width:100%;'>
+<a href='https://www.netflix.com/search?q={safe_title}' title='Search on Netflix' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Netflix</a>
+<a href='https://www.justwatch.com/us/search?q={safe_title}' title='Find on JustWatch' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Where?</a>
+</div>"""
                 
                 html = f'''
                 <div class="simkl-card">
@@ -1568,7 +1571,10 @@ def render_top_categories(df: pd.DataFrame):
                     
                     import urllib.parse
                     safe_title = urllib.parse.quote(str(row['title']))
-                    watch_link = f"<a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='display:inline-block; margin-top:8px; background:var(--primary-color); color:white; padding:4px 12px; border-radius:4px; text-decoration:none; font-size:0.75rem; font-weight:bold; width:100%; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>▶ Watch on Netflix</a>"
+                    watch_link = f"""<div style='display:flex; gap:6px; margin-top:8px; width:100%;'>
+<a href='https://www.netflix.com/search?q={safe_title}' title='Search on Netflix' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Netflix</a>
+<a href='https://www.justwatch.com/us/search?q={safe_title}' title='Find on JustWatch' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Where?</a>
+</div>"""
                     
                     html = f'''
                     <div class="simkl-card">
