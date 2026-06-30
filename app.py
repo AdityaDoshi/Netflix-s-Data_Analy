@@ -1485,7 +1485,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
-                col_b1, col_b2 = st.columns(2, gap="small")
+                col_b1, col_b2 = st.columns([1, 1.4], gap="small")
                 with col_b1:
                     if st.button("Cast", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
                         set_node("movie", row.get('show_id', row['title']))
@@ -1579,7 +1579,7 @@ def render_top_categories(df: pd.DataFrame):
                     '''
                     st.markdown(html, unsafe_allow_html=True)
                     
-                    col_b1, col_b2 = st.columns(2, gap="small")
+                    col_b1, col_b2 = st.columns([1, 1.4], gap="small")
                     with col_b1:
                         if st.button("Cast", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
                             set_node("movie", row.get('show_id', row['title']))
