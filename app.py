@@ -1365,10 +1365,11 @@ def render_catalog_explorer(df: pd.DataFrame):
     
     col_search, col_view = st.columns([4, 1])
     with col_search:
-        default_q = st.session_state.get('global_search_query', '')
-    search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), value=default_q, placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
-    if search_query != default_q:
-        st.session_state.global_search_query = search_query
+        # Initialize the state if it doesn't exist so the text_input key works correctly
+        if "global_search_query" not in st.session_state:
+            st.session_state.global_search_query = ""
+            
+        search_query = st.text_input(T.get("cat_search_prompt", "Search Titles, Directors, or Genres"), key="global_search_query", placeholder=T.get("cat_search_placeholder", "e.g. Sci-Fi, Christopher Nolan"))
     with col_view:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
         view_mode = st.radio("View Mode", ["🖼️ Grid", "📊 Table"], horizontal=True, label_visibility="collapsed")
