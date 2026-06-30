@@ -2090,7 +2090,8 @@ def main():
             st.session_state.active_page = selected_page
             st.rerun()
 
-    # --- Global Header (Rendered previously) ---
+        # --- Global Header ---
+    render_top_bar(filtered_df)
 
     page = st.session_state.active_page
     T = LANG[st.session_state.lang]
