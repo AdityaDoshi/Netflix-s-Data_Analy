@@ -2157,7 +2157,11 @@ def main():
         st.markdown("<h2 style='margin-bottom: 24px; font-weight: 600;'>🎬 Top Categories</h2>", unsafe_allow_html=True)
         # Ensure redirect logic routes them to Data Explorer automatically
         if st.session_state.get('view_all_clicked'):
+            genre = st.session_state.view_all_clicked
             st.session_state.active_page = "Data Explorer"
+            st.session_state['tab3_search_input'] = genre
+            st.session_state['tab3_last_search_query'] = genre
+            st.session_state.view_all_clicked = None
             st.rerun()
         else:
             render_top_categories(filtered_df)
