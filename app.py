@@ -1467,6 +1467,10 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 if pd.isna(row.get('description')) or desc == 'nan': desc = ""
                 elif len(desc) > 70: desc = desc[:67] + "..."
                 
+                import urllib.parse
+                safe_title = urllib.parse.quote(str(row['title']))
+                watch_link = f"<a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='display:inline-block; margin-top:8px; background:var(--primary-color); color:white; padding:4px 12px; border-radius:4px; text-decoration:none; font-size:0.75rem; font-weight:bold; width:100%; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>▶ Watch on Netflix</a>"
+                
                 html = f'''
                 <div class="simkl-card">
                     <div class="simkl-poster" style="{bg_style}">
@@ -1478,6 +1482,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                             <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
                             <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
                             <div class="simkl-duration">{duration}</div>
+                            {watch_link}
                         </div>
                     </div>
                     <div class="simkl-title" title="{row['title']}">{row['title']}</div>
@@ -1561,6 +1566,10 @@ def render_top_categories(df: pd.DataFrame):
                     if pd.isna(row.get('description')) or desc == 'nan': desc = ""
                     elif len(desc) > 70: desc = desc[:67] + "..."
                     
+                    import urllib.parse
+                    safe_title = urllib.parse.quote(str(row['title']))
+                    watch_link = f"<a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='display:inline-block; margin-top:8px; background:var(--primary-color); color:white; padding:4px 12px; border-radius:4px; text-decoration:none; font-size:0.75rem; font-weight:bold; width:100%; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>▶ Watch on Netflix</a>"
+                    
                     html = f'''
                     <div class="simkl-card">
                         <div class="simkl-poster" style="{bg_style}">
@@ -1572,6 +1581,7 @@ def render_top_categories(df: pd.DataFrame):
                                 <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
                                 <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
                                 <div class="simkl-duration">{duration}</div>
+                                {watch_link}
                             </div>
                         </div>
                         <div class="simkl-title" title="{row['title']}">{row['title']}</div>
