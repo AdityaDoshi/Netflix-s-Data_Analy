@@ -561,7 +561,7 @@ update_theme_config(st.session_state.theme)
 
 import os
 @st.cache_resource
-def get_db_connection():
+def get_db_connection(_force_reconnect=1):
     # Ensure we use the absolute path relative to app.py to avoid working directory issues on Streamlit Cloud
     db_path = os.path.join(os.path.dirname(__file__), "netflix.db")
     if not os.path.exists(db_path):
