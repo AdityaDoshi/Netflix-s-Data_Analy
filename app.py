@@ -561,12 +561,45 @@ update_theme_config(st.session_state.theme)
 
 import os
 @st.cache_resource
-def get_db_connection(_force_reconnect=1):
+def get_db_connection(_force_reconnect=2):
     # Ensure we use the absolute path relative to app.py to avoid working directory issues on Streamlit Cloud
     db_path = os.path.join(os.path.dirname(__file__), "netflix.db")
     if not os.path.exists(db_path):
         raise FileNotFoundError(f"Database not found at {db_path}. Ensure netflix.db is pushed to GitHub.")
-    return sqlite3.connect(db_path, check_same_thread=False)
+    conn = sqlite3.connect(db_path, check_same_thread=False)
+    
+    # Guarantee tables exist on Streamlit Cloud even if git pull failed to update the db file
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS watchlists (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            show_id TEXT NOT NULL,
+            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(show_id) REFERENCES titles(show_id),
+            UNIQUE(user_id, show_id)
+        )
+    ''')
+    
+    # Ensure default admin exists
+    import hashlib
+    admin_hash = hashlib.sha256(b"admin123").hexdigest()
+    try:
+        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("admin", admin_hash))
+    except sqlite3.IntegrityError:
+        pass
+        
+    conn.commit()
+    return conn
 
 @st.cache_data(show_spinner=False)
 def load_user_watchlist():
