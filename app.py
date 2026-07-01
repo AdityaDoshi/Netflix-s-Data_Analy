@@ -195,7 +195,7 @@ css = """
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
-        padding: 12px; text-align: center; border-radius: 8px;
+        padding: 8px; text-align: center; border-radius: 8px;
     }}
     .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
@@ -509,7 +509,7 @@ root_css = f"""
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
-        padding: 12px; text-align: center; border-radius: 8px;
+        padding: 8px; text-align: center; border-radius: 8px;
     }}
     .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
@@ -945,7 +945,7 @@ def render_login_screen():
         position: absolute; bottom: 0; left: 0; right: 0; top: 0;
         background: rgba(15,15,15,0.9); display: flex; flex-direction: column;
         justify-content: center; align-items: center; opacity: 0; transition: opacity 0.2s ease;
-        padding: 12px; text-align: center; border-radius: 8px;
+        padding: 8px; text-align: center; border-radius: 8px;
     }}
     .simkl-poster:hover .simkl-overlay {{ opacity: 1; backdrop-filter: blur(2px); }}
     
@@ -1461,7 +1461,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
                 director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
                 genres = f"{row.get('genres', 'N/A')}"
-                duration = f"{row.get('duration', 'N/A')} min"
+                duration = f"{row.get('duration', 'N/A')}"
                 
                 desc = str(row.get('description', ''))
                 if pd.isna(row.get('description')) or desc == 'nan': desc = ""
@@ -1483,7 +1483,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                             <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
                             <div class="simkl-genres" style="margin-bottom: 4px;">{genres}</div>
                             <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
-                            <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
+                            <div style="color: #fff; font-size: 0.7rem; text-align: left; line-height: 1.3; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;" title="{desc}">{desc}</div>
                             <div class="simkl-duration">{duration}</div>
                             {watch_link}
                         </div>
@@ -1563,7 +1563,7 @@ def render_top_categories(df: pd.DataFrame):
                     rating = f"{row.get('rating', '')}" if pd.notna(row.get('rating')) else ""
                     director = f"Dir: {row.get('director', 'Unknown')}" if pd.notna(row.get('director')) else ""
                     genres_str = f"{row.get('genres', 'N/A')}"
-                    duration = f"{row.get('duration', 'N/A')} min"
+                    duration = f"{row.get('duration', 'N/A')}"
                     
                     desc = str(row.get('description', ''))
                     if pd.isna(row.get('description')) or desc == 'nan': desc = ""
@@ -1585,7 +1585,7 @@ def render_top_categories(df: pd.DataFrame):
                                 <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
                                 <div class="simkl-genres" style="margin-bottom: 4px;">{genres_str}</div>
                                 <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
-                                <div style="color: #fff; font-size: 0.75rem; text-align: left; line-height: 1.3; margin-bottom: 8px;">{desc}</div>
+                                <div style="color: #fff; font-size: 0.7rem; text-align: left; line-height: 1.3; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;" title="{desc}">{desc}</div>
                                 <div class="simkl-duration">{duration}</div>
                                 {watch_link}
                             </div>
