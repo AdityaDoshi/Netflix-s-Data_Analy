@@ -569,7 +569,7 @@ def get_db_connection():
     return sqlite3.connect(db_path, check_same_thread=False)
 
 @st.cache_data(show_spinner=False)
-def load_and_preprocess_data(_cache_buster=1):
+def load_and_preprocess_data(_cache_buster=2):
     conn = get_db_connection()
     # Load data from the new SQLite database instead of CSV
     df = pd.read_sql("SELECT * FROM titles", conn)
