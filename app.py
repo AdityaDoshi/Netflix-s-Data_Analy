@@ -559,9 +559,14 @@ update_theme_config(st.session_state.theme)
 #  MODULE 1: DATA LOADING & PREPROCESSING
 # ══════════════════════════════════════════════════════════════════
 
+import os
 @st.cache_resource
 def get_db_connection():
-    return sqlite3.connect("netflix.db", check_same_thread=False)
+    # Ensure we use the absolute path relative to app.py to avoid working directory issues on Streamlit Cloud
+    db_path = os.path.join(os.path.dirname(__file__), "netflix.db")
+    if not os.path.exists(db_path):
+        raise FileNotFoundError(f"Database not found at {db_path}. Ensure netflix.db is pushed to GitHub.")
+    return sqlite3.connect(db_path, check_same_thread=False)
 
 @st.cache_data(show_spinner=False)
 def load_and_preprocess_data(_cache_buster=1):
