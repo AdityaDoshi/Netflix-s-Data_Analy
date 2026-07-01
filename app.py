@@ -2224,6 +2224,71 @@ def render_top_metrics_dashboard(df: pd.DataFrame):
     ''', unsafe_allow_html=True)
 
 def main():
+    st.markdown('''<style>
+        /* Premium UI Upgrades */
+        
+        /* Typography */
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        html, body, [class*="css"]  {
+            font-family: 'Outfit', sans-serif !important;
+        }
+        
+        /* Glassmorphic Navbar (assuming there's a top container we can target) */
+        header[data-testid="stHeader"] {
+            background: rgba(20, 20, 20, 0.7) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.3s ease;
+        }
+        
+        /* Smooth Micro-animations for Cards */
+        .simkl-card {
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease !important;
+            border: 1px solid rgba(255, 255, 255, 0.03) !important;
+        }
+        .simkl-card:hover {
+            transform: scale(1.05) translateY(-5px) !important;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8), 0 0 15px rgba(229, 9, 20, 0.3) !important;
+            border-color: rgba(229, 9, 20, 0.5) !important;
+            z-index: 10;
+        }
+        
+        /* Button Hover Glows */
+        .stButton>button {
+            transition: all 0.2s ease !important;
+        }
+        .stButton>button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4) !important;
+        }
+        .stButton>button[kind="primary"]:hover {
+            box-shadow: 0 5px 20px rgba(229, 9, 20, 0.6) !important;
+            filter: brightness(1.2);
+        }
+        
+        /* Header typography enhancements */
+        .section-header {
+            font-weight: 800 !important;
+            letter-spacing: -0.5px !important;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
+        }
+        
+        /* Custom scrollbar for entire app to match Netflix */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141414;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e50914;
+        }
+</style>''', unsafe_allow_html=True)
     if "demo_credentials" not in st.session_state:
         st.session_state.demo_credentials = {"admin": "admin123"}
     if "popup_request" not in st.session_state:
