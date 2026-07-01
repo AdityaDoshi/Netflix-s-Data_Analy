@@ -577,6 +577,11 @@ def load_and_preprocess_data(_cache_buster=1):
     # Minimal type casting (SQLite stores dates as strings)
     df["date_added"] = pd.to_datetime(df["date_added"].str.strip(), errors="coerce")
     df["year_added"] = df["date_added"].dt.year.astype("Int64")
+    
+    # Restore 'cast' and 'genres' column names so downstream Pandas charts don't crash
+    if 'cast_original' in df.columns:
+        df.rename(columns={'cast_original': 'cast', 'genres_original': 'genres'}, inplace=True)
+        
     return df
 
 
