@@ -1651,14 +1651,15 @@ def render_watchlist_page():
     if "watchlist" not in st.session_state:
         load_user_watchlist()
         
-    if not st.session_state.watchlist:
+    watchlist = st.session_state.get("watchlist", set())
+    if not watchlist:
         st.info("Your list is empty! Explore the catalog and add some titles.")
         return
         
     conn = get_db_connection()
-    placeholders = ','.join(['?'] * len(st.session_state.watchlist))
+    placeholders = ','.join(['?'] * len(watchlist))
     query = f"SELECT * FROM titles WHERE show_id IN ({placeholders})"
-    wl_df = pd.read_sql(query, conn, params=list(st.session_state.watchlist))
+    wl_df = pd.read_sql(query, conn, params=list(watchlist))
     
     # CSS for horizontal carousel
     st.markdown('''
