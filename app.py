@@ -1797,19 +1797,15 @@ def render_top_categories(df: pd.DataFrame):
                     st.markdown(html, unsafe_allow_html=True)
                     
                     wl = st.session_state.get("watchlist", set())
-                    b1, b2, b3 = st.columns([1, 1, 1])
-                    with b1:
-                        btn_label = "✅ In List" if row.get('show_id') in wl else "➕ My List"
-                        if st.button(btn_label, key=f"cat_wl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
-                            toggle_watchlist(row.get('show_id'))
-                    with b2:
-                        if st.button(T["btn_cast"], key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
-                            set_node("movie", row.get('show_id', row['title']))
-                            st.session_state.cast_button_clicked = True
-                            st.rerun()
-                    with b3:
-                        if st.button(T["btn_trailer"], key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
-                            play_trailer_dialog(row)
+                    btn_label = "✅ In List" if row.get('show_id') in wl else "➕ My List"
+                    if st.button(btn_label, key=f"cat_wl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                        toggle_watchlist(row.get('show_id'))
+                    if st.button(T["btn_cast"], key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                        set_node("movie", row.get('show_id', row['title']))
+                        st.session_state.cast_button_clicked = True
+                        st.rerun()
+                    if st.button(T["btn_trailer"], key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
+                        play_trailer_dialog(row)
         st.markdown("<hr style='margin: 24px 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════
@@ -2317,6 +2313,18 @@ def main():
     # ---------------------------------------
     st.markdown('''<style>
         /* Premium UI Upgrades */
+        /* Slimmer Pill Buttons */
+        div.stButton > button {
+            border-radius: 20px !important;
+            padding: 0px 12px !important;
+            min-height: 32px !important;
+            height: 32px !important;
+        }
+        div.stButton > button p {
+            font-size: 0.85rem !important;
+            line-height: 1 !important;
+        }
+
         
         /* Typography */
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
