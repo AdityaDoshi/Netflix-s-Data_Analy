@@ -1493,11 +1493,11 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
-                if st.button("Cast", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                if st.button("🎭 Cast", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
                     set_node("movie", row.get('show_id', row['title']))
                     st.session_state.cast_button_clicked = True
                     st.rerun()
-                if st.button("Trailer", key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                if st.button("▶ Trailer", key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
                     play_trailer_dialog(row['title'], row.get('release_year', ''))
                         
         if total_pages > 1:
@@ -1592,11 +1592,11 @@ def render_top_categories(df: pd.DataFrame):
                     '''
                     st.markdown(html, unsafe_allow_html=True)
                     
-                    if st.button("Cast", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                    if st.button("🎭 Cast", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
                         set_node("movie", row.get('show_id', row['title']))
                         st.session_state.cast_button_clicked = True
                         st.rerun()
-                    if st.button("Trailer", key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                    if st.button("▶ Trailer", key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
                         play_trailer_dialog(row['title'], row.get('release_year', ''))
         st.markdown("<hr style='margin: 24px 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
