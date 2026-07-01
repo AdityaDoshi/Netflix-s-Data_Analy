@@ -561,18 +561,18 @@ update_theme_config(st.session_state.theme)
 
 @st.cache_resource
 def get_db_connection():
-    conn = sqlite3.connect("netflix.db", check_same_thread=False)
-    return conn
+    return sqlite3.connect("netflix.db", check_same_thread=False)
 
 @st.cache_data(show_spinner=False)
-def get_sidebar_bounds():
-    conn = sqlite3.connect("netflix.db")
-    min_yr, max_yr = conn.execute("SELECT MIN(release_year), MAX(release_year) FROM titles").fetchone()
-    types = [r[0] for r in conn.execute("SELECT DISTINCT type FROM titles WHERE type IS NOT NULL").fetchall()]
-    ratings = [r[0] for r in conn.execute("SELECT DISTINCT rating FROM titles WHERE rating IS NOT NULL").fetchall()]
-    countries = [r[0] for r in conn.execute("SELECT DISTINCT primary_country FROM titles WHERE primary_country IS NOT NULL").fetchall()]
-    conn.close()
-    return min_yr, max_yr, sorted(types), sorted(ratings), sorted(countries)
+def load_and_preprocess_data(_cache_buster=1):
+    conn = get_db_connection()
+    # Load data from the new SQLite database instead of CSV
+    df = pd.read_sql("SELECT * FROM titles", conn)
+    
+    # Minimal type casting (SQLite stores dates as strings)
+    df["date_added"] = pd.to_datetime(df["date_added"].str.strip(), errors="coerce")
+    df["year_added"] = df["date_added"].dt.year.astype("Int64")
+    return df
 
 
 # ══════════════════════════════════════════════════════════════════
