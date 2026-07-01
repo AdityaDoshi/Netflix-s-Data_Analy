@@ -2420,6 +2420,9 @@ def main():
         st.markdown("<h2 style='margin-bottom: 24px; font-weight: 600;'>🎬 Top Categories</h2>", unsafe_allow_html=True)
         render_top_categories(filtered_df)
 
+    elif page == "My List":
+        render_watchlist_page()
+
 
     st.markdown(
         f'''
