@@ -1577,38 +1577,30 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 genres = f"{row.get('genres', 'N/A')}"
                 duration = f"{row.get('duration', 'N/A')}"
                 
-                desc = str(row.get('description', ''))
-                if pd.isna(row.get('description')) or desc == 'nan': desc = ""
-                elif len(desc) > 70: desc = desc[:67] + "..."
-                
                 import urllib.parse
                 safe_title = urllib.parse.quote(str(row['title']))
-                watch_link = f"""<div style='display:flex; gap:6px; margin-top:8px; width:100%;'>
-<a href='https://www.netflix.com/search?q={safe_title}' title='{T['title_search_netflix']}' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_netflix']}</a>
-<a href='https://www.justwatch.com/us/search?q={safe_title}' title='{T['title_find_justwatch']}' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_where']}</a>
-</div>"""
+                watch_badges = f"<a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='text-decoration:none;'><span class='stream-pill netflix'>N</span></a>"
+                watch_badges += f"<a href='https://www.justwatch.com/us/search?q={safe_title}' target='_blank' style='text-decoration:none;'><span class='stream-pill more'>+ More</span></a>"
+                genres_dot = str(genres).replace(',', ' •')
                 
                 html = f'''
-                <div class="simkl-card">
-                    <div class="simkl-poster" style="{bg_style}">
-                        <div class="simkl-badge badge-top-right">★ {score}</div>
-                        <div class="simkl-badge badge-top-left">{year}</div>
-                        <div class="simkl-overlay">
-                            <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
-                            <div class="simkl-genres" style="margin-bottom: 4px;">{genres}</div>
-                            <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
-                            <div style="color: #fff; font-size: 0.7rem; text-align: left; line-height: 1.3; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;" title="{desc}">{desc}</div>
-                            <div class="simkl-duration">{duration}</div>
-                            {watch_link}
+                <div class="premium-card">
+                    <div class="premium-poster-wrapper">
+                        <div class="premium-poster" style="{bg_style}"></div>
+                        <div class="premium-badge">★ {score}</div>
+                        <div class="premium-gradient"></div>
+                        <div class="premium-streaming-badges">
+                            {watch_badges}
                         </div>
                     </div>
-                    <div class="simkl-title" title="{row['title']}">{row['title']}</div>
+                    <div class="premium-info">
+                        <div class="premium-title" title="{row['title']}">{row['title']}</div>
+                        <div class="premium-meta">{year} • ★ {score} • {genres_dot}</div>
+                    </div>
                 </div>
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
-                
-                # Watchlist logic
                 if "watchlist" not in st.session_state and "user_id" in st.session_state:
                     load_user_watchlist()
                 
@@ -1619,10 +1611,6 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                     toggle_watchlist(row.get('show_id'))
                     st.rerun()
                     
-                if st.button(T["btn_cast"], key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
-                    set_node("movie", row.get('show_id', row['title']))
-                    st.session_state.cast_button_clicked = True
-                    st.rerun()
                 if st.button(T["btn_trailer"], key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
                     play_trailer_dialog(row)
                         
@@ -1772,26 +1760,24 @@ def render_top_categories(df: pd.DataFrame):
                     
                     import urllib.parse
                     safe_title = urllib.parse.quote(str(row['title']))
-                    watch_link = f"""<div style='display:flex; gap:6px; margin-top:8px; width:100%;'>
-<a href='https://www.netflix.com/search?q={safe_title}' title='{T['title_search_netflix']}' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_netflix']}</a>
-<a href='https://www.justwatch.com/us/search?q={safe_title}' title='{T['title_find_justwatch']}' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_where']}</a>
-</div>"""
+                    watch_badges = f"<a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='text-decoration:none;'><span class='stream-pill netflix'>N</span></a>"
+                    watch_badges += f"<a href='https://www.justwatch.com/us/search?q={safe_title}' target='_blank' style='text-decoration:none;'><span class='stream-pill more'>+ More</span></a>"
+                    genres_dot = str(genres_str).replace(',', ' •')
                     
                     html = f'''
-                    <div class="simkl-card">
-                        <div class="simkl-poster" style="{bg_style}">
-                            <div class="simkl-badge badge-top-right">★ {score}</div>
-                            <div class="simkl-badge badge-top-left">{year}</div>
-                            <div class="simkl-overlay">
-                                <div style="color: #e50914; font-weight: 800; font-size: 0.75rem; margin-bottom: 2px;">{rating}</div>
-                                <div class="simkl-genres" style="margin-bottom: 4px;">{genres_str}</div>
-                                <div style="color: #ccc; font-size: 0.7rem; font-style: italic; margin-bottom: 6px;">{director}</div>
-                                <div style="color: #fff; font-size: 0.7rem; text-align: left; line-height: 1.3; margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;" title="{desc}">{desc}</div>
-                                <div class="simkl-duration">{duration}</div>
-                                {watch_link}
+                    <div class="premium-card">
+                        <div class="premium-poster-wrapper">
+                            <div class="premium-poster" style="{bg_style}"></div>
+                            <div class="premium-badge">★ {score}</div>
+                            <div class="premium-gradient"></div>
+                            <div class="premium-streaming-badges">
+                                {watch_badges}
                             </div>
                         </div>
-                        <div class="simkl-title" title="{row['title']}">{row['title']}</div>
+                        <div class="premium-info">
+                            <div class="premium-title" title="{row['title']}">{row['title']}</div>
+                            <div class="premium-meta">{year} • ★ {score} • {genres_dot}</div>
+                        </div>
                     </div>
                     '''
                     st.markdown(html, unsafe_allow_html=True)
@@ -1800,9 +1786,6 @@ def render_top_categories(df: pd.DataFrame):
                     btn_label = "✅ In List" if row.get('show_id') in wl else "➕ My List"
                     if st.button(btn_label, key=f"cat_wl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
                         toggle_watchlist(row.get('show_id'))
-                    if st.button(T["btn_cast"], key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
-                        set_node("movie", row.get('show_id', row['title']))
-                        st.session_state.cast_button_clicked = True
                         st.rerun()
                     if st.button(T["btn_trailer"], key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
                         play_trailer_dialog(row)
@@ -2313,6 +2296,117 @@ def main():
     # ---------------------------------------
     st.markdown('''<style>
         /* Premium UI Upgrades */
+        /* Premium Cinematic Card Styles */
+        .premium-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .premium-poster-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .premium-poster {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-color: #111;
+        }
+        
+        .premium-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .premium-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        .premium-streaming-badges {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            gap: 6px;
+            z-index: 2;
+        }
+        
+        .stream-pill {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        .stream-pill.netflix { background: #E50914; }
+        .stream-pill.more { background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); }
+        
+        .premium-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 0 4px;
+        }
+        
+        .premium-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .premium-meta {
+            font-size: 0.75rem;
+            color: #a0a0a0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Hover Interactions via CSS :has pseudo-class */
+        div[data-testid="column"]:has(.premium-card):hover .premium-poster-wrapper {
+            transform: scale(1.03);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        }
+        
+        div[data-testid="column"]:has(.premium-card) .stButton {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        div[data-testid="column"]:has(.premium-card):hover .stButton {
+            opacity: 1;
+        }
+
         /* Slimmer Pill Buttons */
         div.stButton > button {
             border-radius: 20px !important;
