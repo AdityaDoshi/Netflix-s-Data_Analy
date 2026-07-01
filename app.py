@@ -1452,33 +1452,69 @@ import re
 
 @st.cache_data(show_spinner=False)
 def get_youtube_trailer_url(movie_title, release_year):
+    import urllib.parse, urllib.request, re
     query = urllib.parse.quote(f"{movie_title} {release_year} official trailer")
     url = f"https://www.youtube.com/results?search_query={query}"
     try:
         req = urllib.request.Request(
             url, 
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         )
-        html = urllib.request.urlopen(req, timeout=3).read().decode('utf-8')
+        html = urllib.request.urlopen(req, timeout=5).read().decode('utf-8')
+        
+        # Look for video ids using standard watch regex or shortcodes
         video_ids = re.findall(r"watch\?v=([a-zA-Z0-9_-]{11})", html)
+        if not video_ids:
+            # Fallback to search videoData ids if youtube changes layout
+            video_ids = re.findall(r"\"videoId\":\"([a-zA-Z0-9_-]{11})\"", html)
+            
         if video_ids:
             return f"https://www.youtube.com/watch?v={video_ids[0]}"
     except Exception as e:
         pass
     return None
 
-@st.dialog("🎬 Watch Trailer", width="large")
-def play_trailer_dialog(title, year):
-    with st.spinner(f"Searching for official trailer for {title}..."):
-        url = get_youtube_trailer_url(title, year)
+@st.dialog("🍿 Movie Details & Trailer", width="large")
+def play_trailer_dialog(row):
+    import urllib.parse
+    title = str(row['title'])
+    year = str(row.get('release_year', ''))
     
-    if url:
-        st.video(url)
-        st.markdown(f"<div style='text-align: center; margin-top: 10px;'><a href='{url}' target='_blank' style='color: #e50914; text-decoration: none; font-weight: bold;'>Watch directly on YouTube</a></div>", unsafe_allow_html=True)
-    else:
-        st.error("Could not find a trailer for this title automatically.")
-        search_query = urllib.parse.quote(f"{title} {year} official trailer")
-        st.markdown(f"<div style='text-align: center;'><a href='https://www.youtube.com/results?search_query={search_query}' target='_blank' style='color: white; text-decoration: underline;'>Search on YouTube manually</a></div>", unsafe_allow_html=True)
+    col1, col2 = st.columns([1.6, 1], gap="large")
+    
+    with col1:
+        with st.spinner(f"Searching for official trailer for {title}..."):
+            url = get_youtube_trailer_url(title, year)
+        
+        if url:
+            st.video(url)
+            st.markdown(f"<div style='text-align: center; margin-top: 10px;'><a href='{url}' target='_blank' style='color: #e50914; text-decoration: none; font-weight: bold;'>Watch directly on YouTube</a></div>", unsafe_allow_html=True)
+        else:
+            st.warning("Could not automatically embed a trailer for this title.")
+            search_query = urllib.parse.quote(f"{title} {year} official trailer")
+            st.markdown(f"**[Click here to search YouTube manually](https://www.youtube.com/results?search_query={search_query})**")
+            
+    with col2:
+        st.markdown(f"## {title} ({year})")
+        score = f"★ {float(row.get('vote_average', 0)):.1f}" if pd.notna(row.get('vote_average')) else "NR"
+        rating = row.get('rating', 'Unknown')
+        duration = row.get('duration', 'Unknown')
+        
+        st.markdown(f"**{score}** &nbsp;|&nbsp; **{rating}** &nbsp;|&nbsp; **{duration}**", unsafe_allow_html=True)
+        st.markdown(f"**Genres:** {row.get('genres', 'N/A')}")
+        st.markdown(f"**Director:** {row.get('director', 'Unknown')}")
+        st.markdown(f"**Cast:** {row.get('cast', 'Unknown')}")
+        st.markdown(f"**Country:** {row.get('country', 'Unknown')}")
+        st.divider()
+        st.markdown(f"_{row.get('description', 'No description available.')}_")
+        
+        safe_title = urllib.parse.quote(title)
+        st.markdown(f"""
+            <div style='display:flex; gap:10px; margin-top:20px; width:100%;'>
+                <a href='https://www.netflix.com/search?q={safe_title}' target='_blank' style='flex:1; background:#e50914; color:white; padding:10px; border-radius:6px; text-decoration:none; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Netflix</a>
+                <a href='https://www.justwatch.com/us/search?q={safe_title}' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:10px; border-radius:6px; text-decoration:none; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>JustWatch</a>
+            </div>
+        """, unsafe_allow_html=True)
 
 def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
 
@@ -1617,7 +1653,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                     st.session_state.cast_button_clicked = True
                     st.rerun()
                 if st.button(T["btn_trailer"], key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
-                    play_trailer_dialog(row['title'], row.get('release_year', ''))
+                    play_trailer_dialog(row)
                         
         if total_pages > 1:
             st.markdown("<br>", unsafe_allow_html=True)
@@ -1794,7 +1830,7 @@ def render_top_categories(df: pd.DataFrame):
                         st.session_state.cast_button_clicked = True
                         st.rerun()
                     if st.button(T["btn_trailer"], key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
-                        play_trailer_dialog(row['title'], row.get('release_year', ''))
+                        play_trailer_dialog(row)
         st.markdown("<hr style='margin: 24px 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════
