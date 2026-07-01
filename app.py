@@ -1552,9 +1552,9 @@ def render_top_categories(df: pd.DataFrame):
         genre_df = genre_df.sort_values(by="vote_numeric", ascending=False).head(5)
         
         if len(genre_df) > 0:
-            cols = st.columns(4)
+            cols = st.columns(5)
             for i, (_, row) in enumerate(genre_df.iterrows()):
-                with cols[i % 4]:
+                with cols[i % 5]:
                     m_img = get_image(f"{row['title']} movie", is_movie=True)
                     bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
                     
