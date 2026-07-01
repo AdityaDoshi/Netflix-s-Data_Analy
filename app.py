@@ -1690,13 +1690,7 @@ def render_watchlist_page():
     
     st.markdown("<br><hr><br><h3>Manage Watchlist</h3>", unsafe_allow_html=True)
     # We can reuse the catalog explorer renderer but pass the watchlist dataframe!
-    # Wait, the catalog explorer takes query, params now. We can't just pass a dataframe.
-    # Instead, we just show the standard grid underneath the carousel for management!
-    
-    # Let's use the catalog explorer logic
-    query = f"SELECT * FROM titles WHERE show_id IN ({placeholders})"
-    params = list(st.session_state.watchlist)
-    render_catalog_explorer(wl_df, query, params, key_prefix="wl_")
+    render_catalog_explorer(wl_df, key_prefix="wl_")
 
 def render_top_categories(df: pd.DataFrame):
     popular_genres = ["Action", "Comedy", "Sci-Fi", "Horror", "Thrillers", "Drama"]
