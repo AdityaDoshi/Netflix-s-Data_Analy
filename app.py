@@ -623,6 +623,14 @@ def toggle_watchlist(show_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     
+    try:
+        cursor.execute("SELECT 1 FROM watchlists LIMIT 1")
+    except sqlite3.OperationalError:
+        # Streamlit Cloud cache is holding onto a stale database connection.
+        get_db_connection.clear()
+        conn = get_db_connection()
+        cursor = conn.cursor()
+    
     watchlist = st.session_state.get("watchlist", set())
     if show_id in watchlist:
         cursor.execute("DELETE FROM watchlists WHERE user_id = ? AND show_id = ?", (user_id, show_id))
@@ -2294,6 +2302,14 @@ def render_top_metrics_dashboard(df: pd.DataFrame):
     ''', unsafe_allow_html=True)
 
 def main():
+    # --- Streamlit Cloud Cache Safeguard ---
+    try:
+        conn = get_db_connection()
+        conn.cursor().execute("SELECT 1 FROM watchlists LIMIT 1")
+    except Exception:
+        get_db_connection.clear()
+        get_db_connection()
+    # ---------------------------------------
     st.markdown('''<style>
         /* Premium UI Upgrades */
         
