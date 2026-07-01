@@ -574,26 +574,32 @@ def load_user_watchlist():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT show_id FROM watchlists WHERE user_id = ?", (st.session_state["user_id"],))
-        st.session_state.watchlist = set(row[0] for row in cursor.fetchall())
+        st.session_state["watchlist"] = set(row[0] for row in cursor.fetchall())
     else:
-        st.session_state.watchlist = set()
+        st.session_state["watchlist"] = set()
 
 def toggle_watchlist(show_id):
     if "user_id" not in st.session_state:
         st.error("Please login to save to your watchlist.")
         return
         
+    if "watchlist" not in st.session_state:
+        load_user_watchlist()
+        
     user_id = st.session_state["user_id"]
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    if show_id in st.session_state.watchlist:
+    watchlist = st.session_state.get("watchlist", set())
+    if show_id in watchlist:
         cursor.execute("DELETE FROM watchlists WHERE user_id = ? AND show_id = ?", (user_id, show_id))
-        st.session_state.watchlist.remove(show_id)
+        watchlist.discard(show_id)
+        st.session_state["watchlist"] = watchlist
         st.toast(f"Removed from My List.")
     else:
         cursor.execute("INSERT INTO watchlists (user_id, show_id) VALUES (?, ?)", (user_id, show_id))
-        st.session_state.watchlist.add(show_id)
+        watchlist.add(show_id)
+        st.session_state["watchlist"] = watchlist
         st.toast(f"Added to My List!")
     conn.commit()
 
@@ -1566,7 +1572,8 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 if "watchlist" not in st.session_state and "user_id" in st.session_state:
                     load_user_watchlist()
                 
-                is_saved = "watchlist" in st.session_state and row.get('show_id') in st.session_state.watchlist
+                watchlist = st.session_state.get("watchlist", set())
+                is_saved = row.get('show_id') in watchlist
                 wl_text = "✔ In My List" if is_saved else "+ My List"
                 if st.button(wl_text, key=f"{key_prefix}wl_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="secondary"):
                     toggle_watchlist(row.get('show_id'))
