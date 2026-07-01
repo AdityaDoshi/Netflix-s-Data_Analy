@@ -2342,7 +2342,6 @@ def main():
     try:
         force_create_tables()
     except Exception as e:
-        import streamlit as st
         st.error(f"Failed to create database tables: {e}")
     # ---------------------------------------
     st.markdown('''<style>
