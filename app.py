@@ -569,6 +569,34 @@ def get_db_connection():
     return sqlite3.connect(db_path, check_same_thread=False)
 
 @st.cache_data(show_spinner=False)
+def load_user_watchlist():
+    if "user_id" in st.session_state:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT show_id FROM watchlists WHERE user_id = ?", (st.session_state["user_id"],))
+        st.session_state.watchlist = set(row[0] for row in cursor.fetchall())
+    else:
+        st.session_state.watchlist = set()
+
+def toggle_watchlist(show_id):
+    if "user_id" not in st.session_state:
+        st.error("Please login to save to your watchlist.")
+        return
+        
+    user_id = st.session_state["user_id"]
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    if show_id in st.session_state.watchlist:
+        cursor.execute("DELETE FROM watchlists WHERE user_id = ? AND show_id = ?", (user_id, show_id))
+        st.session_state.watchlist.remove(show_id)
+        st.toast(f"Removed from My List.")
+    else:
+        cursor.execute("INSERT INTO watchlists (user_id, show_id) VALUES (?, ?)", (user_id, show_id))
+        st.session_state.watchlist.add(show_id)
+        st.toast(f"Added to My List!")
+    conn.commit()
+
 def load_and_preprocess_data(_cache_buster=2):
     conn = get_db_connection()
     # Load data from the new SQLite database instead of CSV
@@ -591,13 +619,21 @@ def load_and_preprocess_data(_cache_buster=2):
 
 @st.dialog("Create a New Account")
 def show_signup_dialog():
-    st.markdown(f"<p style='color:gray; font-size:0.9rem;'>Register a new demo account.</p>", unsafe_allow_html=True)
-    new_user = st.text_input("New Email", placeholder="e.g. elon@tesla.com")
+    st.markdown(f"<p style='color:gray; font-size:0.9rem;'>Register a new account.</p>", unsafe_allow_html=True)
+    new_user = st.text_input("New Username", placeholder="e.g. elon")
     new_pass = st.text_input("New Password", type="password")
     if st.button("Register", type="primary", use_container_width=True):
         if new_user and new_pass:
-            st.session_state.demo_credentials[new_user] = new_pass
-            st.success("Account created successfully! You can now close this and sign in.")
+            import hashlib
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            pwd_hash = hashlib.sha256(new_pass.encode()).hexdigest()
+            try:
+                cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", (new_user, pwd_hash))
+                conn.commit()
+                st.success("Account created successfully! You can now close this and sign in.")
+            except sqlite3.IntegrityError:
+                st.error("Username already exists. Please choose another.")
         else:
             st.error("Please fill in both fields.")
 
@@ -1013,14 +1049,27 @@ def render_login_screen():
                 show_forgot_dialog()
 
             if demo_submitted:
+                conn = get_db_connection()
+                admin_id = conn.execute("SELECT id FROM users WHERE username = 'admin'").fetchone()[0]
                 st.session_state["authenticated"] = True
                 st.session_state["user"] = "admin"
+                st.session_state["user_id"] = admin_id
+                load_user_watchlist()
                 st.rerun()
 
             if submitted:
-                if username in st.session_state.demo_credentials and st.session_state.demo_credentials[username] == password:
+                import hashlib
+                conn = get_db_connection()
+                cursor = conn.cursor()
+                pwd_hash = hashlib.sha256(password.encode()).hexdigest()
+                cursor.execute("SELECT id FROM users WHERE username = ? AND password_hash = ?", (username, pwd_hash))
+                user_row = cursor.fetchone()
+                
+                if user_row:
                     st.session_state["authenticated"] = True
                     st.session_state["user"] = username
+                    st.session_state["user_id"] = user_row[0]
+                    load_user_watchlist()
                     st.rerun()
                 else:
                     st.error("Invalid credentials. Use 'Instant Demo' or enter a valid account.")
@@ -1040,7 +1089,7 @@ def render_sidebar(df: pd.DataFrame):
         if "active_page" not in st.session_state:
             st.session_state.active_page = "Dashboard"
             
-        selected_page = st.radio("Navigation", ["Dashboard", "Deep Dive", "Data Explorer", "Top Categories"], label_visibility="collapsed", key="nav_radio")
+        selected_page = st.radio("Navigation", ["Dashboard", "My List", "Deep Dive", "Data Explorer", "Top Categories"], label_visibility="collapsed", key="nav_radio")
         if selected_page != st.session_state.active_page:
             st.session_state.active_page = selected_page
             st.rerun()
@@ -1512,6 +1561,17 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
+                
+                # Watchlist logic
+                if "watchlist" not in st.session_state and "user_id" in st.session_state:
+                    load_user_watchlist()
+                
+                is_saved = "watchlist" in st.session_state and row.get('show_id') in st.session_state.watchlist
+                wl_text = "✔ In My List" if is_saved else "+ My List"
+                if st.button(wl_text, key=f"{key_prefix}wl_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="secondary"):
+                    toggle_watchlist(row.get('show_id'))
+                    st.rerun()
+                    
                 if st.button(T["btn_cast"], key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
                     set_node("movie", row.get('show_id', row['title']))
                     st.session_state.cast_button_clicked = True
@@ -1546,6 +1606,90 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
 
 
 
+
+def render_watchlist_page():
+    st.markdown("## 🍿 My List", unsafe_allow_html=True)
+    if "user_id" not in st.session_state:
+        st.warning("Please sign in to view your saved titles.")
+        return
+        
+    if "watchlist" not in st.session_state:
+        load_user_watchlist()
+        
+    if not st.session_state.watchlist:
+        st.info("Your list is empty! Explore the catalog and add some titles.")
+        return
+        
+    conn = get_db_connection()
+    placeholders = ','.join(['?'] * len(st.session_state.watchlist))
+    query = f"SELECT * FROM titles WHERE show_id IN ({placeholders})"
+    wl_df = pd.read_sql(query, conn, params=list(st.session_state.watchlist))
+    
+    # CSS for horizontal carousel
+    st.markdown('''
+        <style>
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding: 20px 0;
+            scroll-snap-type: x mandatory;
+        }
+        .carousel-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .carousel-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .carousel-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        .carousel-item {
+            flex: 0 0 220px;
+            scroll-snap-align: start;
+        }
+        </style>
+    ''', unsafe_allow_html=True)
+    
+    st.markdown('<div class="carousel-container">', unsafe_allow_html=True)
+    
+    # We will use columns to fake a carousel visually for standard streamlit, 
+    # but the container CSS will make it scrollable horizontally if we inject raw HTML.
+    # Actually, Streamlit columns wrap. Let's just use raw HTML for the carousel items!
+    
+    html = '<div class="carousel-container">'
+    for _, row in wl_df.iterrows():
+        m_img = get_image(f"{row['title']} movie", is_movie=True)
+        bg_style = f"background: url({m_img}) center/cover;" if m_img else "background: linear-gradient(45deg, #111, #333);"
+        score = f"{float(row.get('vote_average', 0)):.1f}" if pd.notna(row.get('vote_average')) else "NR"
+        year = f"{row.get('release_year', '')}"
+        
+        html += f'''
+        <div class="carousel-item">
+            <div class="simkl-card" style="width: 100%; height: 330px;">
+                <div class="simkl-poster" style="{bg_style}">
+                    <div class="simkl-badge badge-top-right">★ {score}</div>
+                    <div class="simkl-badge badge-top-left">{year}</div>
+                </div>
+                <div class="simkl-title" title="{row['title']}">{row['title']}</div>
+            </div>
+        </div>
+        '''
+    html += '</div>'
+    
+    st.markdown(html, unsafe_allow_html=True)
+    
+    st.markdown("<br><hr><br><h3>Manage Watchlist</h3>", unsafe_allow_html=True)
+    # We can reuse the catalog explorer renderer but pass the watchlist dataframe!
+    # Wait, the catalog explorer takes query, params now. We can't just pass a dataframe.
+    # Instead, we just show the standard grid underneath the carousel for management!
+    
+    # Let's use the catalog explorer logic
+    query = f"SELECT * FROM titles WHERE show_id IN ({placeholders})"
+    params = list(st.session_state.watchlist)
+    render_catalog_explorer(wl_df, query, params, key_prefix="wl_")
 
 def render_top_categories(df: pd.DataFrame):
     popular_genres = ["Action", "Comedy", "Sci-Fi", "Horror", "Thrillers", "Drama"]
