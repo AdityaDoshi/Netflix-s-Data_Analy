@@ -1,3 +1,4 @@
+import sqlite3
 def hex_to_rgba(hex_color, alpha=0.1):
     hex_color = hex_color.lstrip('#')
     return f'rgba({int(hex_color[0:2], 16)}, {int(hex_color[2:4], 16)}, {int(hex_color[4:6], 16)}, {alpha})'
@@ -6,6 +7,7 @@ def hex_to_rgba(hex_color, alpha=0.1):
 
 import streamlit as st
 import pandas as pd
+import sqlite3
 import plotly.express as px
 import plotly.graph_objects as go
 import datetime
@@ -557,14 +559,20 @@ update_theme_config(st.session_state.theme)
 #  MODULE 1: DATA LOADING & PREPROCESSING
 # ══════════════════════════════════════════════════════════════════
 
+@st.cache_resource
+def get_db_connection():
+    conn = sqlite3.connect("netflix.db", check_same_thread=False)
+    return conn
+
 @st.cache_data(show_spinner=False)
-def load_and_preprocess_data(_cache_buster=1):
-    df = pd.read_csv("netflix_titles_2025.csv")
-    df["date_added"] = pd.to_datetime(df["date_added"].str.strip(), errors="coerce")
-    df["year_added"] = df["date_added"].dt.year.astype("Int64")
-    df["duration_minutes"] = df["duration"].str.extract(r"(\d+)", expand=False).astype(float)
-    df["primary_country"] = df["country"].str.split(",").str[0].str.strip()
-    return df
+def get_sidebar_bounds():
+    conn = sqlite3.connect("netflix.db")
+    min_yr, max_yr = conn.execute("SELECT MIN(release_year), MAX(release_year) FROM titles").fetchone()
+    types = [r[0] for r in conn.execute("SELECT DISTINCT type FROM titles WHERE type IS NOT NULL").fetchall()]
+    ratings = [r[0] for r in conn.execute("SELECT DISTINCT rating FROM titles WHERE rating IS NOT NULL").fetchall()]
+    countries = [r[0] for r in conn.execute("SELECT DISTINCT primary_country FROM titles WHERE primary_country IS NOT NULL").fetchall()]
+    conn.close()
+    return min_yr, max_yr, sorted(types), sorted(ratings), sorted(countries)
 
 
 # ══════════════════════════════════════════════════════════════════
