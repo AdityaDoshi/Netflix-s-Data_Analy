@@ -226,7 +226,7 @@ LANG = {
         "ai_search_prompt": "🔍 Search query...", "ai_search_placeholder": "e.g., A spooky detective movie with a twist ending",
         "ai_no_match": "No matches found. Try describing it differently!",
         "header_trend": "Content Release Trend", "header_dist": "Content Distribution", "header_ratings": "Ratings & Directors",
-        "header_granular": "Granular Analysis", "download_csv": "Download CSV",
+        "header_granular": "Granular Analysis", "download_csv": "Download CSV", "header_trend": "Content Release Trend (10 Years)", "header_dist": "Distribution & Genres", "header_ratings": "Ratings & Directors", "header_granular": "Granular Analysis", "dataset_info": "Dataset Info", "source": "Source", "total_records": "Total Records", "year_span": "Year Span", "view_mode_label": "View Mode", "grid_mode": "Grid", "csv_mode": "CSV", "btn_cast": "🎭 Cast", "btn_trailer": "▶ Trailer", "watch_netflix": "▶ Watch on Netflix", "btn_netflix": "Netflix", "btn_where": "Where?", "title_search_netflix": "Search on Netflix", "title_find_justwatch": "Find on JustWatch",
         "metric_total": "Total Content", "metric_movies": "Total Movies", "metric_shows": "Total TV Shows",
         "metric_directors": "Total Directors", "metric_cast": "Unique Cast", "metric_countries": "Countries",
         "metric_genres": "Unique Genres", "metric_type": "Content Type",
@@ -331,7 +331,7 @@ LANG = {
         "ai_search_prompt": "🔍 Consulta de búsqueda...", "ai_search_placeholder": "ej., Una película de detectives espeluznante con un final inesperado",
         "ai_no_match": "No se encontraron coincidencias. ¡Intenta describirlo de manera diferente!",
         "header_trend": "Tendencia de Lanzamiento de Contenido", "header_dist": "Distribución de Contenido", "header_ratings": "Clasificaciones y Directores",
-        "header_granular": "Análisis Granular", "download_csv": "Descargar CSV",
+        "header_granular": "Análisis Granular", "download_csv": "Descargar CSV", "header_trend": "Tendencia de lanzamientos (10 Años)", "header_dist": "Distribución y Géneros", "header_ratings": "Calificaciones y Directores", "header_granular": "Análisis Granular", "dataset_info": "Info del Dataset", "source": "Fuente", "total_records": "Registros Totales", "year_span": "Lapso de Años", "view_mode_label": "Modo de vista", "grid_mode": "Cuadrícula", "csv_mode": "CSV", "btn_cast": "🎭 Reparto", "btn_trailer": "▶ Tráiler", "watch_netflix": "▶ Ver en Netflix", "btn_netflix": "Netflix", "btn_where": "¿Dónde?", "title_search_netflix": "Buscar en Netflix", "title_find_justwatch": "Buscar en JustWatch",
         "metric_total": "Contenido Total", "metric_movies": "Películas Totales", "metric_shows": "Programas de TV Totales",
         "metric_directors": "Directores Totales", "metric_cast": "Elenco Único", "metric_countries": "Países",
         "metric_genres": "Géneros Únicos", "metric_type": "Tipo de Contenido",
@@ -1223,6 +1223,7 @@ def chart_content_split(df: pd.DataFrame):
     type_counts = df["type"].value_counts().reset_index()
     type_counts.columns = ["Type", "Count"]
     type_counts["Type"] = type_counts["Type"].map({"Movie": T["movie"], "TV Show": T["tv_show"]}).fillna(type_counts["Type"])
+    type_counts["Type"] = type_counts["Type"].map({"Movie": T["movie"], "TV Show": T["tv_show"]}).fillna(type_counts["Type"])
     fig = go.Figure(go.Bar(name=T.get("count", "Count"), x=type_counts["Type"], y=type_counts["Count"],
         text=type_counts["Count"].map(lambda x: localize_number(x, st.session_state.lang)), textposition='auto',
         marker=dict(color=[theme_primary, theme_primary], line=dict(color="rgba(0,0,0,0)", width=2)),
@@ -1388,7 +1389,7 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
             st.session_state[last_query_key] = search_query
     with col_view:
         st.markdown("<div style='margin-top:28px;'></div>", unsafe_allow_html=True)
-        view_mode = st.radio("View Mode", [":material/grid_view: Grid", ":material/table_rows: CSV"], horizontal=True, label_visibility="collapsed", key=f"{key_prefix}view_mode")
+        view_mode = st.radio(T["view_mode_label"], [f":material/grid_view: {T['grid_mode']}", f":material/table_rows: {T['csv_mode']}"], horizontal=True, label_visibility="collapsed", key=f"{key_prefix}view_mode")
         
     if search_query:
         try:
@@ -1470,8 +1471,8 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 import urllib.parse
                 safe_title = urllib.parse.quote(str(row['title']))
                 watch_link = f"""<div style='display:flex; gap:6px; margin-top:8px; width:100%;'>
-<a href='https://www.netflix.com/search?q={safe_title}' title='Search on Netflix' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Netflix</a>
-<a href='https://www.justwatch.com/us/search?q={safe_title}' title='Find on JustWatch' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Where?</a>
+<a href='https://www.netflix.com/search?q={safe_title}' title='{T['title_search_netflix']}' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_netflix']}</a>
+<a href='https://www.justwatch.com/us/search?q={safe_title}' title='{T['title_find_justwatch']}' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_where']}</a>
 </div>"""
                 
                 html = f'''
@@ -1493,11 +1494,11 @@ def render_catalog_explorer(df: pd.DataFrame, key_prefix=''):
                 '''
                 st.markdown(html, unsafe_allow_html=True)
                 
-                if st.button("🎭 Cast", key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
+                if st.button(T["btn_cast"], key=f"{key_prefix}grid_btn_{i}_{row.get('show_id', i)}", use_container_width=True):
                     set_node("movie", row.get('show_id', row['title']))
                     st.session_state.cast_button_clicked = True
                     st.rerun()
-                if st.button("▶ Trailer", key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
+                if st.button(T["btn_trailer"], key=f"{key_prefix}trailer_btn_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
                     play_trailer_dialog(row['title'], row.get('release_year', ''))
                         
         if total_pages > 1:
@@ -1569,8 +1570,8 @@ def render_top_categories(df: pd.DataFrame):
                     import urllib.parse
                     safe_title = urllib.parse.quote(str(row['title']))
                     watch_link = f"""<div style='display:flex; gap:6px; margin-top:8px; width:100%;'>
-<a href='https://www.netflix.com/search?q={safe_title}' title='Search on Netflix' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Netflix</a>
-<a href='https://www.justwatch.com/us/search?q={safe_title}' title='Find on JustWatch' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>Where?</a>
+<a href='https://www.netflix.com/search?q={safe_title}' title='{T['title_search_netflix']}' target='_blank' style='flex:1; background:var(--primary-color); color:white; padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_netflix']}</a>
+<a href='https://www.justwatch.com/us/search?q={safe_title}' title='{T['title_find_justwatch']}' target='_blank' style='flex:1; background:rgba(255,255,255,0.1); color:#fff; border: 1px solid rgba(255,255,255,0.2); padding:4px; border-radius:4px; text-decoration:none; font-size:0.7rem; font-weight:bold; text-align:center; transition: opacity 0.2s;' onmouseover='this.style.opacity=0.8' onmouseout='this.style.opacity=1'>{T['btn_where']}</a>
 </div>"""
                     
                     html = f'''
@@ -1592,11 +1593,11 @@ def render_top_categories(df: pd.DataFrame):
                     '''
                     st.markdown(html, unsafe_allow_html=True)
                     
-                    if st.button("🎭 Cast", key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
+                    if st.button(T["btn_cast"], key=f"cat_btn_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True):
                         set_node("movie", row.get('show_id', row['title']))
                         st.session_state.cast_button_clicked = True
                         st.rerun()
-                    if st.button("▶ Trailer", key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
+                    if st.button(T["btn_trailer"], key=f"cat_trl_{genre}_{i}_{row.get('show_id', i)}", use_container_width=True, type="primary"):
                         play_trailer_dialog(row['title'], row.get('release_year', ''))
         st.markdown("<hr style='margin: 24px 0; border-color: rgba(255,255,255,0.1);'>", unsafe_allow_html=True)
 
